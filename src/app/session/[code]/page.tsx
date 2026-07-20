@@ -607,7 +607,7 @@ export default function SessionPage() {
     } else {
       triggerPlay();
     }
-  }, [speechEnabled])
+  }, [])
 
   // Google Cloud TTS synthesiser with local fallback
   const triggerAudioSpeech = (text: string, onEnd?: () => void) => {
