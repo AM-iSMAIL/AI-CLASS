@@ -783,6 +783,10 @@ export default function LiveClassroomPage() {
       // Remove from queue since we're starting play
       ttsQueueRef.current.shift()
 
+      if (!nextChunk.audio && !nextChunk.error) {
+        nextChunk.audio = new Audio(`/api/tts?text=${encodeURIComponent(nextChunk.text)}`);
+      }
+
       if (nextChunk.error || !nextChunk.audio) {
         console.warn("[TTS]: Camb AI failed due to network latency.")
         
@@ -882,10 +886,8 @@ export default function LiveClassroomPage() {
           imagePromise: (isFirst && clauseIdx === 0 && firstImageUrl) ? Promise.resolve() : null as Promise<any> | null
         };
         
-        const audio = new Audio(`/api/tts?text=${encodeURIComponent(clause)}`);
-        audio.volume = 1.0;
-        item.audio = audio;
-        item.promise = Promise.resolve();
+        item.audio = null;
+        item.promise = null;
 
         ttsQueueRef.current.push(item);
       });
@@ -1236,10 +1238,8 @@ export default function LiveClassroomPage() {
                 };
 
                 if (speechEnabled) {
-                  const audio = new Audio(`/api/tts?text=${encodeURIComponent(clause)}`);
-                  audio.volume = 1.0;
-                  item.audio = audio;
-                  item.promise = Promise.resolve();
+                  item.audio = null;
+                  item.promise = null;
                 } else {
                   item.promise = Promise.resolve();
                 }
