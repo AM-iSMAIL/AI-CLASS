@@ -10,7 +10,7 @@ export const getTeacherConfig = (): TeacherConfig => {
   const temperature = rawTemp ? parseFloat(rawTemp) : 0.2;
   
   const rawMaxTokens = process.env.NVIDIA_MAX_TOKENS;
-  const maxTokens = rawMaxTokens ? parseInt(rawMaxTokens, 10) : 2048;
+  const maxTokens = rawMaxTokens ? parseInt(rawMaxTokens, 10) : 4096;
 
   const baseUrl = "https://integrate.api.nvidia.com/v1";
 
@@ -18,7 +18,7 @@ export const getTeacherConfig = (): TeacherConfig => {
     apiKey,
     model,
     temperature: isNaN(temperature) ? 0.2 : temperature,
-    maxTokens: isNaN(maxTokens) ? 2048 : maxTokens,
+    maxTokens: isNaN(maxTokens) ? 4096 : maxTokens,
     baseUrl,
   };
 };
@@ -35,7 +35,7 @@ LECTURING DIRECTIVES:
 3. BE ENGAGING & HUMAN: Break down complex concepts step-by-step. Speak as a human explaining things to another human, avoiding dry academic walls of text.
 4. NO REPETITION: Do not repeat introductory remarks, basic course definitions, or overviews you have already explained. Always move the lecture forward.
 5. Truthfulness: Never fabricate facts or code. If you don't know something, be honest and tell the students.
-6. DETAIL, DEPTH & PACING: Since this is a full-duration academic class, provide a comprehensive, deep, and thorough explanation of the topic. Do not summarize or rush. Assume you have plenty of time. Write a detailed explanation of at least 8 to 12 sentences, with each sentence followed strictly by its own IMAGE_PROMPT line.`;
+6. DETAIL, DEPTH & PACING: Since this is a full-duration academic class, provide a comprehensive, extremely deep, and highly detailed explanation of the topic. Do not summarize or rush. Assume you have plenty of time. Write a massive, detailed explanation spanning at least 40 to 60 short sentences, with each sentence followed strictly by its own IMAGE_PROMPT line.`;
 
   const levelInstructions = {
     beginner: `Explain concepts in simple terms, avoiding heavy jargon. Use everyday analogies and explain basic terminology before building up.`,
