@@ -59,7 +59,7 @@ export class FocusEngine implements CVModule<Map<string, FocusScore>> {
 
       // If face is absent/occluded, drop score instantly to 0 and clear history (prevent keyboard phone cheats)
       const presenceStatus = analysis?.presence?.status;
-      const isAbsent = !presenceStatus || presenceStatus === 'absent' || presenceStatus === 'no_face' || presenceStatus === 'left_seat' || presenceStatus === 'camera_blocked';
+      const isAbsent = !presenceStatus || presenceStatus === 'absent' || presenceStatus === 'no_face' || presenceStatus === 'left_seat' || presenceStatus === 'camera_blocked' || presenceStatus === 'partial_face';
 
       let smoothed = 0;
       if (isAbsent) {
@@ -123,8 +123,8 @@ function computeRawScore(
   const gaze = analysis.gaze;
   const mouth = analysis.mouth;
 
-  // No face / not present
-  if (!presence || presence.status === 'absent' || presence.status === 'no_face') return 0;
+  // No face / not present / partial face
+  if (!presence || presence.status === 'absent' || presence.status === 'no_face' || presence.status === 'partial_face') return 0;
   if (presence.status === 'camera_blocked') return 0;
 
   // Eyes closed + drowsy

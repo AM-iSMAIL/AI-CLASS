@@ -66,13 +66,13 @@ export function useCVPipeline({
   const mapToFocusMetrics = useCallback((output: CVOutput): FocusMetrics => {
     let status: FocusMetrics['status'] = 'focused';
     const s = output.currentState;
-    if (s === 'absent' || s === 'camera_blocked') {
+    if (s === 'absent' || s === 'camera_blocked' || output.presence === 'partial_face') {
       status = 'away';
     } else if (s === 'distracted' || s === 'looking_away') {
       status = 'distracted';
     }
 
-    const faceDetected = output.presence !== 'absent' && output.presence !== 'no_face';
+    const faceDetected = output.presence !== 'absent' && output.presence !== 'no_face' && output.presence !== 'partial_face';
 
     // Estimate effective deviation angle (degrees)
     const yaw = output.headPose?.yaw ?? 0;
@@ -86,7 +86,7 @@ export function useCVPipeline({
       status,
       gazeDirection: output.gazeDirection,
       faceDetected,
-      eyesOpen: output.blinkState?.eyesOpen ?? true,
+      eyesOpen: faceDetected ? (output.blinkState?.eyesOpen ?? true) : false,
       headYaw: yaw,
       headPitch: pitch,
       headRoll: output.headPose?.roll ?? 0,
