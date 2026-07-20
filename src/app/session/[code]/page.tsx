@@ -513,7 +513,6 @@ export default function SessionPage() {
 
       if (nextChunk.error || !nextChunk.audio) {
         console.warn("[TTS]: Camb AI failed due to network latency.")
-        alert("Slow internet connection detected.")
         isTtsPlayingRef.current = false
         if (nextChunk.onEnd) nextChunk.onEnd()
         processTtsQueue()
@@ -537,7 +536,6 @@ export default function SessionPage() {
       audio.onerror = (e) => {
         console.warn("[TTS]: Audio playback error:", e)
         if (nextChunk.runId !== ttsRunIdRef.current) return;
-        alert("Slow internet connection detected.")
         isTtsPlayingRef.current = false
         if (nextChunk.onEnd) nextChunk.onEnd()
         processTtsQueue()
@@ -546,7 +544,6 @@ export default function SessionPage() {
       audio.play().catch(err => {
         console.warn("[TTS]: Failed playing audio:", err)
         if (nextChunk.runId !== ttsRunIdRef.current) return;
-        alert("Slow internet connection detected.")
         isTtsPlayingRef.current = false
         if (nextChunk.onEnd) nextChunk.onEnd()
         processTtsQueue()
