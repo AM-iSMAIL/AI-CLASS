@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
     const { text } = body;
-    const voiceId = body.voiceId ?? body.voice_id ?? 8823;
+    const voiceId = body.voiceId ?? body.voice_id ?? 147320;
     const language = body.language ?? body.lang ?? "en-us";
     const speechModel = body.speechModel ?? body.speech_model ?? "mars-8.1-flash-beta";
     
@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const text = searchParams.get("text");
-    const voiceId = searchParams.get("voiceId") || searchParams.get("voice_id") || "8823";
+    const voiceId = searchParams.get("voiceId") || searchParams.get("voice_id") || "147320";
     const language = searchParams.get("language") || searchParams.get("lang") || "en-us";
     const speechModel = searchParams.get("speechModel") || searchParams.get("speech_model") || "mars-8.1-flash-beta";
 
