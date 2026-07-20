@@ -515,6 +515,12 @@ export default function SessionPage() {
         nextChunk.audio = new Audio(`/api/tts?text=${encodeURIComponent(nextChunk.text)}`);
       }
 
+      // Prefetch the very next chunk while this one plays (Sliding Window)
+      const futureChunk = ttsQueueRef.current[0];
+      if (futureChunk && !futureChunk.audio && !futureChunk.error) {
+        futureChunk.audio = new Audio(`/api/tts?text=${encodeURIComponent(futureChunk.text)}`);
+      }
+
       if (nextChunk.error || !nextChunk.audio) {
         console.warn("[TTS]: Camb AI failed due to network latency.")
         isTtsPlayingRef.current = false

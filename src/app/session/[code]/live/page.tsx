@@ -780,11 +780,17 @@ export default function LiveClassroomPage() {
       // If the runId has changed since this item was queued, it's stale! Discard it!
       if (nextChunk.runId !== ttsRunIdRef.current) return;
 
-      // Remove from queue since we're starting play
+      // Remove from queue since were starting play
       ttsQueueRef.current.shift()
 
       if (!nextChunk.audio && !nextChunk.error) {
         nextChunk.audio = new Audio(`/api/tts?text=${encodeURIComponent(nextChunk.text)}`);
+      }
+
+      // Prefetch the very next chunk while this one plays (Sliding Window)
+      const futureChunk = ttsQueueRef.current[0];
+      if (futureChunk && !futureChunk.audio && !futureChunk.error) {
+        futureChunk.audio = new Audio(`/api/tts?text=${encodeURIComponent(futureChunk.text)}`);
       }
 
       if (nextChunk.error || !nextChunk.audio) {
