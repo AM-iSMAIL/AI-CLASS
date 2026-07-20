@@ -519,6 +519,8 @@ export default function SessionPage() {
       const futureChunk = ttsQueueRef.current[0];
       if (futureChunk && !futureChunk.audio && !futureChunk.error) {
         futureChunk.audio = new Audio(`/api/tts?text=${encodeURIComponent(futureChunk.text)}`);
+        futureChunk.audio.preload = "auto";
+        futureChunk.audio.load();
       }
 
       if (nextChunk.error || !nextChunk.audio) {
