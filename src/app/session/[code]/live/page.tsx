@@ -750,30 +750,28 @@ export default function LiveClassroomPage() {
         }
       };
 
-      if (nextChunk.imagePromise) {
-        nextChunk.imagePromise.then(showImage).catch(showImage);
-      } else {
-        showImage();
-      }
+      // We will call showImage BEFORE we play the audio
     } else {
       setIsGeneratingImage(false);
     }
 
-    // Pre-fetch the NEXT slide's image in the background (at index 1)
-    const nextItem = ttsQueueRef.current[1];
-    if (nextItem && nextItem.imagePrompt && !nextItem.imagePromise) {
-      nextItem.imagePromise = fetch("/api/image", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: nextItem.imagePrompt, width: 768, height: 512 })
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.image) {
-            nextItem.imageUrl = data.image;
-          }
+    // Aggressively pre-fetch the NEXT 3 slides' images in the background to ensure they are ready before the TTS reaches them
+    for (let i = 1; i <= 3; i++) {
+      const futureItem = ttsQueueRef.current[i];
+      if (futureItem && futureItem.imagePrompt && !futureItem.imagePromise) {
+        futureItem.imagePromise = fetch("/api/image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: futureItem.imagePrompt, width: 768, height: 512 })
         })
-        .catch(() => {});
+          .then(res => res.json())
+          .then(data => {
+            if (data.image) {
+              futureItem.imageUrl = data.image;
+            }
+          })
+          .catch(() => {});
+      }
     }
 
     const playItem = () => {
@@ -845,12 +843,44 @@ export default function LiveClassroomPage() {
       })
     }
 
-    if (nextChunk.promise) {
-      nextChunk.promise.then(playItem).catch(playItem)
-    } else {
-      playItem()
+    const triggerPlay = () => {
+      if (nextChunk.promise) {
+        nextChunk.promise.then(playItem).catch(playItem)
+      } else {
+        playItem()
+      }
     }
-  }, [])
+
+    // STRICT SYNC: Wait for the image to be fully loaded BEFORE starting the voice!
+    if (nextChunk.imagePrompt) {
+      if (nextChunk.imagePromise) {
+        nextChunk.imagePromise.then(() => {
+          if (nextChunk.runId === ttsRunIdRef.current) {
+            // we have to call showImage() logic manually here since we abstracted it
+            setIsGeneratingImage(false);
+            if (nextChunk.imageUrl) {
+              setTopicImageUrl(nextChunk.imageUrl);
+              setImageLoaded(true);
+            } else if (topicImageUrl) {
+              setImageLoaded(true);
+            } else {
+              setImageLoaded(false);
+            }
+            triggerPlay();
+          }
+        }).catch(() => {
+          if (nextChunk.runId === ttsRunIdRef.current) {
+            setIsGeneratingImage(false);
+            triggerPlay();
+          }
+        });
+      } else {
+        triggerPlay();
+      }
+    } else {
+      triggerPlay();
+    }
+  }, [speechEnabled])
 
   const speakTextChunk = useCallback((text: string, onEnd?: () => void, startFromIndex = 0, firstImageUrl?: string | null) => {
     if (!text) {

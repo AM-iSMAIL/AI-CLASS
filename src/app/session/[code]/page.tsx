@@ -504,6 +504,25 @@ export default function SessionPage() {
     setAiSpeechState("speaking")
     setLiveSubtitles(nextChunk.text)
 
+    // Aggressively pre-fetch the NEXT 3 slides' images in the background
+    for (let i = 1; i <= 3; i++) {
+      const futureItem = ttsQueueRef.current[i];
+      if (futureItem && futureItem.imagePrompt && !futureItem.imagePromise) {
+        futureItem.imagePromise = fetch("/api/image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: futureItem.imagePrompt, width: 768, height: 512 })
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.image) {
+              futureItem.imageUrl = data.image;
+            }
+          })
+          .catch(() => {});
+      }
+    }
+
     const playItem = () => {
       // If the runId has changed since this item was queued, it's stale! Discard it!
       if (nextChunk.runId !== ttsRunIdRef.current) return;
@@ -562,12 +581,33 @@ export default function SessionPage() {
       })
     }
 
-    if (nextChunk.promise) {
-      nextChunk.promise.then(playItem).catch(playItem)
-    } else {
-      playItem()
+    const triggerPlay = () => {
+      if (nextChunk.promise) {
+        nextChunk.promise.then(playItem).catch(playItem)
+      } else {
+        playItem()
+      }
     }
-  }, [])
+
+    // STRICT SYNC: Wait for the image to be fully loaded BEFORE starting the voice!
+    if (nextChunk.imagePrompt) {
+      if (nextChunk.imagePromise) {
+        nextChunk.imagePromise.then(() => {
+          if (nextChunk.runId === ttsRunIdRef.current) {
+            triggerPlay();
+          }
+        }).catch(() => {
+          if (nextChunk.runId === ttsRunIdRef.current) {
+            triggerPlay();
+          }
+        });
+      } else {
+        triggerPlay();
+      }
+    } else {
+      triggerPlay();
+    }
+  }, [speechEnabled])
 
   // Google Cloud TTS synthesiser with local fallback
   const triggerAudioSpeech = (text: string, onEnd?: () => void) => {
