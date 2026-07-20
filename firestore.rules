@@ -1,0 +1,37 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Sessions collection rules
+    match /sessions/{sessionId} {
+      // Students need to read session info to join/sync; teachers read to monitor
+      allow read: if true;
+      
+      // Only authenticated users can create sessions
+      allow create: if isAuthenticated();
+      
+      // Only the teacher who created the session can modify or delete it
+      allow update, delete: if isAuthenticated() && resource.data.teacherId == request.auth.uid;
+
+      // Subcollection for students participating in the session
+      match /students/{studentId} {
+        // Anyone can read participant list or telemetry of students in the session
+        allow read: if true;
+        
+        // Students can join (create) and update their heartbeat/telemetry status
+        allow create, update, delete: if true;
+      }
+      
+      // Subcollection for kicked/blacklisted students
+      match /kicked/{studentId} {
+        allow read: if true;
+        allow write: if true;
+      }
+    }
+  }
+}
