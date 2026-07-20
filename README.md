@@ -79,3 +79,5 @@ src/
     ├── session-service.ts   # Firestore Telemetry and Sync Handlers
     └── utils.ts             # Tailwind class merging utility
 ```
+
+Testing CodeRabbit review
