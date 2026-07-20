@@ -58,8 +58,8 @@ export async function POST(req: NextRequest) {
       const errText = await res.text().catch(() => "Unknown error");
       console.error("[/api/image] NVIDIA error:", res.status, errText);
       return NextResponse.json(
-        { error: `NVIDIA API returned ${res.status}` },
-        { status: 502 }
+        { error: `NVIDIA API returned ${res.status}: ${errText}` },
+        { status: res.status }
       );
     }
 
