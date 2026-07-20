@@ -39,7 +39,9 @@ export default function StudentDashboardPage() {
       if (!name) {
         window.location.href = "/auth"
       } else {
-        setStudentName(name)
+        setTimeout(() => {
+          setStudentName(name)
+        }, 0)
       }
     }
   }, [])

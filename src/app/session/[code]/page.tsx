@@ -77,7 +77,6 @@ export default function SessionPage() {
   // Authentication & Role
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [authLoading, setAuthLoading] = useState(true)
-  const [isTeacher, setIsTeacher] = useState(false)
   const [studentId, setStudentId] = useState<string | null>(null)
   const [studentName, setStudentName] = useState<string | null>(null)
 
@@ -163,13 +162,17 @@ export default function SessionPage() {
       if (typeof window !== "undefined") {
         const storedName = localStorage.getItem("studentName")
         const storedId = localStorage.getItem("studentId")
-        setStudentName(storedName || "Guest Student")
-        setStudentId(storedId || `guest-${Math.floor(Math.random() * 1000)}`)
+        setTimeout(() => {
+          setStudentName(storedName || "Guest Student")
+          setStudentId(storedId || `guest-${Math.floor(Math.random() * 1000)}`)
+        }, 0)
       }
     } catch (e) {
       console.warn("localStorage fallback:", e)
-      setStudentName("Guest Student")
-      setStudentId("guest-id")
+      setTimeout(() => {
+        setStudentName("Guest Student")
+        setStudentId("guest-id")
+      }, 0)
     }
 
     try {
@@ -180,7 +183,9 @@ export default function SessionPage() {
       return () => unsubscribeAuth()
     } catch (e) {
       console.error("Auth subscription failed:", e)
-      setAuthLoading(false)
+      setTimeout(() => {
+        setAuthLoading(false)
+      }, 0)
     }
   }, [])
 
@@ -257,8 +262,10 @@ export default function SessionPage() {
       )
     } catch (e) {
       console.error("Firebase connection error:", e)
-      setError("Failed to load session. Return to dashboard?")
-      setLoading(false)
+      setTimeout(() => {
+        setError("Failed to load session. Return to dashboard?")
+        setLoading(false)
+      }, 0)
     }
 
     return () => {
@@ -267,17 +274,12 @@ export default function SessionPage() {
     }
   }, [sessionCode])
 
-  // 4. Determine user role
-  useEffect(() => {
-    if (session && currentUser) {
-      setIsTeacher(session.teacherId === currentUser.uid)
-    } else if (session) {
-      // Offline fallback check
-      setIsTeacher(session.teacherId === "offline-teacher")
-    } else {
-      setIsTeacher(false)
-    }
-  }, [session, currentUser])
+  // Determine user role (computed dynamically on each render pass)
+  const isTeacher = session && currentUser
+    ? session.teacherId === currentUser.uid
+    : session
+      ? session.teacherId === "offline-teacher"
+      : false;
 
   // 4b. Enforce admission checks for student
   useEffect(() => {
@@ -382,7 +384,9 @@ export default function SessionPage() {
   // 6. Transition state checker — triggers when Firebase status goes "Active"
   useEffect(() => {
     if ((session?.status === "Active") && !isClassroomActive && !isTransitioning) {
-      triggerClassroomTransition()
+      setTimeout(() => {
+        triggerClassroomTransition()
+      }, 0)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.status, isClassroomActive, isTransitioning])
@@ -491,122 +495,126 @@ export default function SessionPage() {
 
 
   const processTtsQueue = useCallback(() => {
-    if (isTtsPlayingRef.current) return
+    function runQueue() {
+      if (isTtsPlayingRef.current) return
 
-    const nextChunk = ttsQueueRef.current[0]
-    if (!nextChunk) {
-      isTtsPlayingRef.current = false
-      setAiSpeechState("idle")
-      return
-    }
+      const nextChunk = ttsQueueRef.current[0]
+      if (!nextChunk) {
+        isTtsPlayingRef.current = false
+        setAiSpeechState("idle")
+        return
+      }
 
-    isTtsPlayingRef.current = true
-    setAiSpeechState("speaking")
-    setLiveSubtitles(nextChunk.text)
+      isTtsPlayingRef.current = true
+      setAiSpeechState("speaking")
+      setLiveSubtitles(nextChunk.text)
 
-    // Aggressively pre-fetch the NEXT 3 slides' images in the background
-    for (let i = 1; i <= 3; i++) {
-      const futureItem = ttsQueueRef.current[i];
-      if (futureItem && futureItem.imagePrompt && !futureItem.imagePromise) {
-        futureItem.imagePromise = fetch("/api/image", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: futureItem.imagePrompt, width: 768, height: 512 })
-        })
-          .then(res => res.json())
-          .then(data => {
-            if (data.image) {
-              futureItem.imageUrl = data.image;
-            }
+      // Aggressively pre-fetch the NEXT 3 slides' images in the background
+      for (let i = 1; i <= 3; i++) {
+        const futureItem = ttsQueueRef.current[i];
+        if (futureItem && futureItem.imagePrompt && !futureItem.imagePromise) {
+          futureItem.imagePromise = fetch("/api/image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: futureItem.imagePrompt, width: 768, height: 512 })
           })
-          .catch(() => {});
-      }
-    }
-
-    const playItem = () => {
-      // If the runId has changed since this item was queued, it's stale! Discard it!
-      if (nextChunk.runId !== ttsRunIdRef.current) return;
-
-      // Remove from queue since we're starting play
-      ttsQueueRef.current.shift()
-
-      if (!nextChunk.audio && !nextChunk.error) {
-        nextChunk.audio = new Audio(`/api/tts?text=${encodeURIComponent(nextChunk.text)}`);
+            .then(res => res.json())
+            .then(data => {
+              if (data.image) {
+                futureItem.imageUrl = data.image;
+              }
+            })
+            .catch(() => {});
+        }
       }
 
-      // Prefetch the very next chunk while this one plays (Sliding Window)
-      const futureChunk = ttsQueueRef.current[0];
-      if (futureChunk && !futureChunk.audio && !futureChunk.error) {
-        futureChunk.audio = new Audio(`/api/tts?text=${encodeURIComponent(futureChunk.text)}`);
-        futureChunk.audio.preload = "auto";
-        futureChunk.audio.load();
-      }
-
-      if (nextChunk.error || !nextChunk.audio) {
-        console.warn("[TTS]: Camb AI failed due to network latency.")
-        isTtsPlayingRef.current = false
-        if (nextChunk.onEnd) nextChunk.onEnd()
-        processTtsQueue()
-        return;
-      }
-
-      const audio = nextChunk.audio
-      audio.volume = 1.0; // Ensure maximum volume
-      activeAudioRef.current = audio
-
-      audio.onplay = () => {
+      const playItem = () => {
+        // If the runId has changed since this item was queued, it's stale! Discard it!
         if (nextChunk.runId !== ttsRunIdRef.current) return;
-        setAiSpeechState("speaking")
-      }
-      audio.onended = () => {
-        if (nextChunk.runId !== ttsRunIdRef.current) return;
-        isTtsPlayingRef.current = false
-        if (nextChunk.onEnd) nextChunk.onEnd()
-        processTtsQueue()
-      }
-      audio.onerror = (e) => {
-        console.warn("[TTS]: Audio playback error:", e)
-        if (nextChunk.runId !== ttsRunIdRef.current) return;
-        isTtsPlayingRef.current = false
-        if (nextChunk.onEnd) nextChunk.onEnd()
-        processTtsQueue()
+
+        // Remove from queue since we're starting play
+        ttsQueueRef.current.shift()
+
+        if (!nextChunk.audio && !nextChunk.error) {
+          nextChunk.audio = new Audio(`/api/tts?text=${encodeURIComponent(nextChunk.text)}`);
+        }
+
+        // Prefetch the very next chunk while this one plays (Sliding Window)
+        const futureChunk = ttsQueueRef.current[0];
+        if (futureChunk && !futureChunk.audio && !futureChunk.error) {
+          futureChunk.audio = new Audio(`/api/tts?text=${encodeURIComponent(futureChunk.text)}`);
+          futureChunk.audio.preload = "auto";
+          futureChunk.audio.load();
+        }
+
+        if (nextChunk.error || !nextChunk.audio) {
+          console.warn("[TTS]: Camb AI failed due to network latency.")
+          isTtsPlayingRef.current = false
+          if (nextChunk.onEnd) nextChunk.onEnd()
+          runQueue()
+          return;
+        }
+
+        const audio = nextChunk.audio
+        audio.volume = 1.0; // Ensure maximum volume
+        activeAudioRef.current = audio
+
+        audio.onplay = () => {
+          if (nextChunk.runId !== ttsRunIdRef.current) return;
+          setAiSpeechState("speaking")
+        }
+        audio.onended = () => {
+          if (nextChunk.runId !== ttsRunIdRef.current) return;
+          isTtsPlayingRef.current = false
+          if (nextChunk.onEnd) nextChunk.onEnd()
+          runQueue()
+        }
+        audio.onerror = (e) => {
+          console.warn("[TTS]: Audio playback error:", e)
+          if (nextChunk.runId !== ttsRunIdRef.current) return;
+          isTtsPlayingRef.current = false
+          if (nextChunk.onEnd) nextChunk.onEnd()
+          runQueue()
+        }
+
+        audio.play().catch(err => {
+          console.warn("[TTS]: Failed playing audio:", err)
+          if (nextChunk.runId !== ttsRunIdRef.current) return;
+          isTtsPlayingRef.current = false
+          if (nextChunk.onEnd) nextChunk.onEnd()
+          runQueue()
+        })
       }
 
-      audio.play().catch(err => {
-        console.warn("[TTS]: Failed playing audio:", err)
-        if (nextChunk.runId !== ttsRunIdRef.current) return;
-        isTtsPlayingRef.current = false
-        if (nextChunk.onEnd) nextChunk.onEnd()
-        processTtsQueue()
-      })
-    }
-
-    const triggerPlay = () => {
-      if (nextChunk.promise) {
-        nextChunk.promise.then(playItem).catch(playItem)
-      } else {
-        playItem()
+      const triggerPlay = () => {
+        if (nextChunk.promise) {
+          nextChunk.promise.then(playItem).catch(playItem)
+        } else {
+          playItem()
+        }
       }
-    }
 
-    // STRICT SYNC: Wait for the image to be fully loaded BEFORE starting the voice!
-    if (nextChunk.imagePrompt) {
-      if (nextChunk.imagePromise) {
-        nextChunk.imagePromise.then(() => {
-          if (nextChunk.runId === ttsRunIdRef.current) {
-            triggerPlay();
-          }
-        }).catch(() => {
-          if (nextChunk.runId === ttsRunIdRef.current) {
-            triggerPlay();
-          }
-        });
+      // STRICT SYNC: Wait for the image to be fully loaded BEFORE starting the voice!
+      if (nextChunk.imagePrompt) {
+        if (nextChunk.imagePromise) {
+          nextChunk.imagePromise.then(() => {
+            if (nextChunk.runId === ttsRunIdRef.current) {
+              triggerPlay();
+            }
+          }).catch(() => {
+            if (nextChunk.runId === ttsRunIdRef.current) {
+              triggerPlay();
+            }
+          });
+        } else {
+          triggerPlay();
+        }
       } else {
         triggerPlay();
       }
-    } else {
-      triggerPlay();
     }
+
+    runQueue();
   }, [])
 
   // Google Cloud TTS synthesiser with local fallback

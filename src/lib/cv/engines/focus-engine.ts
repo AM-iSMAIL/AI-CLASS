@@ -48,7 +48,7 @@ export class FocusEngine implements CVModule<Map<string, FocusScore>> {
 
       // ── Compute raw score from components ──
       const components = computeComponents(analysis, ctx, config);
-      let raw = computeRawScore(analysis, config);
+      const raw = computeRawScore(analysis, config);
 
       // ── Effective deviation ──
       const headPose = analysis?.headPose;

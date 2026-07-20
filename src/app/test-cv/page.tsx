@@ -85,17 +85,15 @@ export default function CVTestingPage() {
   // ── Sync UI tuning parameters with pipeline configuration ──
   useEffect(() => {
     if (pipeline) {
-      const cfg = (pipeline as any).config;
-      if (cfg) {
-        cfg.earClosedThreshold = earClosed;
-        cfg.marYawnThreshold = marYawn;
-        cfg.headYawThreshold = yawThreshold;
-        cfg.headPitchThreshold = pitchThreshold;
-        cfg.gazeHorizontalThreshold = gazeHorizontal;
-        cfg.gazeVerticalThreshold = gazeVertical;
-        cfg.deviationDeadZone = deadZone;
-        (pipeline as any).applyConfig();
-      }
+      pipeline.updateConfig({
+        earClosedThreshold: earClosed,
+        marYawnThreshold: marYawn,
+        headYawThreshold: yawThreshold,
+        headPitchThreshold: pitchThreshold,
+        gazeHorizontalThreshold: gazeHorizontal,
+        gazeVerticalThreshold: gazeVertical,
+        deviationDeadZone: deadZone,
+      });
     }
   }, [pipeline, earClosed, marYawn, yawThreshold, pitchThreshold, gazeHorizontal, gazeVertical, deadZone]);
 

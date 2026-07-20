@@ -19,8 +19,8 @@ class AIRouter {
       throw new Error("AI Router Error: Missing target module.");
     }
 
-    const module = this.modules[target];
-    if (!module) {
+    const aiModule = this.modules[target];
+    if (!aiModule) {
       throw new Error(`AI Router Error: Module "${target}" not found or not yet implemented.`);
     }
 
@@ -32,7 +32,7 @@ class AIRouter {
       }
     }
 
-    return await module.processRequest(payload);
+    return await aiModule.processRequest(payload);
   }
 }
 

@@ -211,7 +211,9 @@ function DashboardContent() {
       month: "long",
       day: "numeric",
     }
-    setCurrentDate(new Date().toLocaleDateString("en-US", options))
+    setTimeout(() => {
+      setCurrentDate(new Date().toLocaleDateString("en-US", options))
+    }, 0)
   }, [])
 
   const copyToClipboard = (code: string) => {
@@ -460,7 +462,7 @@ function DashboardContent() {
                             <tr>
                               <td colSpan={5} className="px-6 py-12 text-center text-white/40 text-xs font-medium">
                                 <Info className="h-6 w-6 text-white/20 mx-auto mb-2" />
-                                No sessions created yet. Click "New Session" above to start your first class.
+                                No sessions created yet. Click &quot;New Session&quot; above to start your first class.
                               </td>
                             </tr>
                           ) : (

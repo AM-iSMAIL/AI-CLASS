@@ -197,7 +197,7 @@ function checkViolationConditions(
       severity: 'high',
       reason: 'Multiple people detected in the camera frame.',
     },
-    //@ts-ignore (pony-tail: keep track of general distraction)
+    // pony-tail: keep track of general distraction
     sustained_distraction: {
       active: state === 'distracted' || state === 'looking_away',
       severity: 'medium',

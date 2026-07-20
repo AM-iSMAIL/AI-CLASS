@@ -256,7 +256,9 @@ export default function LiveClassroomPage() {
     // Reset when student re-focuses
     if (localMetrics.status === "focused" && warningLevel > 0) {
       clearPending();
-      setWarningLevel(0);
+      setTimeout(() => {
+        setWarningLevel(0);
+      }, 0);
       return;
     }
 
@@ -300,7 +302,9 @@ export default function LiveClassroomPage() {
         clearInterval(outOfFrameIntervalRef.current);
         outOfFrameIntervalRef.current = null;
       }
-      setOutOfFrameSecondsLeft(null);
+      setTimeout(() => {
+        setOutOfFrameSecondsLeft(null);
+      }, 0);
     };
 
     if (localMetrics.faceDetected) {
@@ -309,7 +313,9 @@ export default function LiveClassroomPage() {
     }
 
     // Start 5-second countdown to auto-kick if not in frame
-    setOutOfFrameSecondsLeft(5);
+    setTimeout(() => {
+      setOutOfFrameSecondsLeft(5);
+    }, 0);
 
     outOfFrameIntervalRef.current = setInterval(() => {
       setOutOfFrameSecondsLeft((prev) => {
@@ -340,8 +346,10 @@ export default function LiveClassroomPage() {
         clearInterval(phoneIntervalRef.current);
         phoneIntervalRef.current = null;
       }
-      setPhoneSecondsLeft(null);
-      setShowPhoneWarning(false);
+      setTimeout(() => {
+        setPhoneSecondsLeft(null);
+        setShowPhoneWarning(false);
+      }, 0);
     };
 
     if (!localMetrics.phoneDetected) {
@@ -350,8 +358,10 @@ export default function LiveClassroomPage() {
     }
 
     // Phone detected - start warning flow
-    setShowPhoneWarning(true);
-    setPhoneSecondsLeft(5);
+    setTimeout(() => {
+      setShowPhoneWarning(true);
+      setPhoneSecondsLeft(5);
+    }, 0);
 
     phoneIntervalRef.current = setInterval(() => {
       setPhoneSecondsLeft((prev) => {
@@ -419,7 +429,9 @@ export default function LiveClassroomPage() {
     if (typeof window !== "undefined") {
       const interacted = localStorage.getItem("hasInteractedParticipants")
       if (!interacted) {
-        setShowHint(true)
+        setTimeout(() => {
+          setShowHint(true)
+        }, 0)
       }
     }
   }, [])
@@ -522,7 +534,6 @@ export default function LiveClassroomPage() {
   }, [studentId, micOn, handRaised, getStudentSimulatedProps])
 
   const getDrawerWidth = useCallback(() => {
-    if (drawerRef.current) return drawerRef.current.offsetWidth
     if (typeof window !== "undefined") {
       if (window.innerWidth < 768) return window.innerWidth * 0.85
       if (window.innerWidth < 1024) return 320
@@ -548,7 +559,7 @@ export default function LiveClassroomPage() {
   useEffect(() => {
     let title = "Physics Lab Session"
     let subject = "Physics"
-    let storedTopics = null
+    let storedTopics: string | null = null
     let mode = "AI"
     let role = "teacher"
     let storedStudentId = "unknown-student"
@@ -563,17 +574,18 @@ export default function LiveClassroomPage() {
       storedStudentId = localStorage.getItem("studentId") || storedStudentId
       storedStudentName = localStorage.getItem("studentName") || storedStudentName
       const storedParticipantsOpen = localStorage.getItem("participantsOpen")
-      setIsParticipantsOpen(storedParticipantsOpen === "true")
-
-      setSessionTitle(title)
-      setSessionSubject(subject)
-      if (storedTopics) {
-        try { setTopics(JSON.parse(storedTopics)) } catch { /* keep default topics */ }
-      }
-      if (mode === "Human") setTeachingMode("Human")
-      setIsTeacher(role === "teacher")
-      setStudentId(storedStudentId)
-      setStudentName(storedStudentName)
+      setTimeout(() => {
+        setIsParticipantsOpen(storedParticipantsOpen === "true")
+        setSessionTitle(title)
+        setSessionSubject(subject)
+        if (storedTopics) {
+          try { setTopics(JSON.parse(storedTopics)) } catch { /* keep default topics */ }
+        }
+        if (mode === "Human") setTeachingMode("Human")
+        setIsTeacher(role === "teacher")
+        setStudentId(storedStudentId)
+        setStudentName(storedStudentName)
+      }, 0)
     } catch { /* keep defaults */ }
 
     // PDF Loading
@@ -698,188 +710,177 @@ export default function LiveClassroomPage() {
   }
 
   const processTtsQueue = useCallback(() => {
-    if (isTtsPlayingRef.current) return
+    function runQueue() {
+      if (isTtsPlayingRef.current) return
 
-    const nextChunk = ttsQueueRef.current[0]
-    if (!nextChunk) {
-      isTtsPlayingRef.current = false
-      setAiSpeechState("idle")
-      return
-    }
-
-    isTtsPlayingRef.current = true
-    setAiSpeechState("speaking")
-    setLiveSubtitles(nextChunk.text)
-    currentSlideIdxRef.current = nextChunk.slideIndex
-
-    // Trigger image display/loader for this chunk's prompt (concurrency-safe)
-    if (nextChunk.imagePrompt) {
-      // Start generating the image if it hasn't been triggered yet
-      if (!nextChunk.imagePromise) {
-        nextChunk.imagePromise = fetch("/api/image", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: nextChunk.imagePrompt, width: 768, height: 512 })
-        })
-          .then(res => res.json())
-          .then(data => {
-            if (data.image) {
-              nextChunk.imageUrl = data.image;
-            }
-          })
-          .catch(() => {});
+      const nextChunk = ttsQueueRef.current[0]
+      if (!nextChunk) {
+        isTtsPlayingRef.current = false
+        setAiSpeechState("idle")
+        return
       }
 
-      setIsGeneratingImage(true);
-      setImageError(null);
-      
-      const showImage = () => {
-        // Double-check if the run is still active
-        if (nextChunk.runId !== ttsRunIdRef.current) return;
-        setIsGeneratingImage(false);
-        if (nextChunk.imageUrl) {
-          setTopicImageUrl(nextChunk.imageUrl);
-          setImageLoaded(true);
-        } else {
-          // Keep showing the previous image to prevent a blank/black screen if generation failed
-          if (topicImageUrl) {
+      isTtsPlayingRef.current = true
+      setAiSpeechState("speaking")
+      setLiveSubtitles(nextChunk.text)
+      currentSlideIdxRef.current = nextChunk.slideIndex
+
+      // Trigger image display/loader for this chunk's prompt (concurrency-safe)
+      if (nextChunk.imagePrompt) {
+        // Start generating the image if it hasn't been triggered yet
+        if (!nextChunk.imagePromise) {
+          nextChunk.imagePromise = fetch("/api/image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: nextChunk.imagePrompt, width: 768, height: 512 })
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.image) {
+                nextChunk.imageUrl = data.image;
+              }
+            })
+            .catch(() => {});
+        }
+
+        setIsGeneratingImage(true);
+        setImageError(null);
+        
+        const showImage = () => {
+          // Double-check if the run is still active
+          if (nextChunk.runId !== ttsRunIdRef.current) return;
+          setIsGeneratingImage(false);
+          if (nextChunk.imageUrl) {
+            setTopicImageUrl(nextChunk.imageUrl);
+            setImageLoaded(true);
+          } else if (topicImageUrl) {
             setImageLoaded(true);
           } else {
             setImageLoaded(false);
           }
+        };
+
+        if (nextChunk.imageUrl) {
+          showImage();
+        } else {
+          // Non-blocking loader overlay
+          nextChunk.imagePromise.then(showImage).catch(() => {
+            if (nextChunk.runId === ttsRunIdRef.current) {
+              setIsGeneratingImage(false);
+              setImageError("Failed to generate helper image.");
+            }
+          });
         }
-      };
-
-      // We will call showImage BEFORE we play the audio
-    } else {
-      setIsGeneratingImage(false);
-    }
-
-    // Aggressively pre-fetch the NEXT 3 slides' images in the background to ensure they are ready before the TTS reaches them
-    for (let i = 1; i <= 3; i++) {
-      const futureItem = ttsQueueRef.current[i];
-      if (futureItem && futureItem.imagePrompt && !futureItem.imagePromise) {
-        futureItem.imagePromise = fetch("/api/image", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: futureItem.imagePrompt, width: 768, height: 512 })
-        })
-          .then(res => res.json())
-          .then(data => {
-            if (data.image) {
-              futureItem.imageUrl = data.image;
-            }
-          })
-          .catch(() => {});
-      }
-    }
-
-    const playItem = () => {
-      // If the runId has changed since this item was queued, it's stale! Discard it!
-      if (nextChunk.runId !== ttsRunIdRef.current) return;
-
-      // Remove from queue since were starting play
-      ttsQueueRef.current.shift()
-
-      if (!nextChunk.audio && !nextChunk.error) {
-        nextChunk.audio = new Audio(`/api/tts?text=${encodeURIComponent(nextChunk.text)}`);
-      }
-
-      // Prefetch the very next chunk while this one plays (Sliding Window)
-      const futureChunk = ttsQueueRef.current[0];
-      if (futureChunk && !futureChunk.audio && !futureChunk.error) {
-        futureChunk.audio = new Audio(`/api/tts?text=${encodeURIComponent(futureChunk.text)}`);
-        futureChunk.audio.preload = "auto";
-        futureChunk.audio.load();
-      }
-
-      if (nextChunk.error || !nextChunk.audio) {
-        console.warn("[TTS]: Camb AI failed due to network latency.")
-        
-        // Progress silently using word-count reading duration
-        isTtsPlayingRef.current = true
-        setAiSpeechState("speaking")
-        const clean = nextChunk.text.split("\n").filter(l => !l.trim().startsWith("IMAGE_PROMPT:")).join("\n").trim()
-        setLiveSubtitles(clean)
-        
-        const duration = Math.max(3000, clean.split(/\s+/).length * 250)
-        setTimeout(() => {
-          isTtsPlayingRef.current = false
-          setAiSpeechState("idle")
-          if (nextChunk.onEnd) nextChunk.onEnd()
-          processTtsQueue()
-        }, duration)
-        return;
-      }
-
-      const audio = nextChunk.audio
-      audio.volume = 1.0; // Ensure maximum volume
-      activeAudioRef.current = audio
-
-      audio.onplay = () => {
-        if (nextChunk.runId !== ttsRunIdRef.current) return;
-        setAiSpeechState("speaking")
-      }
-      audio.onended = () => {
-        if (nextChunk.runId !== ttsRunIdRef.current) return;
-        isTtsPlayingRef.current = false
-        if (nextChunk.onEnd) nextChunk.onEnd()
-        processTtsQueue()
-      }
-      audio.onerror = (e) => {
-        console.warn("[TTS]: Audio playback error, progressing silently:", e)
-        if (nextChunk.runId !== ttsRunIdRef.current) return;
-        isTtsPlayingRef.current = false
-        if (nextChunk.onEnd) nextChunk.onEnd()
-        processTtsQueue()
-      }
-
-      audio.play().catch(err => {
-        console.warn("[TTS]: Failed playing audio, progressing silently:", err)
-        if (nextChunk.runId !== ttsRunIdRef.current) return;
-        isTtsPlayingRef.current = false
-        if (nextChunk.onEnd) nextChunk.onEnd()
-        processTtsQueue()
-      })
-    }
-
-    const triggerPlay = () => {
-      if (nextChunk.promise) {
-        nextChunk.promise.then(playItem).catch(playItem)
       } else {
-        playItem()
+        setIsGeneratingImage(false);
+        setImageError(null);
       }
-    }
 
-    // STRICT SYNC: Wait for the image to be fully loaded BEFORE starting the voice!
-    if (nextChunk.imagePrompt) {
-      if (nextChunk.imagePromise) {
-        nextChunk.imagePromise.then(() => {
-          if (nextChunk.runId === ttsRunIdRef.current) {
-            // we have to call showImage() logic manually here since we abstracted it
-            setIsGeneratingImage(false);
-            if (nextChunk.imageUrl) {
-              setTopicImageUrl(nextChunk.imageUrl);
-              setImageLoaded(true);
-            } else if (topicImageUrl) {
-              setImageLoaded(true);
-            } else {
-              setImageLoaded(false);
+      const playItem = () => {
+        // If the runId has changed since this item was queued, it's stale! Discard it!
+        if (nextChunk.runId !== ttsRunIdRef.current) return;
+
+        // Remove from queue since we're starting play
+        ttsQueueRef.current.shift()
+
+        // Prefetch the very next chunk while this one plays (Sliding Window)
+        const futureChunk = ttsQueueRef.current[0];
+        if (futureChunk && !futureChunk.audio && !futureChunk.error) {
+          futureChunk.audio = new Audio(`/api/tts?text=${encodeURIComponent(futureChunk.text)}`);
+          futureChunk.audio.preload = "auto";
+          futureChunk.audio.load();
+        }
+
+        if (nextChunk.error || !nextChunk.audio) {
+          console.warn("[TTS]: Camb AI failed due to network latency.")
+          
+          // Progress silently using word-count reading duration
+          isTtsPlayingRef.current = true
+          setAiSpeechState("speaking")
+          const clean = nextChunk.text.split("\n").filter(l => !l.trim().startsWith("IMAGE_PROMPT:")).join("\n").trim()
+          setLiveSubtitles(clean)
+          
+          const duration = Math.max(3000, clean.split(/\s+/).length * 250)
+          setTimeout(() => {
+            isTtsPlayingRef.current = false
+            setAiSpeechState("idle")
+            if (nextChunk.onEnd) nextChunk.onEnd()
+            runQueue()
+          }, duration)
+          return;
+        }
+
+        const audio = nextChunk.audio
+        audio.volume = 1.0; // Ensure maximum volume
+        activeAudioRef.current = audio
+
+        audio.onplay = () => {
+          if (nextChunk.runId !== ttsRunIdRef.current) return;
+          setAiSpeechState("speaking")
+        }
+        audio.onended = () => {
+          if (nextChunk.runId !== ttsRunIdRef.current) return;
+          isTtsPlayingRef.current = false
+          if (nextChunk.onEnd) nextChunk.onEnd()
+          runQueue()
+        }
+        audio.onerror = (e) => {
+          console.warn("[TTS]: Audio playback error, progressing silently:", e)
+          if (nextChunk.runId !== ttsRunIdRef.current) return;
+          isTtsPlayingRef.current = false
+          if (nextChunk.onEnd) nextChunk.onEnd()
+          runQueue()
+        }
+
+        audio.play().catch(err => {
+          console.warn("[TTS]: Failed playing audio, progressing silently:", err)
+          if (nextChunk.runId !== ttsRunIdRef.current) return;
+          isTtsPlayingRef.current = false
+          if (nextChunk.onEnd) nextChunk.onEnd()
+          runQueue()
+        })
+      }
+
+      const triggerPlay = () => {
+        if (nextChunk.promise) {
+          nextChunk.promise.then(playItem).catch(playItem)
+        } else {
+          playItem()
+        }
+      }
+
+      // STRICT SYNC: Wait for the image to be fully loaded BEFORE starting the voice!
+      if (nextChunk.imagePrompt) {
+        if (nextChunk.imagePromise) {
+          nextChunk.imagePromise.then(() => {
+            if (nextChunk.runId === ttsRunIdRef.current) {
+              // we have to call showImage() logic manually here since we abstracted it
+              setIsGeneratingImage(false);
+              if (nextChunk.imageUrl) {
+                setTopicImageUrl(nextChunk.imageUrl);
+                setImageLoaded(true);
+              } else if (topicImageUrl) {
+                setImageLoaded(true);
+              } else {
+                setImageLoaded(false);
+              }
+              triggerPlay();
             }
-            triggerPlay();
-          }
-        }).catch(() => {
-          if (nextChunk.runId === ttsRunIdRef.current) {
-            setIsGeneratingImage(false);
-            triggerPlay();
-          }
-        });
+          }).catch(() => {
+            if (nextChunk.runId === ttsRunIdRef.current) {
+              setIsGeneratingImage(false);
+              triggerPlay();
+            }
+          });
+        } else {
+          triggerPlay();
+        }
       } else {
         triggerPlay();
       }
-    } else {
-      triggerPlay();
     }
+
+    runQueue();
   }, [speechEnabled])
 
   const speakTextChunk = useCallback((text: string, onEnd?: () => void, startFromIndex = 0, firstImageUrl?: string | null) => {
@@ -1119,57 +1120,58 @@ export default function LiveClassroomPage() {
 
   /* ─── AI TEACHING SEQUENCE ─── */
   const runTopicSpeech = useCallback(async (idx: number, resumeFrom?: string) => {
-    stopSpeaking()
-    
-    // Create a new AbortController for this lecture stream
-    lectureAbortRef.current?.abort()
-    const abortController = new AbortController()
-    lectureAbortRef.current = abortController
-    
-    setLecturePlayState("PLAYING")
-    streamCompletedRef.current = false
-    
-    const items = isPdfMode ? pdfPages : topics
-    if (idx >= items.length) {
-      speakTextChunk("That concludes our topics for today. Feel free to review the materials and ask any remaining questions.\nIMAGE_PROMPT: A beautiful, elegant, stylized 'The End' title card on a dark premium background, representing the completion of a lecture, high resolution, photorealistic, with clear readable text 'The End'")
-      return
-    }
-    const currentItem = items[idx]
-    
-    // Only clear visual states if NOT resuming
-    if (!resumeFrom) {
-      setIsGeneratingImage(false)
-      setImageError(null)
-      setTopicImageUrl(null)
-      setImageLoaded(false)
-      setImageFading(false)
-      setTranscript("")
-    }
-
-    setAiSpeechState("speaking")
-    
-    let explanation = resumeFrom || ""
-    let sentenceBuffer = ""
-    let firstTokenTime = 0
-    let lastTokenTime = 0
-    const triggeredPrompts = new Set<string>()
-
-    const reqStartTime = performance.now()
-    let cachedTime = reqStartTime;
-
-    const onPlaybackEnd = () => {
-      const next = idx + 1
-      if (next < items.length) {
-        addToast(isPdfMode ? `Moving to Page ${next + 1}` : `Moving to Topic ${next + 1}`)
-        setActiveTopicIdx(next)
-        if (isTeacher) {
-          syncClassroomProgress(sessionCode, next)
-        }
-        runTopicSpeech(next)
-      } else {
+    async function executeTopicSpeech(targetIdx: number, targetResumeFrom?: string) {
+      stopSpeaking()
+      
+      // Create a new AbortController for this lecture stream
+      lectureAbortRef.current?.abort()
+      const abortController = new AbortController()
+      lectureAbortRef.current = abortController
+      
+      setLecturePlayState("PLAYING")
+      streamCompletedRef.current = false
+      
+      const items = isPdfMode ? pdfPages : topics
+      if (targetIdx >= items.length) {
         speakTextChunk("That concludes our topics for today. Feel free to review the materials and ask any remaining questions.\nIMAGE_PROMPT: A beautiful, elegant, stylized 'The End' title card on a dark premium background, representing the completion of a lecture, high resolution, photorealistic, with clear readable text 'The End'")
+        return
       }
-    }
+      const currentItem = items[targetIdx]
+      
+      // Only clear visual states if NOT resuming
+      if (!targetResumeFrom) {
+        setIsGeneratingImage(false)
+        setImageError(null)
+        setTopicImageUrl(null)
+        setImageLoaded(false)
+        setImageFading(false)
+        setTranscript("")
+      }
+
+      setAiSpeechState("speaking")
+      
+      let explanation = targetResumeFrom || ""
+      let sentenceBuffer = ""
+      let firstTokenTime = 0
+      let lastTokenTime = 0
+      const triggeredPrompts = new Set<string>()
+
+      const reqStartTime = performance.now()
+      let cachedTime = reqStartTime;
+
+      const onPlaybackEnd = () => {
+        const next = targetIdx + 1
+        if (next < items.length) {
+          addToast(isPdfMode ? `Moving to Page ${next + 1}` : `Moving to Topic ${next + 1}`)
+          setActiveTopicIdx(next)
+          if (isTeacher) {
+            syncClassroomProgress(sessionCode, next)
+          }
+          executeTopicSpeech(next)
+        } else {
+          speakTextChunk("That concludes our topics for today. Feel free to review the materials and ask any remaining questions.\nIMAGE_PROMPT: A beautiful, elegant, stylized 'The End' title card on a dark premium background, representing the completion of a lecture, high resolution, photorealistic, with clear readable text 'The End'")
+        }
+      }
 
       let retries = 0;
       const MAX_RETRIES = 2;
@@ -1178,8 +1180,8 @@ export default function LiveClassroomPage() {
       while (retries <= MAX_RETRIES && !streamCompleted) {
         try {
           const currentContext = classroomContext.getState();
-          const currentTopic = topics[idx] || "";
-          const prevTopics = topics.slice(0, idx);
+          const currentTopic = topics[targetIdx] || "";
+          const prevTopics = topics.slice(0, targetIdx);
           if (
             currentContext.subject !== sessionSubject || 
             currentContext.topic !== currentTopic ||
@@ -1198,10 +1200,10 @@ export default function LiveClassroomPage() {
 
           let res: Response | void | undefined;
 
-          if (!resumeFrom && cached && cached.fullText && retries === 0) {
+          if (!targetResumeFrom && cached && cached.fullText && retries === 0) {
             console.log(`[Latency] Using fully cached text for ${cacheKey}`);
             explanation = cached.fullText;
-            setTranscript(explanation);
+            setTimeout(() => setTranscript(explanation), 0);
             speakTextChunk(explanation, onPlaybackEnd, 0, cached.firstImageUrl);
             
             // Inject pre-fetched first audio into the first queue item for instant playback
@@ -1217,7 +1219,7 @@ export default function LiveClassroomPage() {
             
             streamCompleted = true;
             break;
-          } else if (!resumeFrom && cached && !cached.consumed && retries === 0) {
+          } else if (!targetResumeFrom && cached && !cached.consumed && retries === 0) {
             console.log(`[Latency] Using pre-fetched promise for stream ${cacheKey}`);
             cachedTime = cached.time;
             cached.consumed = true; // Mark as consumed so it isn't read twice
@@ -1228,7 +1230,7 @@ export default function LiveClassroomPage() {
               : `Please give a detailed lecture explanation for the current topic to the class: ${currentItem}`;
 
             // When resuming after a doubt, tell the AI to CONTINUE, not restart
-            if (resumeFrom && resumeFrom.length > 50) {
+            if (targetResumeFrom && targetResumeFrom.length > 50) {
                prompt = `CONTINUATION REQUIRED: You were in the middle of explaining "${currentItem}" and got interrupted by a student question. Your lecture so far is provided in the transcript below. Pick up EXACTLY where you left off and continue teaching. Do NOT repeat anything, do NOT re-introduce the topic, do NOT greet the students again. Just seamlessly continue the explanation from the next logical point.`;
             }
 
@@ -1241,7 +1243,7 @@ export default function LiveClassroomPage() {
                 question: prompt,
                 target: "teacher",
                 state: lectureState,
-                transcript: resumeFrom || undefined
+                transcript: targetResumeFrom || undefined
               })
             })
           }
@@ -1304,7 +1306,7 @@ export default function LiveClassroomPage() {
                           if (firstTokenTime === 0) firstTokenTime = performance.now();
                           explanation += delta;
                           sentenceBuffer += delta;
-                          setTranscript(explanation);
+                          setTimeout(() => setTranscript(explanation), 0);
 
                           // Flush slides incrementally: check if buffer has a complete IMAGE_PROMPT line
                           const hasImagePrompt = sentenceBuffer.includes("IMAGE_PROMPT:");
@@ -1327,6 +1329,7 @@ export default function LiveClassroomPage() {
                                 const q = ttsQueueRef.current;
                                 const lastItem = q.length > 0 ? q[q.length - 1] : null;
                                 if (lastItem && !lastItem.imagePrompt) {
+                                  // eslint-disable-next-line react-hooks/immutability
                                   lastItem.imagePrompt = imgPrompt;
                                 } else if (currentSlideIdxRef.current === slideIdx - 1) {
                                   // 2. The slide is already playing on screen!
@@ -1615,14 +1618,16 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
     const totalStreamingTime = lastTokenTime - firstTokenTime;
     
     console.log(`[Latency] Time to First Token: ${totalTimeToFirstToken.toFixed(0)}ms | Streaming Duration: ${totalStreamingTime.toFixed(0)}ms`);
-    if (idx === 0) {
+    if (targetIdx === 0) {
        addToast(`Latency | TTFT: ${totalTimeToFirstToken.toFixed(0)}ms | Streaming: ${totalStreamingTime.toFixed(0)}ms`);
     }
 
     transcriptRef.current.push(explanation)
     setPastTranscripts((old) => [...old, explanation])
+  }
 
-  }, [topics, pdfPages, isPdfMode, speakTextChunk, stopSpeaking, addToast, sessionCode, sessionSubject])
+  await executeTopicSpeech(idx, resumeFrom);
+}, [topics, pdfPages, isPdfMode, speakTextChunk, stopSpeaking, addToast, sessionCode, sessionSubject])
 
   /* ─── ENTER CLASSROOM ─── */
   const handleEnterClassroom = useCallback(() => {

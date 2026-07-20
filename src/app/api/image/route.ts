@@ -20,7 +20,10 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    let { prompt, width = 1024, height = 1024 } = await req.json();
+    const body = await req.json();
+    const prompt = body.prompt;
+    let width = body.width ?? 1024;
+    let height = body.height ?? 1024;
     
     // NVIDIA FLUX.2-klein-4b requires dimensions >= 512 and <= 1568
     if (width < 512) width = 512;

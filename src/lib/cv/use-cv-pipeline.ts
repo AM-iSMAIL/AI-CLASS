@@ -57,6 +57,7 @@ export function useCVPipeline({
   });
 
   const [rawOutput, setRawOutput] = useState<CVOutput | null>(null);
+  const [pipelineState, setPipelineState] = useState<CVPipeline | null>(null);
 
   const pipelineRef = useRef<CVPipeline | null>(null);
   const frameSourceRef = useRef<FrameSource | null>(null);
@@ -106,6 +107,7 @@ export function useCVPipeline({
     const video = videoRef.current;
     const pipeline = new CVPipeline();
     pipelineRef.current = pipeline;
+    setPipelineState(pipeline);
 
     const frameSource = new FrameSource(video, (pipeline as any).config);
     frameSourceRef.current = frameSource;
@@ -200,6 +202,7 @@ export function useCVPipeline({
       frameSource.stop();
       pipeline.destroy();
       pipelineRef.current = null;
+      setPipelineState(null);
       frameSourceRef.current = null;
     };
   }, [enabled, videoRef, studentId, onFocusUpdate, mapToFocusMetrics]);
@@ -207,6 +210,6 @@ export function useCVPipeline({
   return {
     metrics,
     rawOutput,
-    pipeline: pipelineRef.current,
+    pipeline: pipelineState,
   };
 }

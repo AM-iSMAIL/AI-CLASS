@@ -88,6 +88,11 @@ export class CVPipeline {
     console.log('[CVPipeline] Pipeline initialized successfully');
   }
 
+  updateConfig(config: Partial<CVConfig>): void {
+    this.config = { ...this.config, ...config };
+    this.applyConfig();
+  }
+
   /** Run the entire invigilator pipeline for a single frame */
   async processFrame(video: HTMLVideoElement): Promise<CVOutput[]> {
     if (!this.isInitialized) {

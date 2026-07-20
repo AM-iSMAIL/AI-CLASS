@@ -41,39 +41,42 @@ export default function AuthPage() {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search)
       const mode = params.get("mode")
-      if (mode === "signup") {
-        setTeacherMode("signup")
-      }
       const role = params.get("role")
-      if (role === "student") {
-        setTab("student")
-      }
       const code = params.get("code")
-      if (code) {
-        setSessionCode(code.toUpperCase())
-      }
+      setTimeout(() => {
+        if (mode === "signup") {
+          setTeacherMode("signup")
+        }
+        if (role === "student") {
+          setTab("student")
+        }
+        if (code) {
+          setSessionCode(code.toUpperCase())
+        }
+      }, 0)
     }
   }, [])
 
   // Check if Firebase is configured with real credentials on client mount
   useEffect(() => {
     const key = process.env.NEXT_PUBLIC_FIREBASE_API_KEY
-    if (
+    const isConfigured = !(
       !key ||
       key === "your-api-key" ||
       key === "AIzaSyDummyKeyForBuildSafetyOnly"
-    ) {
-      setIsFirebaseConfigured(false)
-    } else {
-      setIsFirebaseConfigured(true)
-    }
+    )
+    setTimeout(() => {
+      setIsFirebaseConfigured(isConfigured)
+    }, 0)
   }, [])
 
   // Clear status on view switch
   useEffect(() => {
-    setError(null)
-    setSuccess(null)
-    setStudentFlow("self-learn")
+    setTimeout(() => {
+      setError(null)
+      setSuccess(null)
+      setStudentFlow("self-learn")
+    }, 0)
   }, [tab, teacherMode, studentMode])
 
   // Sign in with Google
@@ -331,7 +334,7 @@ export default function AuthPage() {
                     : "text-neutral-500 hover:text-neutral-900 disabled:opacity-50"
                 }`}
               >
-                I'm a Student
+                I&apos;m a Student
               </button>
             </div>
 
@@ -453,7 +456,7 @@ export default function AuthPage() {
                       </button>
 
                       <p className="text-sm text-neutral-500 text-center mt-6 pt-2 border-t border-neutral-100">
-                        Don't have an account?{" "}
+                        Don&apos;t have an account?{" "}
                         <button
                           type="button"
                           disabled={isSubmitting}
@@ -692,7 +695,7 @@ export default function AuthPage() {
                           </button>
 
                           <p className="text-sm text-neutral-500 text-center mt-6 pt-2 border-t border-neutral-100">
-                            Don't have an account?{" "}
+                            Don&apos;t have an account?{" "}
                             <button
                               type="button"
                               disabled={isSubmitting}

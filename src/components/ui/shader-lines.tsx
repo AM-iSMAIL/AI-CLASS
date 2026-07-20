@@ -24,30 +24,7 @@ export function ShaderAnimation() {
     animationId: null,
   })
 
-  useEffect(() => {
-    // Load Three.js dynamically
-    const script = document.createElement("script")
-    script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"
-    script.onload = () => {
-      if (containerRef.current && window.THREE) {
-        initThreeJS()
-      }
-    }
-    document.head.appendChild(script)
-
-    return () => {
-      // Cleanup
-      if (sceneRef.current.animationId) {
-        cancelAnimationFrame(sceneRef.current.animationId)
-      }
-      if (sceneRef.current.renderer) {
-        sceneRef.current.renderer.dispose()
-      }
-      document.head.removeChild(script)
-    }
-  }, [])
-
-  const initThreeJS = () => {
+  function initThreeJS() {
     if (!containerRef.current || !window.THREE) return
 
     const THREE = window.THREE
@@ -166,6 +143,29 @@ export function ShaderAnimation() {
 
     animate()
   }
+
+  useEffect(() => {
+    // Load Three.js dynamically
+    const script = document.createElement("script")
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"
+    script.onload = () => {
+      if (containerRef.current && window.THREE) {
+        initThreeJS()
+      }
+    }
+    document.head.appendChild(script)
+
+    return () => {
+      // Cleanup
+      if (sceneRef.current.animationId) {
+        cancelAnimationFrame(sceneRef.current.animationId)
+      }
+      if (sceneRef.current.renderer) {
+        sceneRef.current.renderer.dispose()
+      }
+      document.head.removeChild(script)
+    }
+  }, [])
 
   return (
     <div

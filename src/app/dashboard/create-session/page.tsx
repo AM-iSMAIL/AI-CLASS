@@ -106,7 +106,9 @@ export default function CreateSessionPage() {
   useEffect(() => {
     const detected = detectSubject(sessionTitle);
     if (detected) {
-      setSubject(detected);
+      setTimeout(() => {
+        setSubject(detected);
+      }, 0);
     }
   }, [sessionTitle]);
 

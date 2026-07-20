@@ -28,7 +28,6 @@ export default function SummaryPage() {
   const [session, setSession] = useState<Session | null>(null);
   const [studentsList, setStudentsList] = useState<Student[]>([]);
   const [kickedList, setKickedList] = useState<KickedStudent[]>([]);
-  const [isTeacher, setIsTeacher] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Load auth state
@@ -76,7 +75,7 @@ export default function SummaryPage() {
       );
     } catch (e) {
       console.error(e);
-      setLoading(false);
+      setTimeout(() => setLoading(false), 0);
     }
 
     return () => {
@@ -86,17 +85,12 @@ export default function SummaryPage() {
     };
   }, [sessionCode]);
 
-  // Determine user role
-  useEffect(() => {
-    if (session && currentUser) {
-      setIsTeacher(session.teacherId === currentUser.uid);
-    } else if (session) {
-      // Offline fallback check
-      setIsTeacher(session.teacherId === "offline-teacher");
-    } else {
-      setIsTeacher(false);
-    }
-  }, [session, currentUser]);
+  // Determine user role (computed dynamically on each render pass)
+  const isTeacher = session && currentUser
+    ? session.teacherId === currentUser.uid
+    : session
+      ? session.teacherId === "offline-teacher"
+      : false;
 
   // Export Attendance CSV function
   const handleExportCSV = () => {
