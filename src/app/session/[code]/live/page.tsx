@@ -187,6 +187,7 @@ export default function LiveClassroomPage() {
   const ttsRunIdRef = useRef(0)
   const currentSlideIdxRef = useRef(0)
   const streamCompletedRef = useRef(false)
+  const hasStartedRef = useRef(false)
   
   // Lecture pause/resume state machine
   const [lecturePlayState, setLecturePlayState] = useState<"PLAYING" | "PAUSED_FOR_DOUBT" | "RESUMING">("PLAYING")
@@ -1719,8 +1720,23 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
     stopSpeaking()
     setHasEntered(true)
     setLectureHistory([])
-    if (teachingMode === "AI") runTopicSpeech(0)
+    if (teachingMode === "AI" && !hasStartedRef.current) {
+      hasStartedRef.current = true
+      runTopicSpeech(0)
+    }
   }, [teachingMode, runTopicSpeech])
+
+  /* ─── AUTO-START AI TEACHING ─── */
+  useEffect(() => {
+    if (hasEntered && !loading && !isParsingPdf && teachingMode === "AI" && !hasStartedRef.current) {
+      const items = isPdfMode ? pdfPages : topics;
+      if (items.length > 0) {
+        hasStartedRef.current = true;
+        console.log("[Live Classroom] Auto-triggering runTopicSpeech(0)");
+        runTopicSpeech(0);
+      }
+    }
+  }, [hasEntered, loading, isParsingPdf, teachingMode, isPdfMode, pdfPages, topics, runTopicSpeech]);
 
   /* ─── CLEANUP: kill speech on unmount (navigation away) ─── */
   useEffect(() => {
