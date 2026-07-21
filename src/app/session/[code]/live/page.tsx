@@ -3201,25 +3201,53 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           {/* Warning modal overlay */}
           {warningLevel > 0 &&
             createPortal(
-              <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
-                <div className="max-w-md mx-4 rounded-2xl border border-amber-500/40 bg-[#16141a]/95 p-6 text-center animate-in zoom-in duration-300 text-amber-300 shadow-2xl">
-                  <AlertCircle className="h-10 w-10 text-amber-400 mx-auto mb-3 animate-pulse" />
-                  <p className="text-xl font-bold mb-2 text-white">
-                    {warningLevel === 1 && "Heads up! Keep your eyes on the screen."}
-                    {warningLevel === 2 && "Focus Needed! You seem distracted."}
-                    {warningLevel === 3 && "Lesson Paused. Please re-engage to continue."}
-                  </p>
-                  <p className="text-sm opacity-80 mb-3">
-                    Focus Score: <span className="font-mono font-bold text-amber-400">{localMetrics.score}%</span> ({localMetrics.status.toUpperCase()})
-                  </p>
-                  <div className="text-xs text-white/60 bg-white/5 p-3 rounded-xl border border-white/5 mb-4 leading-relaxed">
-                    {localMetrics.gazeDirection !== 'unknown' && localMetrics.gazeDirection !== 'center' 
-                      ? `Detected Gaze: ${localMetrics.gazeDirection.toUpperCase()} (${Math.round(localMetrics.effectiveDeviation)}° angle deviation)` 
-                      : "Please face forward and align your gaze with the screen."}
+              <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/75 backdrop-blur-xl animate-in fade-in duration-300 p-4 font-sans">
+                <div className="max-w-md w-full rounded-3xl border border-white/10 bg-[#0E0E12]/95 backdrop-blur-2xl p-7 text-center animate-in zoom-in-95 duration-300 shadow-[0_0_60px_rgba(124,58,237,0.25)] relative overflow-hidden">
+                  {/* Subtle background glow */}
+                  <div className="absolute -top-20 -left-20 w-40 h-40 rounded-full bg-purple-600/20 blur-3xl pointer-events-none" />
+                  <div className="absolute -bottom-20 -right-20 w-40 h-40 rounded-full bg-indigo-600/20 blur-3xl pointer-events-none" />
+
+                  {/* Icon badge */}
+                  <div className="relative z-10 h-16 w-16 rounded-2xl bg-gradient-to-br from-purple-500/15 to-indigo-500/15 border border-purple-500/30 flex items-center justify-center mx-auto mb-5 shadow-[0_0_30px_rgba(147,51,234,0.3)]">
+                    <AlertCircle className="h-8 w-8 text-purple-400 animate-pulse" />
                   </div>
+
+                  {/* Title & Subtitle */}
+                  <div className="relative z-10 space-y-2 mb-5">
+                    <h3 className="text-xl font-black text-white tracking-tight">
+                      {warningLevel === 1 && "Heads Up! Keep Eyes On Screen"}
+                      {warningLevel === 2 && "Focus Needed! You Seem Distracted"}
+                      {warningLevel === 3 && "Lesson Paused — Re-engage to Continue"}
+                    </h3>
+                    <p className="text-xs text-white/50 leading-relaxed">
+                      {warningLevel === 1 && "Our AI attention engine noticed your gaze shifted away from the lecture screen."}
+                      {warningLevel === 2 && "Sustained distraction detected. Please face forward to resume your focus score."}
+                      {warningLevel === 3 && "The class stream is currently paused. Tap below when you are ready to resume."}
+                    </p>
+                  </div>
+
+                  {/* Focus metrics pill */}
+                  <div className="relative z-10 inline-flex items-center gap-2 bg-white/[0.04] border border-white/10 rounded-full px-4 py-1.5 mb-5 shadow-inner">
+                    <span className={`h-2 w-2 rounded-full ${localMetrics.status === "focused" ? "bg-emerald-400" : localMetrics.status === "distracted" ? "bg-amber-400" : "bg-rose-400"} animate-ping`} />
+                    <span className="text-xs text-white/60 font-medium">Focus Score:</span>
+                    <span className="text-xs font-mono font-bold text-purple-300">{localMetrics.score}%</span>
+                    <span className="text-[10px] text-white/30 font-bold uppercase tracking-wider">({localMetrics.status})</span>
+                  </div>
+
+                  {/* Gaze Telemetry Box */}
+                  <div className="relative z-10 text-xs text-white/60 bg-white/[0.02] p-3.5 rounded-2xl border border-white/[0.06] mb-6 flex items-center justify-center gap-2">
+                    <Eye className="h-4 w-4 text-purple-400/80 flex-shrink-0" />
+                    <span>
+                      {localMetrics.gazeDirection !== 'unknown' && localMetrics.gazeDirection !== 'center' 
+                        ? `Detected Gaze: ${localMetrics.gazeDirection.toUpperCase()} (${Math.round(localMetrics.effectiveDeviation)}° angle)` 
+                        : "Please face forward and align your gaze with the screen."}
+                    </span>
+                  </div>
+
+                  {/* CTA Button */}
                   <button
                     onClick={() => setWarningLevel(0)}
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 transition-all text-xs font-bold uppercase tracking-wider cursor-pointer text-white shadow-lg shadow-purple-600/25"
+                    className="relative z-10 w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 text-xs font-black uppercase tracking-widest text-white shadow-[0_0_30px_rgba(147,51,234,0.4)] hover:shadow-[0_0_40px_rgba(147,51,234,0.6)] active:scale-[0.98] cursor-pointer"
                   >
                     I&apos;m Focused — Resume Learning
                   </button>
@@ -3232,18 +3260,26 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           {/* Out of frame overlay */}
           {outOfFrameSecondsLeft !== null &&
             createPortal(
-              <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
-                <div className="max-w-md mx-4 rounded-2xl border border-rose-500/30 bg-[#1A0B0C]/90 p-6 text-center animate-in zoom-in duration-300 text-rose-300 shadow-2xl">
-                  <Lock className="h-10 w-10 text-rose-400 mx-auto mb-3 animate-bounce" />
-                  <p className="text-xl font-bold mb-2">Face Not Detected</p>
-                  <p className="text-sm opacity-90 mb-5">
-                    Please align your face within the camera frame.
+              <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-xl animate-in fade-in duration-300 p-4 font-sans">
+                <div className="max-w-md w-full rounded-3xl border border-rose-500/30 bg-[#120A0C]/95 backdrop-blur-2xl p-7 text-center animate-in zoom-in-95 duration-300 shadow-[0_0_60px_rgba(244,63,94,0.25)] relative overflow-hidden">
+                  <div className="absolute -top-20 -left-20 w-40 h-40 rounded-full bg-rose-600/20 blur-3xl pointer-events-none" />
+
+                  {/* Icon */}
+                  <div className="relative z-10 h-16 w-16 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center mx-auto mb-5 shadow-[0_0_30px_rgba(244,63,94,0.3)]">
+                    <Lock className="h-8 w-8 text-rose-400 animate-bounce" />
+                  </div>
+
+                  <h3 className="relative z-10 text-xl font-black text-white tracking-tight mb-2">Face Not Detected</h3>
+                  <p className="relative z-10 text-xs text-white/50 leading-relaxed mb-6">
+                    Please align your face within the camera frame to remain active in the session.
                   </p>
-                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-rose-500/20 border border-rose-500/40 mb-5 shadow-[0_0_20px_rgba(239,68,68,0.2)]">
+
+                  <div className="relative z-10 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-rose-500/10 border border-rose-500/30 mb-6 shadow-[0_0_25px_rgba(244,63,94,0.2)]">
                     <span className="text-3xl font-mono font-black text-rose-400">{outOfFrameSecondsLeft}s</span>
                   </div>
-                  <p className="text-xs text-rose-400/60 leading-relaxed">
-                    You will be automatically removed from the session in {outOfFrameSecondsLeft} seconds.
+
+                  <p className="relative z-10 text-[11px] text-rose-300/60 leading-relaxed">
+                    You will be automatically removed from the session in {outOfFrameSecondsLeft} seconds if undetected.
                   </p>
                 </div>
               </div>,
@@ -3254,27 +3290,32 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           {/* Phone / Tablet Warning overlay */}
           {showPhoneWarning && phoneWarningCount < 3 &&
             createPortal(
-              <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-                <div className="max-w-md mx-4 rounded-2xl border border-rose-500/30 bg-[#1A0B0C]/90 p-6 text-center animate-in zoom-in duration-300 text-rose-300 shadow-2xl">
-                  <AlertTriangle className="h-10 w-10 text-rose-400 mx-auto mb-3 animate-bounce" />
-                  <p className="text-xl font-bold mb-2">Device Usage Detected</p>
-                  <p className="text-sm opacity-90 mb-5">
-                    Using phones, tablets, or other secondary screens is strictly prohibited.
+              <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-black/80 backdrop-blur-xl animate-in fade-in duration-300 p-4 font-sans">
+                <div className="max-w-md w-full rounded-3xl border border-amber-500/30 bg-[#140E0A]/95 backdrop-blur-2xl p-7 text-center animate-in zoom-in-95 duration-300 shadow-[0_0_60px_rgba(245,158,11,0.25)] relative overflow-hidden">
+                  <div className="absolute -top-20 -left-20 w-40 h-40 rounded-full bg-amber-600/20 blur-3xl pointer-events-none" />
+
+                  <div className="relative z-10 h-16 w-16 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center mx-auto mb-5 shadow-[0_0_30px_rgba(245,158,11,0.3)]">
+                    <AlertTriangle className="h-8 w-8 text-amber-400 animate-pulse" />
+                  </div>
+
+                  <h3 className="relative z-10 text-xl font-black text-white tracking-tight mb-2">Device Usage Detected</h3>
+                  <p className="relative z-10 text-xs text-white/50 leading-relaxed mb-6">
+                    Using phones, tablets, or secondary screens is strictly prohibited during live sessions.
                   </p>
-                  
+
                   {phoneSecondsLeft !== null ? (
-                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-rose-500/20 border border-rose-500/40 mb-5 shadow-[0_0_20px_rgba(239,68,68,0.2)]">
-                      <span className="text-3xl font-mono font-black text-rose-400">{phoneSecondsLeft}s</span>
+                    <div className="relative z-10 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-amber-500/10 border border-amber-500/30 mb-6 shadow-[0_0_25px_rgba(245,158,11,0.2)]">
+                      <span className="text-3xl font-mono font-black text-amber-400">{phoneSecondsLeft}s</span>
                     </div>
                   ) : (
-                    <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/40 mb-5">
-                      <span className="text-sm font-mono font-bold text-rose-400">Warning {phoneWarningCount} of 3</span>
+                    <div className="relative z-10 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-amber-500/15 border border-amber-500/30 mb-6">
+                      <span className="text-xs font-mono font-bold text-amber-300">Warning {phoneWarningCount} of 3</span>
                     </div>
                   )}
 
-                  <p className="text-xs text-rose-400/60 leading-relaxed">
+                  <p className="relative z-10 text-[11px] text-amber-300/60 leading-relaxed">
                     {phoneSecondsLeft !== null
-                      ? `Please put away the device. Warning will trigger in ${phoneSecondsLeft} seconds.`
+                      ? `Please put away the device. Warning strike in ${phoneSecondsLeft} seconds.`
                       : "Put the device completely away to resume learning."}
                   </p>
                 </div>
