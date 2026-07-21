@@ -288,11 +288,11 @@ export default function LiveClassroomPage() {
     } else if (isUnfocused && warningLevel === 2) {
       clearPending();
       timerRef.current = setTimeout(() => setWarningLevel(3), WARNING_3_DELAY);
-    } else if (warningLevel === 3 && isUnfocused && !isTeacher) {
+    } else if (warningLevel === 3 && isUnfocused) {
       clearPending();
       timerRef.current = setTimeout(async () => {
         const storedName = studentName || "Unknown";
-        await kickStudent(sessionCode, studentId, storedName);
+        if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
         window.location.href = `/session/${sessionCode}/summary?kicked=true`;
       }, AUTO_KICK_DELAY);
     }
@@ -335,13 +335,11 @@ export default function LiveClassroomPage() {
       });
     }, 1000);
 
-    if (!isTeacher) {
-      outOfFrameTimerRef.current = setTimeout(async () => {
-        const storedName = studentName || "Unknown";
-        await kickStudent(sessionCode, studentId, storedName);
-        window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
-      }, 5000);
-    }
+    outOfFrameTimerRef.current = setTimeout(async () => {
+      const storedName = studentName || "Unknown";
+      if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
+      window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
+    }, 5000);
 
     return clearOutOfFrameTimers;
   }, [localMetrics.faceDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
@@ -387,11 +385,11 @@ export default function LiveClassroomPage() {
       // 5 seconds completed - escalate warning count
       setPhoneWarningCount((prevCount) => {
         const nextCount = prevCount + 1;
-        if (nextCount >= 3 && !isTeacher) {
-          // Kicked out on 3rd warning for student
+        if (nextCount >= 3) {
+          // Kicked out on 3rd warning
           const kickAsync = async () => {
             const storedName = studentName || "Unknown";
-            await kickStudent(sessionCode, studentId, storedName);
+            if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
             window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=device_usage`;
           };
           kickAsync();
