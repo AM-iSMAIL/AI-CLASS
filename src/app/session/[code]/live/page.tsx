@@ -211,6 +211,7 @@ export default function LiveClassroomPage() {
   const [localMetrics, setLocalMetrics] = useState<FocusMetrics>({score: 0, status: "offline", gazeDirection: "unknown", faceDetected: false, eyesOpen: false, headYaw: 0, headPitch: 0, headRoll: 0, yawning: false, blinkRate: 0, gazeYaw: 0, gazePitch: 0, irisEngagement: 50, effectiveDeviation: 0, phoneDetected: false})
   
   const [warningLevel, setWarningLevel] = useState(0)
+  const [strikeCount, setStrikeCount] = useState(0) // Persistent strike counter across clicks
   const [outOfFrameSecondsLeft, setOutOfFrameSecondsLeft] = useState<number | null>(null)
   const [phoneWarningCount, setPhoneWarningCount] = useState(0)
   const [showPhoneWarning, setShowPhoneWarning] = useState(false)
@@ -249,6 +250,13 @@ export default function LiveClassroomPage() {
   useEffect(() => {
     if (!hasEntered || !videoOn || endCountdown !== null || sessionStatus === "Completed") return;
 
+    const clearPending = () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+
     // Trigger strike escalation when face is in frame and student is distracted or score < 60
     const isUnfocused =
       localMetrics.faceDetected && (
@@ -266,35 +274,36 @@ export default function LiveClassroomPage() {
     if (isUnfocused) {
       if (timerRef.current) return; // Keep existing timeout running without resetting it
 
+      // Calculate what the NEXT strike should be based on current persistent strike count
+      const nextStrike = Math.min(3, strikeCount + 1);
+
+      // Display warning modal overlay if not currently shown
       if (warningLevel === 0) {
-        timerRef.current = setTimeout(() => {
-          timerRef.current = null;
-          setWarningLevel(1);
-        }, 800);
-      } else if (warningLevel === 1) {
-        timerRef.current = setTimeout(() => {
-          timerRef.current = null;
-          setWarningLevel(2);
-        }, STRIKE_STEP_DELAY);
-      } else if (warningLevel === 2) {
-        timerRef.current = setTimeout(() => {
-          timerRef.current = null;
-          setWarningLevel(3);
-        }, STRIKE_STEP_DELAY);
-      } else if (warningLevel === 3) {
-        timerRef.current = setTimeout(async () => {
-          timerRef.current = null;
-          const storedName = studentName || "Unknown";
-          if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
-          window.location.href = `/session/${sessionCode}/summary?kicked=true`;
-        }, AUTO_KICK_DELAY);
+        setWarningLevel(nextStrike);
       }
-    } else {
-      // If user refocuses, clear any running warning timers and reset level to 0
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
+
+      // Automatically advance to the next strike if they remain distracted
+      timerRef.current = setTimeout(async () => {
         timerRef.current = null;
-      }
+        if (nextStrike === 1) {
+          setStrikeCount(1);
+          setWarningLevel(2); // Escalate to show Strike 2 next
+        } else if (nextStrike === 2) {
+          setStrikeCount(2);
+          setWarningLevel(3); // Escalate to show Strike 3 next
+        } else if (nextStrike === 3) {
+          setStrikeCount(3);
+          // Fired 3 strikes, kick student after AUTO_KICK_DELAY
+          setTimeout(async () => {
+            const storedName = studentName || "Unknown";
+            if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
+            window.location.href = `/session/${sessionCode}/summary?kicked=true`;
+          }, AUTO_KICK_DELAY);
+        }
+      }, STRIKE_STEP_DELAY);
+    } else {
+      // If user refocuses, clear running warning timers. Keep warningLevel = 0 so modal closes.
+      clearPending();
       if (warningLevel > 0) {
         setWarningLevel(0);
       }
@@ -303,7 +312,7 @@ export default function LiveClassroomPage() {
     return () => {
       // Clean up on unmount or dependency updates (without clearing progress on stable unfocused status)
     };
-  }, [localMetrics.status, localMetrics.score, localMetrics.faceDetected, localMetrics.phoneDetected, localMetrics.effectiveDeviation, localMetrics.gazeDirection, warningLevel, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
+  }, [localMetrics.status, localMetrics.score, localMetrics.faceDetected, localMetrics.phoneDetected, localMetrics.effectiveDeviation, localMetrics.gazeDirection, warningLevel, strikeCount, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
 
   // ── Out of frame auto-kick engine ──
   useEffect(() => {
@@ -3325,7 +3334,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
                   {/* CTA Button */}
                   <button
-                    onClick={() => setWarningLevel(0)}
+                    onClick={() => {
+                      setStrikeCount(prev => Math.min(3, prev + 1));
+                      setWarningLevel(0);
+                    }}
                     className="relative z-10 w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 text-xs font-black uppercase tracking-widest text-white shadow-[0_0_30px_rgba(147,51,234,0.4)] hover:shadow-[0_0_40px_rgba(147,51,234,0.6)] active:scale-[0.98] cursor-pointer"
                   >
                     I&apos;m Focused — Resume Learning
