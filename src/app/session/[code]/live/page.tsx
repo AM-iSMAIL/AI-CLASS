@@ -256,13 +256,16 @@ export default function LiveClassroomPage() {
       }
     };
 
+    // Only trigger warning overlays if the student is in frame (faceDetected === true) AND their focus score is < 30
     const isUnfocused =
-      localMetrics.status === "distracted" ||
-      localMetrics.status === "away" ||
-      localMetrics.score < 65 ||
-      localMetrics.phoneDetected ||
-      localMetrics.effectiveDeviation > 8 ||
-      (localMetrics.gazeDirection !== "center" && localMetrics.gazeDirection !== "unknown");
+      localMetrics.faceDetected && (
+        localMetrics.status === "distracted" ||
+        localMetrics.status === "away" ||
+        localMetrics.score < 30 ||
+        localMetrics.phoneDetected ||
+        localMetrics.effectiveDeviation > 8 ||
+        (localMetrics.gazeDirection !== "center" && localMetrics.gazeDirection !== "unknown")
+      );
 
     // Reset when participant re-focuses
     if (!isUnfocused && warningLevel > 0) {
@@ -298,7 +301,7 @@ export default function LiveClassroomPage() {
     }
 
     return clearPending;
-  }, [localMetrics.status, localMetrics.score, warningLevel, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
+  }, [localMetrics.status, localMetrics.score, localMetrics.faceDetected, warningLevel, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
 
   // ── Out of frame auto-kick engine ──
   useEffect(() => {
