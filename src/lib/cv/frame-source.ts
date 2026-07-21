@@ -20,8 +20,24 @@ export class FrameSource {
     if (this.videoElement.srcObject instanceof MediaStream) {
       console.log('[FrameSource] Reusing existing MediaStream from video element');
       this.activeStream = this.videoElement.srcObject;
-      this.startFallbackLoop(onFrameCallback);
-      return this.activeStream;
+      try {
+        const cameraUtilsMod = await import('@mediapipe/camera_utils');
+        const CameraConstructor = cameraUtilsMod.Camera || (window as any).Camera;
+        this.cameraInstance = new CameraConstructor(this.videoElement, {
+          onFrame: async () => {
+            if (this.isCancelled) return;
+            await onFrameCallback();
+          },
+          width: this.config.captureWidth,
+          height: this.config.captureHeight,
+        });
+        this.cameraInstance.start();
+        return this.activeStream;
+      } catch (err) {
+        console.error('[FrameSource] Camera helper init failed on existing stream, fallback to rAF loop:', err);
+        this.startFallbackLoop(onFrameCallback);
+        return this.activeStream;
+      }
     }
 
     // 2. Otherwise request a new stream
@@ -72,13 +88,19 @@ export class FrameSource {
   }
 
   private startFallbackLoop(callback: () => Promise<void>): void {
+    let isProcessing = false;
     const loop = async () => {
       if (this.isCancelled) return;
-      if (this.videoElement && this.videoElement.readyState >= 2 && !this.videoElement.paused) {
-        try {
-          await callback();
-        } catch (err) {
-          console.warn('[FrameSource] Frame callback execution error:', err);
+      if (this.videoElement && this.videoElement.readyState >= 2) {
+        if (!isProcessing) {
+          isProcessing = true;
+          try {
+            await callback();
+          } catch (err) {
+            console.warn('[FrameSource] Frame callback execution error:', err);
+          } finally {
+            isProcessing = false;
+          }
         }
       }
       requestAnimationFrame(loop);
