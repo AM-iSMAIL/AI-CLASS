@@ -51,7 +51,7 @@ export default function StudentCamera({
     videoRef,
     studentId,
     onFocusUpdate: handleFocusUpdate,
-    enabled: enabled && active && !isTeacher,
+    enabled: enabled && active,
   });
 
   // ── Camera initialisation ──
