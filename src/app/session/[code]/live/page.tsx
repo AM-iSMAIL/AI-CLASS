@@ -326,25 +326,29 @@ export default function LiveClassroomPage() {
       return;
     }
 
-    // Start 5-second countdown if face is not in frame
-    setTimeout(() => {
+    // Grace period (4 seconds) before starting the 5s out-of-frame countdown
+    // to give browser time to grant camera access / start feed
+    const graceTimer = setTimeout(() => {
       setOutOfFrameSecondsLeft(5);
-    }, 0);
 
-    outOfFrameIntervalRef.current = setInterval(() => {
-      setOutOfFrameSecondsLeft((prev) => {
-        if (prev === null) return null;
-        return prev > 1 ? prev - 1 : 0;
-      });
-    }, 1000);
+      outOfFrameIntervalRef.current = setInterval(() => {
+        setOutOfFrameSecondsLeft((prev) => {
+          if (prev === null) return null;
+          return prev > 1 ? prev - 1 : 0;
+        });
+      }, 1000);
 
-    outOfFrameTimerRef.current = setTimeout(async () => {
-      const storedName = studentName || "Unknown";
-      if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
-      window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
-    }, 5000);
+      outOfFrameTimerRef.current = setTimeout(async () => {
+        const storedName = studentName || "Unknown";
+        if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
+        window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
+      }, 5000);
+    }, 4000);
 
-    return clearOutOfFrameTimers;
+    return () => {
+      clearTimeout(graceTimer);
+      clearOutOfFrameTimers();
+    };
   }, [localMetrics.faceDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
 
   // ── Phone usage warning engine ──
