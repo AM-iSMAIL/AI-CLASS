@@ -22,7 +22,7 @@ import {
   Download,
   ArrowLeft
 } from "lucide-react"
-import { joinSession } from "@/lib/session-service"
+import { joinSession, getStudentHistorySessions, Session } from "@/lib/session-service"
 
 export default function StudentDashboardPage() {
   const [studentName, setStudentName] = useState("")
@@ -32,16 +32,26 @@ export default function StudentDashboardPage() {
   const [success, setSuccess] = useState<string | null>(null)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<"dashboard" | "documents" | "history">("dashboard")
+  const [historySessions, setHistorySessions] = useState<Session[]>([])
+  const [loadingHistory, setLoadingHistory] = useState(true)
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const name = localStorage.getItem("studentName")
+      const stId = localStorage.getItem("studentId") || undefined
       if (!name) {
         window.location.href = "/auth"
       } else {
         setTimeout(() => {
           setStudentName(name)
         }, 0)
+
+        getStudentHistorySessions(stId, name)
+          .then((sessions) => {
+            setHistorySessions(sessions)
+          })
+          .catch((err) => console.error("Error fetching history:", err))
+          .finally(() => setLoadingHistory(false))
       }
     }
   }, [])
@@ -304,66 +314,75 @@ export default function StudentDashboardPage() {
                   <History className="h-4.5 w-4.5 text-purple-400" />
                   <h3 className="text-xs font-bold uppercase tracking-wider text-white">Previous Lectures History</h3>
                 </div>
-                <span className="text-[10px] text-white/30 font-semibold">2 Sessions logged</span>
+                <span className="text-[10px] text-white/30 font-semibold">{historySessions.length} Sessions logged</span>
               </div>
 
               <div className="space-y-4">
-                {[
-                  {
-                    title: "Introduction to Generative AI & LLMs",
-                    date: "July 17, 2026",
-                    duration: "45 mins",
-                    summary: "This session detailed the transition of Class AI into a fully autonomous lecture assistant. Discussed how HLS.js connects player layers with Ngrok tunnel streaming, while Firebase handles real-time synchronization between teacher settings and student dashboards."
-                  },
-                  {
-                    title: "Neural Network Architectures & Deep Learning",
-                    date: "July 14, 2026",
-                    duration: "52 mins",
-                    summary: "Covered the foundational models of deep learning, backpropagation algorithms, and the integration of NVIDIA NIM speech synthesis API pathways for the virtual assistant avatar."
-                  }
-                ].map((lecture, index) => (
-                  <div
-                    key={index}
-                    className="bg-[#0D0D11] border border-white/5 rounded-2xl p-5 md:p-6 space-y-4 hover:border-purple-500/15 hover:bg-[#111116] transition-all duration-300 shadow-md group relative"
-                  >
-                    {/* Subtle hover gradient light */}
-                    <div className="absolute inset-0 bg-radial-gradient from-purple-550/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-2xl" />
-
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3 relative z-10">
-                      <div className="space-y-1">
-                        <span className="text-[8px] bg-purple-500/10 border border-purple-500/20 text-purple-400 font-black px-2 py-0.5 rounded uppercase tracking-wider">
-                          Lecture {index + 1}
-                        </span>
-                        <h4 className="text-xs font-extrabold text-white leading-snug group-hover:text-purple-300 transition-colors">
-                          {lecture.title}
-                        </h4>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 text-[10px] text-white/40 font-bold bg-black/25 px-2.5 py-1 rounded-lg border border-white/5 flex-shrink-0 self-start sm:self-center">
-                        <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {lecture.date}</span>
-                        <span>•</span>
-                        <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {lecture.duration}</span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1.5 relative z-10">
-                      <span className="text-[9px] uppercase font-black text-purple-400/90 tracking-widest block">AI Catch-Up Summary</span>
-                      <p className="text-[11px] text-white/50 leading-relaxed font-sans font-medium">
-                        {lecture.summary}
-                      </p>
-                    </div>
-
-                    <div className="flex gap-3 pt-1.5 relative z-10">
-                      <button
-                        onClick={() => alert(`Launching recorded video playback stream...`)}
-                        className="px-4 py-2 bg-purple-650/10 hover:bg-purple-650/20 border border-purple-500/20 text-purple-300 hover:text-purple-200 text-[10px] font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 active:scale-95"
-                      >
-                        <Play className="h-3.5 w-3.5 fill-current" />
-                        Watch Recording
-                      </button>
-                    </div>
+                {loadingHistory ? (
+                  <div className="py-12 text-center text-xs text-white/30 font-mono">
+                    Loading session history...
                   </div>
-                ))}
+                ) : historySessions.length === 0 ? (
+                  <div className="bg-[#0D0D11] border border-dashed border-white/10 rounded-2xl p-8 text-center space-y-2">
+                    <History className="h-8 w-8 text-white/20 mx-auto mb-2" />
+                    <h4 className="text-xs font-bold text-white/80">No session history found</h4>
+                    <p className="text-[11px] text-white/40 max-w-sm mx-auto">
+                      Enter a session code from your teacher above to join a live class and log your completed lectures!
+                    </p>
+                  </div>
+                ) : (
+                  historySessions.map((sess, index) => {
+                    const formattedDate = sess.createdAt?.seconds 
+                      ? new Date(sess.createdAt.seconds * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                      : "Recent Class"
+                    const topicSummary = sess.topics && sess.topics.length > 0 
+                      ? `Covered key topics including ${sess.topics.join(", ")}.`
+                      : "Automated AI lecture session with live focus telemetry and interactive doubt resolution."
+
+                    return (
+                      <div
+                        key={sess.code || index}
+                        className="bg-[#0D0D11] border border-white/5 rounded-2xl p-5 md:p-6 space-y-4 hover:border-purple-500/15 hover:bg-[#111116] transition-all duration-300 shadow-md group relative"
+                      >
+                        <div className="absolute inset-0 bg-radial-gradient from-purple-550/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-2xl" />
+
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3 relative z-10">
+                          <div className="space-y-1">
+                            <span className="text-[8px] bg-purple-500/10 border border-purple-500/20 text-purple-400 font-black px-2 py-0.5 rounded uppercase tracking-wider">
+                              {sess.code} • {sess.subject || "General"}
+                            </span>
+                            <h4 className="text-xs font-extrabold text-white leading-snug group-hover:text-purple-300 transition-colors">
+                              {sess.title || (sess as any).name || `Session ${sess.code}`}
+                            </h4>
+                          </div>
+                          
+                          <div className="flex items-center gap-3 text-[10px] text-white/40 font-bold bg-black/25 px-2.5 py-1 rounded-lg border border-white/5 flex-shrink-0 self-start sm:self-center">
+                            <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {formattedDate}</span>
+                            <span>•</span>
+                            <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {sess.duration || "60 mins"}</span>
+                          </div>
+                        </div>
+
+                        <div className="space-y-1.5 relative z-10">
+                          <span className="text-[9px] uppercase font-black text-purple-400/90 tracking-widest block">AI Catch-Up Summary</span>
+                          <p className="text-[11px] text-white/50 leading-relaxed font-sans font-medium">
+                            {topicSummary}
+                          </p>
+                        </div>
+
+                        <div className="flex gap-3 pt-1.5 relative z-10">
+                          <Link
+                            href={`/session/${sess.code}/summary`}
+                            className="px-4 py-2 bg-purple-650/10 hover:bg-purple-650/20 border border-purple-500/20 text-purple-300 hover:text-purple-200 text-[10px] font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 active:scale-95"
+                          >
+                            <Play className="h-3.5 w-3.5 fill-current" />
+                            View Session Summary
+                          </Link>
+                        </div>
+                      </div>
+                    )
+                  })
+                )}
               </div>
             </div>
 
@@ -449,61 +468,71 @@ export default function StudentDashboardPage() {
             </div>
 
             <div className="space-y-4">
-              {[
-                {
-                  title: "Introduction to Generative AI & LLMs",
-                  date: "July 17, 2026",
-                  duration: "45 mins",
-                  summary: "This session detailed the transition of Class AI into a fully autonomous lecture assistant. Discussed how HLS.js connects player layers with Ngrok tunnel streaming, while Firebase handles real-time synchronization between teacher settings and student dashboards."
-                },
-                {
-                  title: "Neural Network Architectures & Deep Learning",
-                  date: "July 14, 2026",
-                  duration: "52 mins",
-                  summary: "Covered the foundational models of deep learning, backpropagation algorithms, and the integration of NVIDIA NIM speech synthesis API pathways for the virtual assistant avatar."
-                }
-              ].map((lecture, index) => (
-                <div
-                  key={index}
-                  className="bg-[#0D0D11] border border-white/5 rounded-2xl p-5 md:p-6 space-y-4 hover:border-purple-500/15 hover:bg-[#111116] transition-all duration-300 shadow-md group relative"
-                >
-                  <div className="absolute inset-0 bg-radial-gradient from-purple-550/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-2xl" />
-
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3 relative z-10">
-                    <div className="space-y-1">
-                      <span className="text-[8px] bg-purple-500/10 border border-purple-500/20 text-purple-400 font-black px-2 py-0.5 rounded uppercase tracking-wider">
-                        Lecture {index + 1}
-                      </span>
-                      <h4 className="text-xs font-extrabold text-white leading-snug group-hover:text-purple-300 transition-colors">
-                        {lecture.title}
-                      </h4>
-                    </div>
-                    
-                    <div className="flex items-center gap-3 text-[10px] text-white/40 font-bold bg-black/25 px-2.5 py-1 rounded-lg border border-white/5 flex-shrink-0 self-start sm:self-center">
-                      <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {lecture.date}</span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {lecture.duration}</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5 relative z-10">
-                    <span className="text-[9px] uppercase font-black text-purple-400/90 tracking-widest block">AI Catch-Up Summary</span>
-                    <p className="text-[11px] text-white/50 leading-relaxed font-sans font-medium">
-                      {lecture.summary}
-                    </p>
-                  </div>
-
-                  <div className="flex gap-3 pt-1.5 relative z-10">
-                    <button
-                      onClick={() => alert(`Launching recorded video playback stream...`)}
-                      className="px-4 py-2 bg-purple-650/10 hover:bg-purple-650/20 border border-purple-500/20 text-purple-300 hover:text-purple-200 text-[10px] font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 active:scale-95"
-                    >
-                      <Play className="h-3.5 w-3.5 fill-current" />
-                      Watch Recording
-                    </button>
-                  </div>
+              {loadingHistory ? (
+                <div className="py-12 text-center text-xs text-white/30 font-mono">
+                  Loading session history...
                 </div>
-              ))}
+              ) : historySessions.length === 0 ? (
+                <div className="bg-[#0D0D11] border border-dashed border-white/10 rounded-2xl p-8 text-center space-y-2">
+                  <History className="h-8 w-8 text-white/20 mx-auto mb-2" />
+                  <h4 className="text-xs font-bold text-white/80">No session history found</h4>
+                  <p className="text-[11px] text-white/40 max-w-sm mx-auto">
+                    Enter a session code from your teacher on the dashboard tab to join a live class and log your completed lectures!
+                  </p>
+                </div>
+              ) : (
+                historySessions.map((sess, index) => {
+                  const formattedDate = sess.createdAt?.seconds 
+                    ? new Date(sess.createdAt.seconds * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                    : "Recent Class"
+                  const topicSummary = sess.topics && sess.topics.length > 0 
+                    ? `Covered key topics including ${sess.topics.join(", ")}.`
+                    : "Automated AI lecture session with live focus telemetry and interactive doubt resolution."
+
+                  return (
+                    <div
+                      key={sess.code || index}
+                      className="bg-[#0D0D11] border border-white/5 rounded-2xl p-5 md:p-6 space-y-4 hover:border-purple-500/15 hover:bg-[#111116] transition-all duration-300 shadow-md group relative"
+                    >
+                      <div className="absolute inset-0 bg-radial-gradient from-purple-550/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-2xl" />
+
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3 relative z-10">
+                        <div className="space-y-1">
+                          <span className="text-[8px] bg-purple-500/10 border border-purple-500/20 text-purple-400 font-black px-2 py-0.5 rounded uppercase tracking-wider">
+                            {sess.code} • {sess.subject || "General"}
+                          </span>
+                          <h4 className="text-xs font-extrabold text-white leading-snug group-hover:text-purple-300 transition-colors">
+                            {sess.title || (sess as any).name || `Session ${sess.code}`}
+                          </h4>
+                        </div>
+                        
+                        <div className="flex items-center gap-3 text-[10px] text-white/40 font-bold bg-black/25 px-2.5 py-1 rounded-lg border border-white/5 flex-shrink-0 self-start sm:self-center">
+                          <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {formattedDate}</span>
+                          <span>•</span>
+                          <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {sess.duration || "60 mins"}</span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1.5 relative z-10">
+                        <span className="text-[9px] uppercase font-black text-purple-400/90 tracking-widest block">AI Catch-Up Summary</span>
+                        <p className="text-[11px] text-white/50 leading-relaxed font-sans font-medium">
+                          {topicSummary}
+                        </p>
+                      </div>
+
+                      <div className="flex gap-3 pt-1.5 relative z-10">
+                        <Link
+                          href={`/session/${sess.code}/summary`}
+                          className="px-4 py-2 bg-purple-650/10 hover:bg-purple-650/20 border border-purple-500/20 text-purple-300 hover:text-purple-200 text-[10px] font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 active:scale-95"
+                        >
+                          <Play className="h-3.5 w-3.5 fill-current" />
+                          View Session Summary
+                        </Link>
+                      </div>
+                    </div>
+                  )
+                })
+              )}
             </div>
           </div>
         )}

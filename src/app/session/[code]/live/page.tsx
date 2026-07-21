@@ -620,6 +620,7 @@ export default function LiveClassroomPage() {
     // Access Check
     const checkAccess = async () => {
       if (role === "teacher") {
+        setHasEntered(true)
         setLoading(false)
         return
       }
@@ -646,6 +647,7 @@ export default function LiveClassroomPage() {
       } catch (err) {
         console.error("Error verifying student access:", err)
       }
+      setHasEntered(true)
       setLoading(false)
     }
 

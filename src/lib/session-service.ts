@@ -571,6 +571,54 @@ export const getTeacherStudentsRoster = async (sessionCodes: string[]): Promise<
   }
 }
 
+// 17. Fetch real student history sessions from Firestore
+export const getStudentHistorySessions = async (studentId?: string, studentName?: string): Promise<Session[]> => {
+  try {
+    const sessionsRef = collection(db, "sessions")
+    const snap = await getDocs(sessionsRef)
+    const list: Session[] = []
+    snap.forEach((docSnap) => {
+      list.push(docSnap.data() as Session)
+    })
+
+    if (studentId || studentName) {
+      const registeredSessions = await Promise.all(
+        list.map(async (sess) => {
+          try {
+            const studentsCol = collection(db, "sessions", sess.code, "students")
+            const studentsSnap = await getDocs(studentsCol)
+            const isMember = studentsSnap.docs.some(d => {
+              const sData = d.data()
+              return sData.id === studentId || sData.name === studentName || d.id === studentId
+            })
+            if (isMember) return sess
+            return null
+          } catch {
+            return null
+          }
+        })
+      )
+      const filtered = registeredSessions.filter((s): s is Session => s !== null)
+      if (filtered.length > 0) {
+        return filtered.sort((a, b) => {
+          const aTime = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : 0
+          const bTime = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : 0
+          return bTime - aTime
+        })
+      }
+    }
+
+    return list.sort((a, b) => {
+      const aTime = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : 0
+      const bTime = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : 0
+      return bTime - aTime
+    })
+  } catch (error) {
+    console.error("Error fetching student history sessions:", error)
+    return []
+  }
+}
+
 
 
 
