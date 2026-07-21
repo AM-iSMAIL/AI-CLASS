@@ -111,7 +111,7 @@ export default function SummaryPage() {
     try {
       const headers = ["Student Name", "Status", "Join Time", "Average Focus Score"];
       const rows = [
-        ...studentsList.filter(s => s.id !== session.teacherId).map(s => {
+        ...studentsList.filter(s => s.id !== session?.teacherId).map(s => {
           const joinedTime = s.joinedAt?.seconds 
             ? new Date(s.joinedAt.seconds * 1000).toLocaleTimeString() 
             : "Unknown";
@@ -217,7 +217,7 @@ export default function SummaryPage() {
           </div>
 
           {/* Stats Row */}
-          <section className={`grid gap-4 grid-cols-2 ${(session as any).teacherEngagementScore !== undefined ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
+          <section className={`grid gap-4 grid-cols-2 ${session && (session as any).teacherEngagementScore !== undefined ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
             {/* Attendees */}
             <div className="bg-[#1a1a1a] rounded-xl border border-white/5 p-5">
               <div className="flex items-center justify-between text-white/40 mb-3">
@@ -239,7 +239,7 @@ export default function SummaryPage() {
             </div>
 
             {/* Teacher Focus */}
-            {(session as any).teacherEngagementScore !== undefined && (
+            {session && (session as any).teacherEngagementScore !== undefined && (
               <div className="bg-[#1a1a1a] rounded-xl border border-white/5 p-5">
                 <div className="flex items-center justify-between text-white/40 mb-3">
                   <span className="text-[10px] font-bold uppercase tracking-wider font-mono">Teacher Focus</span>
