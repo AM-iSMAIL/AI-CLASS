@@ -256,52 +256,42 @@ export default function LiveClassroomPage() {
       }
     };
 
-    // Only trigger warning overlays if the student is in frame (faceDetected === true) AND their focus score is < 30
+    // Trigger strike escalation when face is in frame and student is distracted or score < 60
     const isUnfocused =
       localMetrics.faceDetected && (
         localMetrics.status === "distracted" ||
         localMetrics.status === "away" ||
-        localMetrics.score < 30 ||
+        localMetrics.score < 60 ||
         localMetrics.phoneDetected ||
         localMetrics.effectiveDeviation > 8 ||
         (localMetrics.gazeDirection !== "center" && localMetrics.gazeDirection !== "unknown")
       );
 
-    // Reset when participant re-focuses
-    if (!isUnfocused && warningLevel > 0) {
-      clearPending();
-      setTimeout(() => {
-        setWarningLevel(0);
-      }, 0);
-      return;
-    }
+    const STRIKE_STEP_DELAY = 2500; // 2.5s between strikes
+    const AUTO_KICK_DELAY = 4000;    // 4s after Strike 3 to kick
 
-    const WARNING_1_DELAY = 800;  // 800ms fast trigger for Heads Up warning
-    const WARNING_2_DELAY = 4000; // 4s trigger for Focus Needed
-    const WARNING_3_DELAY = 8000; // 8s trigger for Lesson Paused
-    const AUTO_KICK_DELAY = 30000; // 30s auto-kick
-
-    // Escalate through warning levels
-    if (isUnfocused && warningLevel === 0) {
-      clearPending();
-      timerRef.current = setTimeout(() => setWarningLevel(1), WARNING_1_DELAY);
-    } else if (isUnfocused && warningLevel === 1) {
-      clearPending();
-      timerRef.current = setTimeout(() => setWarningLevel(2), WARNING_2_DELAY);
-    } else if (isUnfocused && warningLevel === 2) {
-      clearPending();
-      timerRef.current = setTimeout(() => setWarningLevel(3), WARNING_3_DELAY);
-    } else if (warningLevel === 3 && isUnfocused) {
-      clearPending();
-      timerRef.current = setTimeout(async () => {
-        const storedName = studentName || "Unknown";
-        if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
-        window.location.href = `/session/${sessionCode}/summary?kicked=true`;
-      }, AUTO_KICK_DELAY);
+    if (isUnfocused) {
+      if (warningLevel === 0) {
+        clearPending();
+        timerRef.current = setTimeout(() => setWarningLevel(1), 800);
+      } else if (warningLevel === 1) {
+        clearPending();
+        timerRef.current = setTimeout(() => setWarningLevel(2), STRIKE_STEP_DELAY);
+      } else if (warningLevel === 2) {
+        clearPending();
+        timerRef.current = setTimeout(() => setWarningLevel(3), STRIKE_STEP_DELAY);
+      } else if (warningLevel === 3) {
+        clearPending();
+        timerRef.current = setTimeout(async () => {
+          const storedName = studentName || "Unknown";
+          if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
+          window.location.href = `/session/${sessionCode}/summary?kicked=true`;
+        }, AUTO_KICK_DELAY);
+      }
     }
 
     return clearPending;
-  }, [localMetrics.status, localMetrics.score, localMetrics.faceDetected, warningLevel, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
+  }, [localMetrics.status, localMetrics.score, localMetrics.faceDetected, localMetrics.phoneDetected, localMetrics.effectiveDeviation, localMetrics.gazeDirection, warningLevel, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
 
   // ── Out of frame auto-kick engine ──
   useEffect(() => {
