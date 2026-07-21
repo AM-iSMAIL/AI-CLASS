@@ -103,7 +103,7 @@ src/
     - [x] Faster warning escalation (5s warning, 12s lock warning, 20s pause overlay, 45s kick)
     - [x] Replaced emoji warnings with custom lucide-react vector icons (Hand, AlertTriangle, Lock, Eye, EyeOff, Brain)
     - [x] Added debounced face detection (5 frames) to avoid warning flicker on momentary camera glitches
-    - [x] Added out-of-frame warning overlay with a strict 5-second countdown auto-kick if face remains undetected
+    - [x] Added out-of-frame warning overlay with a strict 5-second countdown auto-kick triggered immediately if face remains undetected (removed the 4-second grace period delay, with a 5-second startup grace exception on class entry)
   - [x] Retinal Focus / 3D Iris Gaze Tracking Upgrade
     - [x] Rewrote `useFocusTracker.ts` with true 3D gaze vector computation (eyeball center → iris center using landmarks 468-477)
     - [x] Implemented embedded One-Euro Filter (no deps) for jitter-free gaze smoothing — adaptive cutoff: low jitter when still, low latency when moving
@@ -302,7 +302,7 @@ src/
     - [x] Faster warning escalation (5s warning, 12s lock warning, 20s pause overlay, 45s kick)
     - [x] Replaced emoji warnings with custom lucide-react vector icons (Hand, AlertTriangle, Lock, Eye, EyeOff, Brain)
     - [x] Added debounced face detection (5 frames) to avoid warning flicker on momentary camera glitches
-    - [x] Added out-of-frame warning overlay with a strict 5-second countdown auto-kick if face remains undetected
+    - [x] Added out-of-frame warning overlay with a strict 5-second countdown auto-kick triggered immediately if face remains undetected (removed the 4-second grace period delay, with a 5-second startup grace exception on class entry)
   - [x] Retinal Focus / 3D Iris Gaze Tracking Upgrade
     - [x] Rewrote `useFocusTracker.ts` with true 3D gaze vector computation (eyeball center → iris center using landmarks 468-477)
     - [x] Implemented embedded One-Euro Filter (no deps) for jitter-free gaze smoothing — adaptive cutoff: low jitter when still, low latency when moving

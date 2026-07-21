@@ -161,6 +161,7 @@ export default function LiveClassroomPage() {
   const [studentId, setStudentId] = useState("unknown-student")
   const [studentName, setStudentName] = useState<string | null>(null)
   const [hasEntered, setHasEntered] = useState(false)
+  const [startupGraceActive, setStartupGraceActive] = useState(true)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -314,9 +315,19 @@ export default function LiveClassroomPage() {
     };
   }, [localMetrics.status, localMetrics.score, localMetrics.faceDetected, localMetrics.phoneDetected, localMetrics.effectiveDeviation, localMetrics.gazeDirection, warningLevel, strikeCount, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
 
+  // Startup grace period timer to delay detection at the start of class
+  useEffect(() => {
+    if (hasEntered) {
+      const timer = setTimeout(() => {
+        setStartupGraceActive(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [hasEntered]);
+
   // ── Out of frame auto-kick engine ──
   useEffect(() => {
-    if (!hasEntered || !videoOn || endCountdown !== null || sessionStatus === "Completed") return;
+    if (!hasEntered || !videoOn || endCountdown !== null || sessionStatus === "Completed" || startupGraceActive) return;
 
     const clearOutOfFrameTimers = () => {
       if (outOfFrameTimerRef.current) {
@@ -337,30 +348,25 @@ export default function LiveClassroomPage() {
       return;
     }
 
-    // Grace period (4 seconds) before starting the 5s out-of-frame countdown
-    // to give browser time to grant camera access / start feed
-    const graceTimer = setTimeout(() => {
-      setOutOfFrameSecondsLeft(5);
+    setOutOfFrameSecondsLeft(5);
 
-      outOfFrameIntervalRef.current = setInterval(() => {
-        setOutOfFrameSecondsLeft((prev) => {
-          if (prev === null) return null;
-          return prev > 1 ? prev - 1 : 0;
-        });
-      }, 1000);
+    outOfFrameIntervalRef.current = setInterval(() => {
+      setOutOfFrameSecondsLeft((prev) => {
+        if (prev === null) return null;
+        return prev > 1 ? prev - 1 : 0;
+      });
+    }, 1000);
 
-      outOfFrameTimerRef.current = setTimeout(async () => {
-        const storedName = studentName || "Unknown";
-        if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
-        window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
-      }, 5000);
-    }, 4000);
+    outOfFrameTimerRef.current = setTimeout(async () => {
+      const storedName = studentName || "Unknown";
+      if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
+      window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
+    }, 5000);
 
     return () => {
-      clearTimeout(graceTimer);
       clearOutOfFrameTimers();
     };
-  }, [localMetrics.faceDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
+  }, [localMetrics.faceDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus, startupGraceActive]);
 
   // ── Phone usage warning engine ──
   useEffect(() => {
