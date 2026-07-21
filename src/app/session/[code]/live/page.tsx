@@ -727,7 +727,7 @@ export default function LiveClassroomPage() {
 
       // Trigger image display/loader for this chunk's prompt (concurrency-safe)
       if (nextChunk.imagePrompt) {
-        // Start generating the image if it hasn't been triggered yet
+        // Start generating the image asynchronously if not already triggered
         if (!nextChunk.imagePromise) {
           nextChunk.imagePromise = fetch("/api/image", {
             method: "POST",
@@ -753,21 +753,16 @@ export default function LiveClassroomPage() {
           if (nextChunk.imageUrl) {
             setTopicImageUrl(nextChunk.imageUrl);
             setImageLoaded(true);
-          } else if (topicImageUrl) {
-            setImageLoaded(true);
-          } else {
-            setImageLoaded(false);
           }
         };
 
         if (nextChunk.imageUrl) {
           showImage();
         } else {
-          // Non-blocking loader overlay
+          // Non-blocking loader: pop up image asynchronously when ready without pausing speech
           nextChunk.imagePromise.then(showImage).catch(() => {
             if (nextChunk.runId === ttsRunIdRef.current) {
               setIsGeneratingImage(false);
-              setImageError("Failed to generate helper image.");
             }
           });
         }
@@ -781,64 +776,104 @@ export default function LiveClassroomPage() {
         if (nextChunk.runId !== ttsRunIdRef.current) return;
 
         // Remove from queue since we're starting play
-        ttsQueueRef.current.shift()
+        ttsQueueRef.current.shift();
 
-        // Prefetch the very next chunk while this one plays (Sliding Window)
-        const futureChunk = ttsQueueRef.current[0];
-        if (futureChunk && !futureChunk.audio && !futureChunk.error) {
-          futureChunk.audio = new Audio(`/api/tts?text=${encodeURIComponent(futureChunk.text)}`);
-          futureChunk.audio.preload = "auto";
-          futureChunk.audio.load();
-        }
-
-        if (nextChunk.error || !nextChunk.audio) {
-          console.warn("[TTS]: Camb AI failed due to network latency.")
-          
-          // Progress silently using word-count reading duration
-          isTtsPlayingRef.current = true
-          setAiSpeechState("speaking")
-          const clean = nextChunk.text.split("\n").filter(l => !l.trim().startsWith("IMAGE_PROMPT:")).join("\n").trim()
-          setLiveSubtitles(clean)
-          
-          const duration = Math.max(3000, clean.split(/\s+/).length * 250)
-          setTimeout(() => {
-            isTtsPlayingRef.current = false
-            setAiSpeechState("idle")
-            if (nextChunk.onEnd) nextChunk.onEnd()
-            runQueue()
-          }, duration)
+        const clean = nextChunk.text.split("\n").filter(l => !l.trim().startsWith("IMAGE_PROMPT:")).join("\n").trim();
+        if (!clean) {
+          isTtsPlayingRef.current = false;
+          if (nextChunk.onEnd) nextChunk.onEnd();
+          runQueue();
           return;
         }
 
-        const audio = nextChunk.audio
-        audio.volume = 1.0; // Ensure maximum volume
-        activeAudioRef.current = audio
+        setLiveSubtitles(clean);
 
-        audio.onplay = () => {
-          if (nextChunk.runId !== ttsRunIdRef.current) return;
-          setAiSpeechState("speaking")
-        }
-        audio.onended = () => {
-          if (nextChunk.runId !== ttsRunIdRef.current) return;
-          isTtsPlayingRef.current = false
-          if (nextChunk.onEnd) nextChunk.onEnd()
-          runQueue()
-        }
-        audio.onerror = (e) => {
-          console.warn("[TTS]: Audio playback error, progressing silently:", e)
-          if (nextChunk.runId !== ttsRunIdRef.current) return;
-          isTtsPlayingRef.current = false
-          if (nextChunk.onEnd) nextChunk.onEnd()
-          runQueue()
+        // 1. Primary Engine: Play Camb AI Audio (Realistic Human Voice)
+        if (nextChunk.audio) {
+          const audio = nextChunk.audio;
+          audio.volume = 1.0;
+          activeAudioRef.current = audio;
+
+          audio.onplay = () => {
+            if (nextChunk.runId !== ttsRunIdRef.current) return;
+            setAiSpeechState("speaking");
+          };
+          audio.onended = () => {
+            if (nextChunk.runId !== ttsRunIdRef.current) return;
+            isTtsPlayingRef.current = false;
+            if (nextChunk.onEnd) nextChunk.onEnd();
+            runQueue();
+          };
+          audio.onerror = (e) => {
+            console.warn("[Camb AI Audio]: Playback error, advancing:", e);
+            if (nextChunk.runId !== ttsRunIdRef.current) return;
+            isTtsPlayingRef.current = false;
+            if (nextChunk.onEnd) nextChunk.onEnd();
+            runQueue();
+          };
+
+          audio.play().catch(err => {
+            console.warn("[Camb AI Audio]: Playback exception, advancing:", err);
+            if (nextChunk.runId !== ttsRunIdRef.current) return;
+            isTtsPlayingRef.current = false;
+            if (nextChunk.onEnd) nextChunk.onEnd();
+            runQueue();
+          });
+          return;
         }
 
-        audio.play().catch(err => {
-          console.warn("[TTS]: Failed playing audio, progressing silently:", err)
-          if (nextChunk.runId !== ttsRunIdRef.current) return;
-          isTtsPlayingRef.current = false
-          if (nextChunk.onEnd) nextChunk.onEnd()
-          runQueue()
-        })
+        // If audio wasn't pre-fetched yet, fetch from Camb AI directly
+        if (speechEnabled && !nextChunk.error) {
+          console.log(`[Camb AI] On-demand fetching voice for: "${clean.substring(0, 25)}..."`);
+          fetch("/api/tts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: clean })
+          })
+            .then(r => r.json())
+            .then(data => {
+              if (data.audioContent && nextChunk.runId === ttsRunIdRef.current) {
+                const audio = new Audio("data:audio/mpeg;base64," + data.audioContent);
+                audio.volume = 1.0;
+                activeAudioRef.current = audio;
+                audio.onplay = () => setAiSpeechState("speaking");
+                audio.onended = () => {
+                  isTtsPlayingRef.current = false;
+                  if (nextChunk.onEnd) nextChunk.onEnd();
+                  runQueue();
+                };
+                audio.onerror = () => {
+                  isTtsPlayingRef.current = false;
+                  if (nextChunk.onEnd) nextChunk.onEnd();
+                  runQueue();
+                };
+                audio.play().catch(() => {
+                  isTtsPlayingRef.current = false;
+                  if (nextChunk.onEnd) nextChunk.onEnd();
+                  runQueue();
+                });
+                return;
+              }
+              fallbackDurationProgress();
+            })
+            .catch(() => fallbackDurationProgress());
+          return;
+        }
+
+        function fallbackDurationProgress() {
+          isTtsPlayingRef.current = true;
+          setAiSpeechState("speaking");
+          const duration = Math.max(1000, clean.split(/\s+/).length * 200);
+          setTimeout(() => {
+            if (nextChunk.runId !== ttsRunIdRef.current) return;
+            isTtsPlayingRef.current = false;
+            setAiSpeechState("idle");
+            if (nextChunk.onEnd) nextChunk.onEnd();
+            runQueue();
+          }, duration);
+        }
+
+        fallbackDurationProgress();
       }
 
       const triggerPlay = () => {
@@ -849,35 +884,8 @@ export default function LiveClassroomPage() {
         }
       }
 
-      // STRICT SYNC: Wait for the image to be fully loaded BEFORE starting the voice!
-      if (nextChunk.imagePrompt) {
-        if (nextChunk.imagePromise) {
-          nextChunk.imagePromise.then(() => {
-            if (nextChunk.runId === ttsRunIdRef.current) {
-              // we have to call showImage() logic manually here since we abstracted it
-              setIsGeneratingImage(false);
-              if (nextChunk.imageUrl) {
-                setTopicImageUrl(nextChunk.imageUrl);
-                setImageLoaded(true);
-              } else if (topicImageUrl) {
-                setImageLoaded(true);
-              } else {
-                setImageLoaded(false);
-              }
-              triggerPlay();
-            }
-          }).catch(() => {
-            if (nextChunk.runId === ttsRunIdRef.current) {
-              setIsGeneratingImage(false);
-              triggerPlay();
-            }
-          });
-        } else {
-          triggerPlay();
-        }
-      } else {
-        triggerPlay();
-      }
+      // NON-BLOCKING EXECUTION: Start voice playback immediately without waiting for image generation!
+      triggerPlay();
     }
 
     runQueue();
@@ -912,6 +920,8 @@ export default function LiveClassroomPage() {
       
       const clauses = splitIntoShortClauses(slide.text);
       clauses.forEach((clause, clauseIdx) => {
+        const cleanClause = clause.split("\n").filter(l => !l.trim().startsWith("IMAGE_PROMPT:")).join("\n").trim();
+
         const item = {
           text: clause,
           runId: ttsRunIdRef.current,
@@ -925,8 +935,27 @@ export default function LiveClassroomPage() {
           imagePromise: (isFirst && clauseIdx === 0 && firstImageUrl) ? Promise.resolve() : null as Promise<any> | null
         };
         
-        item.audio = null;
-        item.promise = null;
+        if (speechEnabled && cleanClause) {
+          item.promise = fetch("/api/tts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: cleanClause })
+          })
+            .then(r => r.json())
+            .then(data => {
+              if (data.audioContent) {
+                const audio = new Audio("data:audio/mpeg;base64," + data.audioContent);
+                audio.preload = "auto";
+                audio.load();
+                item.audio = audio;
+              }
+            })
+            .catch(() => {
+              item.error = true;
+            });
+        } else {
+          item.promise = Promise.resolve();
+        }
 
         ttsQueueRef.current.push(item);
       });
@@ -974,137 +1003,90 @@ export default function LiveClassroomPage() {
             target: "teacher",
             state: initialState
           })
-        }).then(async res => {
+        }).then(res => {
           if (!res.ok) throw new Error("Fetch failed");
           
-          // Fully consume the stream in background so fullText is ready when user clicks Enter
+          // Asynchronously consume a clone for caching without delaying stream start!
           const cloned = res.clone();
-          if (cloned.body) {
-            const reader = cloned.body.getReader();
-            const decoder = new TextDecoder();
-            let fullText = "";
-            let sentenceBuffer = "";
-            let firstTtsTriggered = false;
-            let firstImgTriggered = false;
+          const bodyStream = cloned.body;
+          if (bodyStream) {
+            (async () => {
+              const reader = bodyStream.getReader();
+              const decoder = new TextDecoder();
+              let fullText = "";
+              let sentenceBuffer = "";
+              let firstTtsTriggered = false;
+              let firstImgTriggered = false;
 
-            try {
-              while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                const chunk = decoder.decode(value, { stream: true });
-                const lines = chunk.split("\n");
-                for (const line of lines) {
-                  if (line.startsWith("data: ") && !line.includes("[DONE]")) {
-                    try {
-                      const data = JSON.parse(line.slice(6));
-                      const delta = data.choices?.[0]?.delta?.content || "";
-                      fullText += delta;
-                      sentenceBuffer += delta;
+              try {
+                while (true) {
+                  const { done, value } = await reader.read();
+                  if (done) break;
+                  const chunk = decoder.decode(value, { stream: true });
+                  const lines = chunk.split("\n");
+                  for (const line of lines) {
+                    if (line.startsWith("data: ") && !line.includes("[DONE]")) {
+                      try {
+                        const data = JSON.parse(line.slice(6));
+                        const delta = data.choices?.[0]?.delta?.content || "";
+                        fullText += delta;
+                        sentenceBuffer += delta;
 
-                      // 1. Trigger first TTS prefetch on-the-fly as soon as the first sentence completes
-                      if (!firstTtsTriggered && shouldFlushSpeechBuffer(sentenceBuffer) && !sentenceBuffer.includes("IMAGE_PROMPT:")) {
-                        firstTtsTriggered = true;
-                        const ttsText = sentenceBuffer.trim();
-                        if (ttsText) {
-                          console.log(`[Latency] Prefetching first TTS audio on the fly: "${ttsText}"`);
-                          fetch("/api/tts", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ text: ttsText })
-                          })
-                            .then(r => r.json())
-                            .then(data => {
-                              if (data.audioContent && prefetchedLectures.current[cacheKey]) {
-                                prefetchedLectures.current[cacheKey].firstAudioBase64 = data.audioContent;
-                                console.log(`[Latency] Prefetched first TTS audio successfully on the fly`);
-                              }
-                            })
-                            .catch(() => {});
-                        }
-                      }
-
-                      // 2. Trigger first image prefetch on-the-fly as soon as the first IMAGE_PROMPT line is received
-                      if (!firstImgTriggered && sentenceBuffer.includes("IMAGE_PROMPT:")) {
-                        const imgIdx = sentenceBuffer.indexOf("IMAGE_PROMPT:");
-                        const afterPrompt = sentenceBuffer.substring(imgIdx + 13);
-                        const newlineIdx = afterPrompt.indexOf("\n");
-                        if (newlineIdx !== -1) {
-                          firstImgTriggered = true;
-                          const imgPrompt = afterPrompt.substring(0, newlineIdx).trim();
-                          if (imgPrompt) {
-                            console.log(`[Latency] Prefetching first image on the fly: "${imgPrompt}"`);
-                            fetch("/api/image", {
+                        // 1. Trigger first TTS prefetch on-the-fly
+                        if (!firstTtsTriggered && shouldFlushSpeechBuffer(sentenceBuffer) && !sentenceBuffer.includes("IMAGE_PROMPT:")) {
+                          firstTtsTriggered = true;
+                          const ttsText = sentenceBuffer.trim();
+                          if (ttsText) {
+                            fetch("/api/tts", {
                               method: "POST",
                               headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ prompt: imgPrompt, width: 768, height: 512 })
+                              body: JSON.stringify({ text: ttsText })
                             })
                               .then(r => r.json())
                               .then(data => {
-                                if (data.image && prefetchedLectures.current[cacheKey]) {
-                                  prefetchedLectures.current[cacheKey].firstImageUrl = data.image;
-                                  console.log(`[Latency] Prefetched first image successfully on the fly`);
+                                if (data.audioContent && prefetchedLectures.current[cacheKey]) {
+                                  prefetchedLectures.current[cacheKey].firstAudioBase64 = data.audioContent;
                                 }
                               })
                               .catch(() => {});
                           }
                         }
-                      }
-                    } catch {}
-                  }
-                }
-              }
-              
-              const entry = prefetchedLectures.current[cacheKey];
-              if (entry) {
-                entry.fullText = fullText;
-                console.log(`[Latency] Prefetch fully cached text for ${cacheKey} (${fullText.length} chars)`);
-                
-                // Fallbacks in case stream finished too quickly to trigger on-the-fly hooks
-                if (!firstImgTriggered) {
-                  const textLines = fullText.split("\n");
-                  let firstImgPrompt = "";
-                  for (const s of textLines) {
-                    const cl = s.trim();
-                    if (cl.startsWith("IMAGE_PROMPT:")) {
-                      firstImgPrompt = cl.substring(13).trim();
-                      break;
+
+                        // 2. Trigger first image prefetch on-the-fly
+                        if (!firstImgTriggered && sentenceBuffer.includes("IMAGE_PROMPT:")) {
+                          const imgIdx = sentenceBuffer.indexOf("IMAGE_PROMPT:");
+                          const afterPrompt = sentenceBuffer.substring(imgIdx + 13);
+                          const newlineIdx = afterPrompt.indexOf("\n");
+                          if (newlineIdx !== -1) {
+                            firstImgTriggered = true;
+                            const imgPrompt = afterPrompt.substring(0, newlineIdx).trim();
+                            if (imgPrompt) {
+                              fetch("/api/image", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ prompt: imgPrompt, width: 768, height: 512 })
+                              })
+                                .then(r => r.json())
+                                .then(data => {
+                                  if (data.image && prefetchedLectures.current[cacheKey]) {
+                                    prefetchedLectures.current[cacheKey].firstImageUrl = data.image;
+                                  }
+                                })
+                                .catch(() => {});
+                            }
+                          }
+                        }
+                      } catch {}
                     }
                   }
-                  if (firstImgPrompt) {
-                    fetch("/api/image", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ prompt: firstImgPrompt, width: 768, height: 512 })
-                    })
-                      .then(r => r.json())
-                      .then(data => {
-                        if (data.image && prefetchedLectures.current[cacheKey]) {
-                          prefetchedLectures.current[cacheKey].firstImageUrl = data.image;
-                        }
-                      })
-                      .catch(() => {});
-                  }
                 }
                 
-                if (!firstTtsTriggered) {
-                  const slides = parseExplanationToSlides(fullText);
-                  if (slides.length > 0 && slides[0].text) {
-                    fetch("/api/tts", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ text: slides[0].text })
-                    })
-                      .then(r => r.json())
-                      .then(data => {
-                        if (data.audioContent && prefetchedLectures.current[cacheKey]) {
-                          prefetchedLectures.current[cacheKey].firstAudioBase64 = data.audioContent;
-                        }
-                      })
-                      .catch(() => {});
-                  }
+                const entry = prefetchedLectures.current[cacheKey];
+                if (entry) {
+                  entry.fullText = fullText;
                 }
-              }
-            } catch {}
+              } catch {}
+            })();
           }
           return res;
         }).catch(err => {
@@ -1264,6 +1246,8 @@ export default function LiveClassroomPage() {
               const currentSlideIdx = slideIdx++;
               
               clauses.forEach((clause, clauseIdx) => {
+                const cleanClause = clause.split("\n").filter(l => !l.trim().startsWith("IMAGE_PROMPT:")).join("\n").trim();
+                
                 const item = {
                   text: clause,
                   runId: ttsRunIdRef.current,
@@ -1277,9 +1261,24 @@ export default function LiveClassroomPage() {
                   imagePromise: null as Promise<any> | null,
                 };
 
-                if (speechEnabled) {
-                  item.audio = null;
-                  item.promise = null;
+                if (speechEnabled && cleanClause) {
+                  item.promise = fetch("/api/tts", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ text: cleanClause })
+                  })
+                    .then(r => r.json())
+                    .then(data => {
+                      if (data.audioContent) {
+                        const audio = new Audio("data:audio/mpeg;base64," + data.audioContent);
+                        audio.preload = "auto";
+                        audio.load();
+                        item.audio = audio;
+                      }
+                    })
+                    .catch(() => {
+                      item.error = true;
+                    });
                 } else {
                   item.promise = Promise.resolve();
                 }
@@ -1319,21 +1318,33 @@ export default function LiveClassroomPage() {
                               const textBefore = sentenceBuffer.substring(0, imgIdx).trim();
                               const imgPrompt = afterPrompt.substring(0, newlineIdx).trim();
                               const rest = afterPrompt.substring(newlineIdx + 1);
-                              
                               if (textBefore) {
                                 // Normal case: text + image prompt together
                                 flushSlide(textBefore, imgPrompt, false);
                               } else if (imgPrompt) {
                                 // Text was already flushed by sentence-boundary detection.
-                                // 1. Check if the slide is still in the queue
+                                // 1. Attach image prompt to last item in queue if available
                                 const q = ttsQueueRef.current;
                                 const lastItem = q.length > 0 ? q[q.length - 1] : null;
-                                if (lastItem && !lastItem.imagePrompt) {
+                                if (lastItem) {
                                   // eslint-disable-next-line react-hooks/immutability
                                   lastItem.imagePrompt = imgPrompt;
-                                } else if (currentSlideIdxRef.current === slideIdx - 1) {
-                                  // 2. The slide is already playing on screen!
-                                  // Trigger image generation and display it immediately.
+                                  if (!lastItem.imagePromise) {
+                                    lastItem.imagePromise = fetch("/api/image", {
+                                      method: "POST",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ prompt: imgPrompt, width: 768, height: 512 })
+                                    })
+                                      .then(res => res.json())
+                                      .then(data => {
+                                        if (data.image) {
+                                          lastItem.imageUrl = data.image;
+                                        }
+                                      })
+                                      .catch(() => {});
+                                  }
+                                } else {
+                                  // 2. Queue is already empty/playing — trigger image generation in background directly!
                                   setIsGeneratingImage(true);
                                   setImageError(null);
                                   fetch("/api/image", {
@@ -1343,7 +1354,7 @@ export default function LiveClassroomPage() {
                                   })
                                     .then(res => res.json())
                                     .then(data => {
-                                      if (data.image && currentSlideIdxRef.current === slideIdx - 1) {
+                                      if (data.image && ttsRunIdRef.current) {
                                         setTopicImageUrl(data.image);
                                         setImageLoaded(true);
                                       }
@@ -1352,9 +1363,6 @@ export default function LiveClassroomPage() {
                                     .catch(() => {
                                       setIsGeneratingImage(false);
                                     });
-                                } else {
-                                  // No matching slide — create an image-only slide with minimal text
-                                  flushSlide("...", imgPrompt, false);
                                 }
                               }
                               sentenceBuffer = rest;
@@ -1388,7 +1396,23 @@ export default function LiveClassroomPage() {
               if (imgIdx !== -1) {
                 const textBefore = sentenceBuffer.substring(0, imgIdx).trim();
                 const imgPrompt = sentenceBuffer.substring(imgIdx + 13).trim();
-                if (textBefore) flushSlide(textBefore, imgPrompt, true);
+                if (textBefore) {
+                  flushSlide(textBefore, imgPrompt, true);
+                } else if (imgPrompt) {
+                  fetch("/api/image", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt: imgPrompt, width: 768, height: 512 })
+                  })
+                    .then(res => res.json())
+                    .then(data => {
+                      if (data.image) {
+                        setTopicImageUrl(data.image);
+                        setImageLoaded(true);
+                      }
+                    })
+                    .catch(() => {});
+                }
               } else {
                 flushSlide(sentenceBuffer, "", true);
               }

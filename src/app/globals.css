@@ -139,6 +139,34 @@
   .animate-slideDown {
     animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
+  .img-in {
+    animation: imgIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .img-out {
+    animation: imgOut 0.4s ease-out forwards;
+  }
+}
+
+@keyframes imgIn {
+  from {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes imgOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
 }
 
 @keyframes pulse-slow {

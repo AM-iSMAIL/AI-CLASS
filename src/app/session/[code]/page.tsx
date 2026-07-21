@@ -594,24 +594,8 @@ export default function SessionPage() {
         }
       }
 
-      // STRICT SYNC: Wait for the image to be fully loaded BEFORE starting the voice!
-      if (nextChunk.imagePrompt) {
-        if (nextChunk.imagePromise) {
-          nextChunk.imagePromise.then(() => {
-            if (nextChunk.runId === ttsRunIdRef.current) {
-              triggerPlay();
-            }
-          }).catch(() => {
-            if (nextChunk.runId === ttsRunIdRef.current) {
-              triggerPlay();
-            }
-          });
-        } else {
-          triggerPlay();
-        }
-      } else {
-        triggerPlay();
-      }
+      // NON-BLOCKING STREAMING: Voice plays immediately without waiting for image generation!
+      triggerPlay();
     }
 
     runQueue();
