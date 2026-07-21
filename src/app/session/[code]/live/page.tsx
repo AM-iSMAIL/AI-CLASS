@@ -258,16 +258,10 @@ export default function LiveClassroomPage() {
       }
     };
 
-    // Trigger strike escalation when face is in frame and student is distracted or score < 60
+    // Trigger strike escalation when face is in frame and student focus score is 30 or less
     const isUnfocused =
-      localMetrics.faceDetected && (
-        localMetrics.status === "distracted" ||
-        localMetrics.status === "away" ||
-        localMetrics.score < 60 ||
-        localMetrics.phoneDetected ||
-        localMetrics.effectiveDeviation > 8 ||
-        (localMetrics.gazeDirection !== "center" && localMetrics.gazeDirection !== "unknown")
-      );
+      localMetrics.faceDetected &&
+      localMetrics.score <= 30;
 
     const STRIKE_STEP_DELAY = 2500; // 2.5s between strikes
     const AUTO_KICK_DELAY = 4000;    // 4s after Strike 3 to kick

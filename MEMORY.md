@@ -101,6 +101,7 @@ src/
     - [x] Added MAR yawn detection
     - [x] Implemented EMA smoothing & sustained distraction penalty decay
     - [x] Faster warning escalation (5s warning, 12s lock warning, 20s pause overlay, 45s kick)
+    - [x] Adjusted strike escalation warning modal to trigger only when the student's focus score drops to 30% or less
     - [x] Replaced emoji warnings with custom lucide-react vector icons (Hand, AlertTriangle, Lock, Eye, EyeOff, Brain)
     - [x] Added debounced face detection (5 frames) to avoid warning flicker on momentary camera glitches
     - [x] Added out-of-frame warning overlay with a strict 5-second countdown auto-kick triggered immediately if face remains undetected (removed the 4-second grace period delay, with a 5-second startup grace exception on class entry)
