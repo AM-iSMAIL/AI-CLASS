@@ -3274,26 +3274,31 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                   <div className="absolute -top-20 -left-20 w-40 h-40 rounded-full bg-purple-600/20 blur-3xl pointer-events-none" />
                   <div className="absolute -bottom-20 -right-20 w-40 h-40 rounded-full bg-indigo-600/20 blur-3xl pointer-events-none" />
 
-                  {/* Icon badge */}
-                  <div className="relative z-10 h-16 w-16 rounded-2xl bg-gradient-to-br from-purple-500/15 to-indigo-500/15 border border-purple-500/30 flex items-center justify-center mx-auto mb-5 shadow-[0_0_30px_rgba(147,51,234,0.3)]">
-                    <AlertCircle className="h-8 w-8 text-purple-400 animate-pulse" />
+                  {/* Big Prominent Strike Counter Badge */}
+                  <div className="relative z-10 h-20 w-28 rounded-2xl bg-gradient-to-br from-rose-500/20 via-purple-500/20 to-indigo-500/20 border-2 border-rose-500/50 flex flex-col items-center justify-center mx-auto mb-4 shadow-[0_0_35px_rgba(244,63,94,0.4)]">
+                    <span className="text-2xl font-black text-white font-mono tracking-wider drop-shadow-md">
+                      {warningLevel}/3
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">
+                      STRIKE {warningLevel}
+                    </span>
                   </div>
 
                   {/* Title & Subtitle */}
                   <div className="relative z-10 space-y-2 mb-5">
                     <h3 className="text-xl font-black text-white tracking-tight">
-                      {warningLevel === 1 && "Heads Up! Keep Eyes On Screen"}
-                      {warningLevel === 2 && "Focus Needed! You Seem Distracted"}
-                      {warningLevel === 3 && "Lesson Paused — Re-engage to Continue"}
+                      {warningLevel === 1 && "Warning: Strike 1 of 3"}
+                      {warningLevel === 2 && "Warning: Strike 2 of 3"}
+                      {warningLevel === 3 && "FINAL STRIKE 3/3 — Lesson Paused"}
                     </h3>
-                    <p className="text-xs text-white/50 leading-relaxed">
-                      {warningLevel === 1 && "Our AI attention engine noticed your gaze shifted away from the lecture screen."}
-                      {warningLevel === 2 && "Sustained distraction detected. Please face forward to resume your focus score."}
-                      {warningLevel === 3 && "The class stream is currently paused. Tap below when you are ready to resume."}
+                    <p className="text-xs text-white/60 leading-relaxed">
+                      {warningLevel === 1 && "Focus score dropped below 30%. Facing away again will trigger Strike 2."}
+                      {warningLevel === 2 && "Sustained distraction detected! One more strike will result in automatic kick."}
+                      {warningLevel === 3 && "You have reached 3 strikes! Click below to resume or you will be kicked from class."}
                     </p>
                     <div className="pt-1">
-                      <span className="text-[11px] font-bold text-rose-400/90 bg-rose-500/10 border border-rose-500/20 rounded-lg px-2.5 py-1 inline-block">
-                        ⚠️ Warning: Receiving more than 3 focus strikes will result in being kicked from the class.
+                      <span className="text-xs font-black text-rose-400 bg-rose-500/15 border border-rose-500/30 rounded-xl px-3 py-1.5 inline-block shadow-sm">
+                        🚨 STRIKE {warningLevel}/3 — Reaching 3/3 results in auto-kick!
                       </span>
                     </div>
                   </div>
