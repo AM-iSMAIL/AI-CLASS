@@ -48,7 +48,7 @@ export class FocusEngine implements CVModule<Map<string, FocusScore>> {
 
       // ── Compute raw score from components ──
       const components = computeComponents(analysis, ctx, config);
-      const raw = computeRawScore(analysis, config);
+      const raw = computeRawScore(analysis, config, ctx);
 
       // ── Effective deviation ──
       const headPose = analysis?.headPose;
@@ -114,6 +114,7 @@ export class FocusEngine implements CVModule<Map<string, FocusScore>> {
 function computeRawScore(
   analysis: import('../types').StudentAnalysis | undefined,
   config: CVConfig,
+  ctx?: FrameContext,
 ): number {
   if (!analysis) return 0;
 
@@ -132,7 +133,15 @@ function computeRawScore(
 
   let score = 100;
 
-  // ── Head-Gaze Fusion (signed addition for compensation) ──
+  // ── Phone Usage Penalty (60 pts) ──
+  const phoneDetected = ctx?.objectDetections.some(
+    d => d.class === 'cell_phone' || d.class === 'tablet' || d.class === 'laptop' || d.rawClass?.includes('phone')
+  );
+  if (phoneDetected) {
+    score -= 60;
+  }
+
+  // ── Head-Gaze Fusion ──
   const effectiveYaw = (headPose?.yaw ?? 0) + (gaze?.combined.yaw ?? 0);
   const effectivePitch = (headPose?.pitch ?? 0) + (gaze?.combined.pitch ?? 0);
   const effectiveDeviation = Math.sqrt(effectiveYaw ** 2 + effectivePitch ** 2);
@@ -140,6 +149,12 @@ function computeRawScore(
   if (effectiveDeviation > config.deviationDeadZone) {
     const excess = effectiveDeviation - config.deviationDeadZone;
     score -= Math.round(excess * config.deviationPenaltyPerDeg);
+  }
+
+  // ── Downward Gaze / Looking Down at Lap or Phone Penalty (35 pts) ──
+  // Downward pitch > 8 deg or gaze direction 'down' indicates looking down away from screen
+  if (effectivePitch > 8 || gaze?.direction === 'down' || (headPose && headPose.pitch > 10)) {
+    score -= 35;
   }
 
   // Roll penalty
@@ -192,7 +207,7 @@ function computeComponents(
 
   // Phone detection component (100 = no phone, 0 = phone detected)
   const phoneDetected = ctx.objectDetections.some(
-    d => d.class === 'cell_phone' || d.class === 'tablet' || d.class === 'laptop',
+    d => d.class === 'cell_phone' || d.class === 'tablet' || d.class === 'laptop' || d.rawClass?.includes('phone')
   );
   const phoneScore = phoneDetected ? 0 : 100;
 

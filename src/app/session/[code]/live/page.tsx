@@ -253,7 +253,13 @@ export default function LiveClassroomPage() {
       }
     };
 
-    const isUnfocused = localMetrics.status === "distracted" || localMetrics.status === "away" || localMetrics.score < 60;
+    const isUnfocused =
+      localMetrics.status === "distracted" ||
+      localMetrics.status === "away" ||
+      localMetrics.score < 65 ||
+      localMetrics.phoneDetected ||
+      localMetrics.effectiveDeviation > 8 ||
+      (localMetrics.gazeDirection !== "center" && localMetrics.gazeDirection !== "unknown");
 
     // Reset when participant re-focuses
     if (!isUnfocused && warningLevel > 0) {
@@ -264,9 +270,9 @@ export default function LiveClassroomPage() {
       return;
     }
 
-    const WARNING_1_DELAY = 1500; // 1.5s fast trigger for Heads Up warning
-    const WARNING_2_DELAY = 5000;  // 5s trigger for Focus Needed
-    const WARNING_3_DELAY = 10000; // 10s trigger for Lesson Paused
+    const WARNING_1_DELAY = 800;  // 800ms fast trigger for Heads Up warning
+    const WARNING_2_DELAY = 4000; // 4s trigger for Focus Needed
+    const WARNING_3_DELAY = 8000; // 8s trigger for Lesson Paused
     const AUTO_KICK_DELAY = 30000; // 30s auto-kick for students
 
     // Escalate through warning levels

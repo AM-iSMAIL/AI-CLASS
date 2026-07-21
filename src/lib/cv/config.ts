@@ -141,7 +141,7 @@ export const DEFAULT_CV_CONFIG: CVConfig = {
   maxNumFaces: 2,
   minDetectionConfidence: 0.6,
   minTrackingConfidence: 0.6,
-  faceDebounceFrames: 5,
+  faceDebounceFrames: 3,
   landmarkBoundsMargin: 0.03,
 
   // Tracking
@@ -159,13 +159,13 @@ export const DEFAULT_CV_CONFIG: CVConfig = {
   marTalkingThreshold: 0.35,
 
   // Head Pose
-  rollThreshold: 20,
-  headYawThreshold: 25,
-  headPitchThreshold: 20,
+  rollThreshold: 15,
+  headYawThreshold: 18,
+  headPitchThreshold: 12,
 
   // Gaze
-  gazeHorizontalThreshold: 12,
-  gazeVerticalThreshold: 10,
+  gazeHorizontalThreshold: 10,
+  gazeVerticalThreshold: 8,
   eyeballZOffset: 0.035,
   gazeFilterMinCutoff: 1.0,
   gazeFilterBeta: 0.007,
@@ -176,46 +176,46 @@ export const DEFAULT_CV_CONFIG: CVConfig = {
   irisBaselineMinSamples: 10,
 
   // Focus Scoring
-  deviationDeadZone: 10,
-  deviationPenaltyPerDeg: 2,
-  rollPenalty: 20,
-  yawnPenalty: 25,
+  deviationDeadZone: 6,
+  deviationPenaltyPerDeg: 4,
+  rollPenalty: 25,
+  yawnPenalty: 30,
   blinkFatiguePenalty: 15,
   irisEngagementDivisor: 10,
-  emaAlpha: 0.15,
-  historySize: 30,
+  emaAlpha: 0.35, // Faster responsiveness (less lag)
+  historySize: 10, // Shorter buffer to reflect instant distraction
 
   // Sustained Distraction
-  sustainScoreThreshold: 50,
-  sustainTimeMs: 5_000,
-  sustainDecayPerSec: 2,
+  sustainScoreThreshold: 65,
+  sustainTimeMs: 1_500,
+  sustainDecayPerSec: 5,
 
   // Status
   statusFocusedMin: 70,
-  statusDistractedMin: 35,
+  statusDistractedMin: 40,
 
   // Object Detection
-  objectDetectionConfidence: 0.40,
-  objectDetectionIntervalMs: 1_200,
-  forbiddenObjects: ['cell phone', 'laptop', 'tablet'],
+  objectDetectionConfidence: 0.35,
+  objectDetectionIntervalMs: 800,
+  forbiddenObjects: ['cell phone', 'cell_phone', 'mobile phone', 'phone', 'laptop', 'tablet'],
 
   // Presence
-  absentThresholdMs: 5_000,
+  absentThresholdMs: 3_000,
 
   // Behavior
-  behaviorMinDwellMs: 2_000,
+  behaviorMinDwellMs: 600, // Faster behavior transition (600ms)
 
   // State
-  stateTransitionMinMs: 1_500,
+  stateTransitionMinMs: 500, // Fast state transition (500ms)
 
   // Violation
-  violationMinDurationMs: 3_000,
+  violationMinDurationMs: 2_000,
 
   // Evidence
   maxEvidencePerStudent: 50,
 
   // Output
-  outputThrottleMs: 3_000,
+  outputThrottleMs: 500, // Emit updates twice per second
 
   // Memory
   memoryHistorySize: 300,
@@ -225,8 +225,8 @@ export const DEFAULT_CV_CONFIG: CVConfig = {
     gaze: 0.35,
     headPose: 0.25,
     presence: 0.15,
-    phoneDetection: 0.10,
-    behaviorHistory: 0.10,
+    phoneDetection: 0.15,
+    behaviorHistory: 0.05,
     recentAttention: 0.05,
   },
 };

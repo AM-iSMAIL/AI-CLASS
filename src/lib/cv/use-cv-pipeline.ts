@@ -69,7 +69,14 @@ export function useCVPipeline({
     const s = output.currentState;
     if (s === 'absent' || s === 'camera_blocked' || output.presence === 'partial_face') {
       status = 'away';
-    } else if (s === 'distracted' || s === 'looking_away') {
+    } else if (
+      s === 'distracted' ||
+      s === 'looking_away' ||
+      s === 'phone_usage' ||
+      output.focusScore < 70 ||
+      output.phoneDetected ||
+      (output.gazeDirection !== 'center' && output.gazeDirection !== 'unknown')
+    ) {
       status = 'distracted';
     }
 
