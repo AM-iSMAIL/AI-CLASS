@@ -249,13 +249,6 @@ export default function LiveClassroomPage() {
   useEffect(() => {
     if (!hasEntered || !videoOn || endCountdown !== null || sessionStatus === "Completed") return;
 
-    const clearPending = () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-    };
-
     // Trigger strike escalation when face is in frame and student is distracted or score < 60
     const isUnfocused =
       localMetrics.faceDetected && (
@@ -271,26 +264,45 @@ export default function LiveClassroomPage() {
     const AUTO_KICK_DELAY = 4000;    // 4s after Strike 3 to kick
 
     if (isUnfocused) {
+      if (timerRef.current) return; // Keep existing timeout running without resetting it
+
       if (warningLevel === 0) {
-        clearPending();
-        timerRef.current = setTimeout(() => setWarningLevel(1), 800);
+        timerRef.current = setTimeout(() => {
+          timerRef.current = null;
+          setWarningLevel(1);
+        }, 800);
       } else if (warningLevel === 1) {
-        clearPending();
-        timerRef.current = setTimeout(() => setWarningLevel(2), STRIKE_STEP_DELAY);
+        timerRef.current = setTimeout(() => {
+          timerRef.current = null;
+          setWarningLevel(2);
+        }, STRIKE_STEP_DELAY);
       } else if (warningLevel === 2) {
-        clearPending();
-        timerRef.current = setTimeout(() => setWarningLevel(3), STRIKE_STEP_DELAY);
+        timerRef.current = setTimeout(() => {
+          timerRef.current = null;
+          setWarningLevel(3);
+        }, STRIKE_STEP_DELAY);
       } else if (warningLevel === 3) {
-        clearPending();
         timerRef.current = setTimeout(async () => {
+          timerRef.current = null;
           const storedName = studentName || "Unknown";
           if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
           window.location.href = `/session/${sessionCode}/summary?kicked=true`;
         }, AUTO_KICK_DELAY);
       }
+    } else {
+      // If user refocuses, clear any running warning timers and reset level to 0
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+      if (warningLevel > 0) {
+        setWarningLevel(0);
+      }
     }
 
-    return clearPending;
+    return () => {
+      // Clean up on unmount or dependency updates (without clearing progress on stable unfocused status)
+    };
   }, [localMetrics.status, localMetrics.score, localMetrics.faceDetected, localMetrics.phoneDetected, localMetrics.effectiveDeviation, localMetrics.gazeDirection, warningLevel, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
 
   // ── Out of frame auto-kick engine ──
