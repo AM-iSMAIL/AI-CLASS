@@ -37,7 +37,7 @@ import { getFile } from "@/lib/fileStorage"
 import { extractPDFPages } from "@/lib/pdfParser"
 import StudentCamera from "@/components/StudentCamera"
 import type { FocusMetrics } from "@/lib/cv/use-cv-pipeline"
-import { subscribeToStudents, subscribeToSession, syncClassroomProgress, setStudentOffline, checkIsIdKicked, checkIsKicked, isStudentRegistered, endSession, kickStudent } from "@/lib/session-service"
+import { subscribeToStudents, subscribeToSession, syncClassroomProgress, setStudentOffline, checkIsIdKicked, checkIsKicked, isStudentRegistered, endSession, kickStudent, removeStudent } from "@/lib/session-service"
 import { classroomContext } from "@/lib/classroom-context"
 
 /* ─── MOCK DATA ─── */
@@ -681,6 +681,55 @@ export default function LiveClassroomPage() {
     ttsRunIdRef.current++
     setAiSpeechState("idle")
   }, [])
+
+  // Immediate Session Termination Handler (Zero delay)
+  const handleEndSession = useCallback(async () => {
+    stopSpeaking()
+    if (localStream) {
+      localStream.getTracks().forEach((track) => track.stop())
+    }
+    try {
+      await endSession(sessionCode)
+    } catch (err) {
+      console.error("Error ending session:", err)
+    }
+    window.location.href = `/session/${sessionCode}/summary`
+  }, [sessionCode, localStream, stopSpeaking])
+
+  // Immediate Leave Session Handler (Zero delay)
+  const handleLeaveSession = useCallback(async () => {
+    stopSpeaking()
+    if (localStream) {
+      localStream.getTracks().forEach((track) => track.stop())
+    }
+    if (!isTeacher && studentId) {
+      try {
+        await removeStudent(sessionCode, studentId)
+      } catch (err) {
+        console.error("Error removing student on leave:", err)
+      }
+    }
+    if (isTeacher) {
+      window.location.href = "/dashboard"
+    } else {
+      window.location.href = "/student-dashboard"
+    }
+  }, [sessionCode, isTeacher, studentId, localStream, stopSpeaking])
+
+  // Real-time listener for session state (instantly redirects when teacher ends session)
+  useEffect(() => {
+    if (!sessionCode) return
+    const unsubscribe = subscribeToSession(sessionCode, (updatedSession) => {
+      if (updatedSession?.status === "Completed") {
+        stopSpeaking()
+        if (localStream) {
+          localStream.getTracks().forEach((track) => track.stop())
+        }
+        window.location.href = `/session/${sessionCode}/summary`
+      }
+    })
+    return () => unsubscribe()
+  }, [sessionCode, localStream, stopSpeaking])
 
   const pauseSpeaking = useCallback(() => {
     try { window.speechSynthesis.pause() } catch {}
@@ -2490,7 +2539,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           </div>
           {isTeacher && (
             <div className="flex items-center gap-2">
-              <button id="end-session-btn" onClick={() => setShowEndModal(true)} className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl transition-colors cursor-pointer text-xs font-bold">End Session</button>
+              <button id="end-session-btn" onClick={handleEndSession} className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl transition-colors cursor-pointer text-xs font-bold shadow-lg shadow-red-600/20 active:scale-95">End Session</button>
             </div>
           )}
         </div>
@@ -2932,12 +2981,14 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         </div>
 
         {/* Leave — separate red pill */}
-        <Link href="/dashboard" onClick={stopSpeaking}
-          className="flex flex-col items-center justify-center gap-0.5 px-5 rounded-2xl text-red-400 hover:bg-red-600/15 transition-all"
-          style={{ height: 64, background: "rgba(220,38,38,.08)", backdropFilter: "blur(20px)", border: "1px solid rgba(239,68,68,.12)" }}>
+        <button
+          onClick={handleLeaveSession}
+          className="flex flex-col items-center justify-center gap-0.5 px-5 rounded-2xl text-red-400 hover:bg-red-600/15 transition-all cursor-pointer active:scale-95"
+          style={{ height: 64, background: "rgba(220,38,38,.08)", backdropFilter: "blur(20px)", border: "1px solid rgba(239,68,68,.12)" }}
+        >
           <LogOut className="h-[18px] w-[18px]" />
           <span className="text-[11px] font-medium">Leave</span>
-        </Link>
+        </button>
       </div>
 
       {/* ═══ TOASTS ═══ */}
