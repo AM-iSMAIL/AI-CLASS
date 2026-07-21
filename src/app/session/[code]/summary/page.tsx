@@ -92,7 +92,9 @@ export default function SummaryPage() {
       const role = localStorage.getItem("userRole");
       const name = localStorage.getItem("studentName");
       if (role === "student" || (!!name && role !== "teacher")) {
-        setIsStudentRole(true);
+        setTimeout(() => {
+          setIsStudentRole(true);
+        }, 0);
       }
     }
   }, []);

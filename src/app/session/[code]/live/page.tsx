@@ -258,10 +258,12 @@ export default function LiveClassroomPage() {
       }
     };
 
-    // Trigger strike escalation when face is in frame and student focus score is 30 or less
+    // Trigger strike escalation when face is in frame and student focus score is 30 or less, or if phone is detected
     const isUnfocused =
-      localMetrics.faceDetected &&
-      localMetrics.score <= 30;
+      localMetrics.faceDetected && (
+        localMetrics.score <= 30 ||
+        localMetrics.phoneDetected
+      );
 
     const STRIKE_STEP_DELAY = 2500; // 2.5s between strikes
     const AUTO_KICK_DELAY = 4000;    // 4s after Strike 3 to kick
@@ -274,7 +276,9 @@ export default function LiveClassroomPage() {
 
       // Display warning modal overlay if not currently shown
       if (warningLevel === 0) {
-        setWarningLevel(nextStrike);
+        setTimeout(() => {
+          setWarningLevel(nextStrike);
+        }, 0);
       }
 
       // Automatically advance to the next strike if they remain distracted
@@ -300,7 +304,9 @@ export default function LiveClassroomPage() {
       // If user refocuses, clear running warning timers. Keep warningLevel = 0 so modal closes.
       clearPending();
       if (warningLevel > 0) {
-        setWarningLevel(0);
+        setTimeout(() => {
+          setWarningLevel(0);
+        }, 0);
       }
     }
 
@@ -342,7 +348,9 @@ export default function LiveClassroomPage() {
       return;
     }
 
-    setOutOfFrameSecondsLeft(5);
+    setTimeout(() => {
+      setOutOfFrameSecondsLeft(5);
+    }, 0);
 
     outOfFrameIntervalRef.current = setInterval(() => {
       setOutOfFrameSecondsLeft((prev) => {
