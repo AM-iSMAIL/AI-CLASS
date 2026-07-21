@@ -1450,13 +1450,20 @@ export default function LiveClassroomPage() {
                               }
                               sentenceBuffer = rest;
                             }
-                            // Always wait for the IMAGE_PROMPT line so every spoken sentence gets an image
-                            // Prevent flushing if sentence doesn't have an IMAGE_PROMPT yet unless sentenceBuffer is huge
-                            if (sentenceBuffer.length > 500 && shouldFlushSpeechBuffer(sentenceBuffer)) {
-                              flushSlide(sentenceBuffer, "", false);
-                              sentenceBuffer = "";
+                            } else {
+                              // Flush on sentence boundary for fast first voice response
+                              const trimmed = sentenceBuffer.trim();
+                              const cleanUpper = trimmed.toUpperCase();
+                              const lastIdx = cleanUpper.lastIndexOf("I");
+                              const isPartiallyReceivingImagePrompt = lastIdx !== -1 && 
+                                (lastIdx === 0 || cleanUpper[lastIdx - 1] === " " || cleanUpper[lastIdx - 1] === "\n") &&
+                                "IMAGE_PROMPT:".startsWith(cleanUpper.substring(lastIdx));
+
+                              if (!isPartiallyReceivingImagePrompt && shouldFlushSpeechBuffer(sentenceBuffer)) {
+                                flushSlide(sentenceBuffer, "", false);
+                                sentenceBuffer = "";
+                              }
                             }
-                          }
                        }
                     } catch (e) {}
                  }
