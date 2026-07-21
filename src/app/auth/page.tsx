@@ -196,13 +196,20 @@ export default function AuthPage() {
           )
         ])
         
-        localStorage.setItem("studentName", name)
-        localStorage.setItem("studentId", studentId)
-        
+        // Pre-warm / Request camera permission immediately on click
+        try {
+          if (typeof navigator !== "undefined" && navigator.mediaDevices?.getUserMedia) {
+            const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            tempStream.getTracks().forEach((track) => track.stop());
+          }
+        } catch (camErr) {
+          console.warn("Camera pre-grant warning:", camErr);
+        }
+
         setSuccess(`Joining session ${formattedCode} as ${name}...`)
         setTimeout(() => {
           window.location.href = `/session/${formattedCode}`
-        }, 1500)
+        }, 800)
       }
     } catch (err: any) {
       console.warn("Authentication or database error:", err)
