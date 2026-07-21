@@ -79,6 +79,21 @@ export default function AuthPage() {
     }, 0)
   }, [tab, teacherMode, studentMode])
 
+  // Instant Demo Access Handler (Bypasses domain whitelist restrictions)
+  const handleDemoSignIn = (role: "teacher" | "student") => {
+    setIsSubmitting(true)
+    setError(null)
+    const demoName = name.trim() || (role === "teacher" ? "Demo Teacher" : "Demo Student")
+    const demoId = "demo-" + Math.random().toString(36).substring(2, 8)
+    setSuccess(`Entering as ${demoName}... Opening Dashboard`)
+    localStorage.setItem("userRole", role)
+    localStorage.setItem("studentName", demoName)
+    localStorage.setItem("studentId", demoId)
+    setTimeout(() => {
+      window.location.href = role === "teacher" ? "/dashboard" : "/student-dashboard"
+    }, 1000)
+  }
+
   // Sign in with Google
   const handleGoogleSignIn = async () => {
     try {
@@ -106,6 +121,8 @@ export default function AuthPage() {
       setIsSubmitting(false)
       if (err.code === "auth/popup-closed-by-user") {
         setError("Sign-in popup closed before completion. Please try again.")
+      } else if (err.code === "auth/unauthorized-domain") {
+        setError("Firebase domain authorization required for Google Auth on this custom URL. Click 'Continue as Guest' below to enter instantly.")
       } else {
         setError(err.message || "Failed to sign in with Google.")
       }
@@ -214,6 +231,8 @@ export default function AuthPage() {
         setError("Please enter a valid email address.")
       } else if (err.code === "auth/weak-password") {
         setError("Password must be at least 6 characters.")
+      } else if (err.code === "auth/unauthorized-domain") {
+        setError("This deployment URL is not yet whitelisted in Firebase Auth. Click 'Continue as Guest' below to enter instantly.")
       } else {
         setError(err.message || "An error occurred. Please check your credentials.")
       }
@@ -353,8 +372,17 @@ export default function AuthPage() {
 
             {/* Error and Success status notifications */}
             {error && (
-              <div className="mb-4 rounded-lg bg-rose-50 border border-rose-100 p-3 text-xs font-semibold text-rose-600">
-                {error}
+              <div className="mb-4 rounded-xl bg-rose-50 border border-rose-100 p-4 text-xs font-semibold text-rose-600 space-y-2">
+                <p>{error}</p>
+                {error.includes("whitelisted") || error.includes("unauthorized-domain") || error.includes("Firebase") ? (
+                  <button
+                    type="button"
+                    onClick={() => handleDemoSignIn(tab)}
+                    className="w-full py-2 bg-purple-600 text-white rounded-lg font-bold text-xs hover:bg-purple-700 transition-colors shadow-sm cursor-pointer mt-1"
+                  >
+                    Continue as Guest ({tab === "teacher" ? "Demo Teacher" : "Demo Student"}) →
+                  </button>
+                ) : null}
               </div>
             )}
 
@@ -836,6 +864,18 @@ export default function AuthPage() {
                 </div>
               )}
             </form>
+
+            {/* Quick Demo Access Option */}
+            <div className="mt-6 pt-4 border-t border-neutral-100 text-center">
+              <button
+                type="button"
+                onClick={() => handleDemoSignIn(tab)}
+                className="w-full py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-purple-600" />
+                Skip Auth &amp; Enter in Demo Mode ({tab === "teacher" ? "Teacher" : "Student"})
+              </button>
+            </div>
           </div>
         </div>
       </div>
