@@ -247,7 +247,7 @@ export default function LiveClassroomPage() {
 
   // ── Warning escalation engine ──
   useEffect(() => {
-    if (!hasEntered || !videoOn || isTeacher || endCountdown !== null || sessionStatus === "Completed") return;
+    if (!hasEntered || !videoOn || endCountdown !== null || sessionStatus === "Completed") return;
 
     const clearPending = () => {
       if (timerRef.current) {
@@ -276,7 +276,7 @@ export default function LiveClassroomPage() {
     const WARNING_1_DELAY = 800;  // 800ms fast trigger for Heads Up warning
     const WARNING_2_DELAY = 4000; // 4s trigger for Focus Needed
     const WARNING_3_DELAY = 8000; // 8s trigger for Lesson Paused
-    const AUTO_KICK_DELAY = 30000; // 30s auto-kick for students
+    const AUTO_KICK_DELAY = 30000; // 30s auto-kick
 
     // Escalate through warning levels
     if (isUnfocused && warningLevel === 0) {
@@ -302,7 +302,7 @@ export default function LiveClassroomPage() {
 
   // ── Out of frame auto-kick engine ──
   useEffect(() => {
-    if (!hasEntered || !videoOn || isTeacher || endCountdown !== null || sessionStatus === "Completed") return;
+    if (!hasEntered || !videoOn || endCountdown !== null || sessionStatus === "Completed") return;
 
     const clearOutOfFrameTimers = () => {
       if (outOfFrameTimerRef.current) {
@@ -346,9 +346,9 @@ export default function LiveClassroomPage() {
     return clearOutOfFrameTimers;
   }, [localMetrics.faceDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
 
-  // ── Phone usage warning and auto-kick engine ──
+  // ── Phone usage warning engine ──
   useEffect(() => {
-    if (!hasEntered || !videoOn || isTeacher || endCountdown !== null || sessionStatus === "Completed") return;
+    if (!hasEntered || !videoOn || endCountdown !== null || sessionStatus === "Completed") return;
 
     const clearPhoneTimers = () => {
       if (phoneTimerRef.current) {
