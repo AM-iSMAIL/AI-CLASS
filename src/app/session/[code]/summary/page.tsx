@@ -375,11 +375,11 @@ export default function SummaryPage() {
 
         <div className="pt-4 border-t border-white/10">
           <button
-            onClick={() => router.push("/dashboard")}
-            className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-bold text-white transition-all flex items-center justify-center gap-2 cursor-pointer font-mono"
+            onClick={() => router.push("/student-dashboard")}
+            className="w-full py-4 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer font-mono shadow-lg shadow-purple-600/20"
           >
             <ArrowLeft className="w-4 h-4" />
-            Return to Dashboard
+            Return to Student Dashboard
           </button>
         </div>
       </div>

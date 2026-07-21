@@ -40,6 +40,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import DashboardSidebar from "@/components/dashboard-sidebar"
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
+import ClassroomAnalyticsSection from "@/components/ClassroomAnalyticsSection"
 
 function DashboardContent() {
   const router = useRouter()
@@ -752,117 +753,15 @@ function DashboardContent() {
           {/* 3. ANALYTICS TAB */}
           {currentTab === "analytics" && (
             <div className="space-y-8 animate-fadeIn">
-              <div>
-                <h2 className="text-xl font-bold text-white">Classroom Performance Analytics</h2>
-                <p className="text-xs text-white/40 mt-1">Focus fluctuations, status indicators, and assistant configurations</p>
-              </div>
-
-              {/* Primary Chart mockup / Visual panels */}
-              <div className="grid gap-6 md:grid-cols-3">
-                <div className="md:col-span-2 bg-[#1a1a1a] rounded-xl border border-white/5 p-6 space-y-6">
-                  <div className="flex items-center justify-between border-b border-white/5 pb-4">
-                    <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                      <Activity className="h-4 w-4 text-purple-400" />
-                      Session Average Attention Levels
-                    </h3>
-                    <span className="text-xs text-white/40">Real Completed Classes</span>
-                  </div>
-
-                  <div className="space-y-4">
-                    {loadingFocusScores ? (
-                      <div className="py-12 text-center text-white/30 text-xs">Calculating focus history...</div>
-                    ) : sessions.filter(s => s.status === "Completed").length === 0 ? (
-                      <div className="py-12 text-center text-white/40 text-xs leading-relaxed">
-                        <Info className="h-6 w-6 text-white/20 mx-auto mb-2" />
-                        No focus data available. Complete a session with students to see trends.
-                      </div>
-                    ) : (
-                      sessions
-                        .filter(s => s.status === "Completed")
-                        .slice(0, 5)
-                        .map((sess, i) => {
-                          const focusVal = sessionFocusScores[sess.code] || 0
-                          return (
-                            <div key={i} className="space-y-1.5">
-                              <div className="flex justify-between text-xs">
-                                <span className="font-semibold text-white/95">
-                                  {sess.title || sess.name}{" "}
-                                  <span className="text-[10px] text-white/40 font-mono">({sess.code})</span>
-                                </span>
-                                <span className="font-bold text-purple-400">{focusVal > 0 ? `${focusVal}% Avg` : "0% Focus"}</span>
-                              </div>
-                              <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                                <div 
-                                  className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full transition-all duration-1000"
-                                  style={{ width: `${focusVal}%` }}
-                                />
-                              </div>
-                            </div>
-                          )
-                        })
-                    )}
-                  </div>
-                </div>
-
-                {/* Right Panel: Focus Distribution */}
-                <div className="bg-[#1a1a1a] rounded-xl border border-white/5 p-6 flex flex-col justify-between">
-                  <div className="border-b border-white/5 pb-3">
-                    <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-emerald-400" />
-                      Active Focus Distribution
-                    </h3>
-                  </div>
-
-                  <div className="py-6 space-y-5">
-                    {loadingDistribution ? (
-                      <div className="text-center text-white/30 text-xs py-8">Analyzing student states...</div>
-                    ) : (focusDistribution.active === 0 && focusDistribution.idle === 0 && focusDistribution.distracted === 0) ? (
-                      <div className="text-center text-white/40 text-xs py-8">
-                        No active student data.
-                      </div>
-                    ) : (
-                      <>
-                        {/* Active */}
-                        <div className="space-y-1.5">
-                          <div className="flex justify-between text-xs">
-                            <span className="text-white/60 font-semibold">Active & Focused</span>
-                            <span className="font-bold text-emerald-400">{focusDistribution.active}%</span>
-                          </div>
-                          <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                            <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${focusDistribution.active}%` }} />
-                          </div>
-                        </div>
-
-                        {/* Idle */}
-                        <div className="space-y-1.5">
-                          <div className="flex justify-between text-xs">
-                            <span className="text-white/60 font-semibold">Idle / Drowsy</span>
-                            <span className="font-bold text-amber-400">{focusDistribution.idle}%</span>
-                          </div>
-                          <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                            <div className="h-full bg-amber-500 rounded-full" style={{ width: `${focusDistribution.idle}%` }} />
-                          </div>
-                        </div>
-
-                        {/* Distracted */}
-                        <div className="space-y-1.5">
-                          <div className="flex justify-between text-xs">
-                            <span className="text-white/60 font-semibold">Distracted / Left Frame</span>
-                            <span className="font-bold text-red-400">{focusDistribution.distracted}%</span>
-                          </div>
-                          <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                            <div className="h-full bg-red-500 rounded-full" style={{ width: `${focusDistribution.distracted}%` }} />
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  <div className="bg-black/10 rounded-lg p-3 text-[10px] text-white/50 leading-relaxed border border-white/5">
-                    💡 **AI recommendation:** Active focus levels represent live student presence. Regularly trigger doubt check-in breaks to improve attention spans.
-                  </div>
-                </div>
-              </div>
+              <ClassroomAnalyticsSection
+                sessions={sessions}
+                sessionFocusScores={sessionFocusScores}
+                focusDistribution={focusDistribution}
+                roster={roster}
+                kickedLogs={kickedLogs}
+                loadingFocusScores={loadingFocusScores}
+                loadingDistribution={loadingDistribution}
+              />
 
               {/* Bottom statistics grid */}
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
