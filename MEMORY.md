@@ -140,6 +140,7 @@ src/
   - [x] Configured real-time classification to scan for forbidden devices (`cell phone`, `tablet`) once every 300ms (lowered from 1200ms) with a lower confidence threshold of 0.20 (lowered from 0.35) to improve detection accuracy. (Note: `laptop` was removed from the forbidden list to prevent false positives for students joining via computer).
   - [x] Implemented a 3-strikes warnings modal: warning dialog pops up on screen on detection, and automatically kicks/ejects the student if detected 3 times consecutively, redirecting to a custom `device_usage` exit screen.
   - [x] Debounced the phone warning clear logic with a 3-second delay to prevent momentary model misclassifications from reset-evading the countdown.
+  - [x] Integrated real-time focus score tracking for the teacher, storing the teacher's average focus score directly on the `sessions/{code}` document under `teacherEngagementScore` and displaying a dedicated card for it on the session summary report.
   - [x] Pushed all updates to main GitHub repository branch and triggered live Vercel deployments.
 - [x] Integrated AI Study Buddy feature (/study-buddy) supporting collaborative study paths.
 - [x] Integrated NVIDIA NIM API endpoint for the Classroom AI teacher:

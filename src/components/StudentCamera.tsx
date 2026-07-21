@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback } from "react";
 import { useCVPipeline, FocusMetrics } from "@/lib/cv/use-cv-pipeline";
-import { updateStudentEngagement } from "@/lib/session-service";
+import { updateStudentEngagement, updateTeacherEngagement } from "@/lib/session-service";
 import { Eye, EyeOff, ScanEye, Brain } from "lucide-react";
 
 // ─── Constants ──────────────────────────────────────────────────────────────
@@ -39,12 +39,16 @@ export default function StudentCamera({
     async (m: FocusMetrics) => {
       if (onLocalFocusUpdate) onLocalFocusUpdate(m);
       try {
-        await updateStudentEngagement(sessionCode, studentId, studentName || studentId, m.score, m.status);
+        if (isTeacher) {
+          await updateTeacherEngagement(sessionCode, m.score, m.status);
+        } else {
+          await updateStudentEngagement(sessionCode, studentId, studentName || studentId, m.score, m.status);
+        }
       } catch {
         // Silently ignore transient network failures
       }
     },
-    [sessionCode, studentId, studentName, onLocalFocusUpdate],
+    [sessionCode, studentId, studentName, onLocalFocusUpdate, isTeacher],
   );
 
   const { metrics } = useCVPipeline({

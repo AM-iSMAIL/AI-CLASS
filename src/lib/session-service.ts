@@ -329,6 +329,24 @@ export const updateStudentEngagement = async (
   }
 }
 
+// 6.2 Update teacher presence & engagement telemetry on the session document
+export const updateTeacherEngagement = async (
+  sessionCode: string,
+  score: number,
+  status: "focused" | "distracted" | "away" | "offline"
+): Promise<void> => {
+  try {
+    const sessionRef = doc(db, "sessions", sessionCode.trim().toUpperCase())
+    await updateDoc(sessionRef, {
+      teacherEngagementScore: score,
+      teacherEngagementStatus: status,
+      teacherLastActive: serverTimestamp(),
+    })
+  } catch (error) {
+    console.error("Error updating teacher engagement:", error)
+  }
+}
+
 // 6.5 Remove student explicitly when they leave
 import { deleteDoc } from "firebase/firestore";
 

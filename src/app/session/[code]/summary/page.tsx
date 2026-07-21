@@ -111,7 +111,7 @@ export default function SummaryPage() {
     try {
       const headers = ["Student Name", "Status", "Join Time", "Average Focus Score"];
       const rows = [
-        ...studentsList.map(s => {
+        ...studentsList.filter(s => s.id !== session.teacherId).map(s => {
           const joinedTime = s.joinedAt?.seconds 
             ? new Date(s.joinedAt.seconds * 1000).toLocaleTimeString() 
             : "Unknown";
@@ -164,9 +164,10 @@ export default function SummaryPage() {
 
   // ─── TEACHER VIEW: ATTENDANCE REPORT ───
   if (isTeacher && session) {
-    const totalAttendees = studentsList.length + kickedList.length;
-    const avgFocusScore = studentsList.length > 0
-      ? Math.floor(studentsList.reduce((acc, s) => acc + (s.engagementScore || 0), 0) / studentsList.length)
+    const studentsOnly = studentsList.filter(s => s.id !== session.teacherId);
+    const totalAttendees = studentsOnly.length + kickedList.length;
+    const avgFocusScore = studentsOnly.length > 0
+      ? Math.floor(studentsOnly.reduce((acc, s) => acc + (s.engagementScore || 0), 0) / studentsOnly.length)
       : 0;
 
     return (
@@ -216,7 +217,7 @@ export default function SummaryPage() {
           </div>
 
           {/* Stats Row */}
-          <section className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+          <section className={`grid gap-4 grid-cols-2 ${(session as any).teacherEngagementScore !== undefined ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
             {/* Attendees */}
             <div className="bg-[#1a1a1a] rounded-xl border border-white/5 p-5">
               <div className="flex items-center justify-between text-white/40 mb-3">
@@ -237,6 +238,18 @@ export default function SummaryPage() {
               <span className="text-[10px] text-emerald-400 font-medium">Class focus average</span>
             </div>
 
+            {/* Teacher Focus */}
+            {(session as any).teacherEngagementScore !== undefined && (
+              <div className="bg-[#1a1a1a] rounded-xl border border-white/5 p-5">
+                <div className="flex items-center justify-between text-white/40 mb-3">
+                  <span className="text-[10px] font-bold uppercase tracking-wider font-mono">Teacher Focus</span>
+                  <Brain className="h-4 w-4 text-purple-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-white">{(session as any).teacherEngagementScore}%</h3>
+                <span className="text-[10px] text-purple-400 font-medium">Your focus average</span>
+              </div>
+            )}
+
             {/* Present Now */}
             <div className="bg-[#1a1a1a] rounded-xl border border-white/5 p-5">
               <div className="flex items-center justify-between text-white/40 mb-3">
@@ -244,7 +257,7 @@ export default function SummaryPage() {
                 <CheckCircle2 className="h-4 w-4 text-purple-400" />
               </div>
               <h3 className="text-2xl font-bold text-white">
-                {studentsList.filter(s => s.status !== "offline").length}
+                {studentsOnly.filter(s => s.status !== "offline").length}
               </h3>
               <span className="text-[10px] text-white/30 font-medium">Active till the end</span>
             </div>
@@ -278,7 +291,7 @@ export default function SummaryPage() {
                 </thead>
                 <tbody className="divide-y divide-[#242424]">
                   {/* Active & Offline Students */}
-                  {studentsList.map((student) => {
+                  {studentsOnly.map((student) => {
                     const focusColor = 
                       student.engagementScore >= 80 ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" :
                       student.engagementScore >= 65 ? "text-amber-400 bg-amber-500/10 border-amber-500/20" :
