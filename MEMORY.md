@@ -155,7 +155,11 @@ src/
   - [x] Copied the missing `vendor/ponytail` files (including the `skills` files) from the backup project directory to resolve the `Ponytail skill 'ponytail' not found` API 500 error.
   - [x] Completely removed Gemini API, Unsplash API, and YouTube API dependencies from [`.env`](file:///c:/Users/mdism/Downloads/future%20learnin%20meet/.env) and [`AIStudyBuddy.tsx`](file:///c:/Users/mdism/Downloads/future%20learnin%20meet/src/components/AIStudyBuddy.tsx).
   - [x] Configured AI Study Buddy to use client-side text extraction and `/api/nvidia` for document summary and chat.
-  - [x] Removed YouTube suggestions option from the dashboard create-session page.
+  - [x] NVIDIA NIM DNS IPv4 Resolution Fix & Vercel Deployment:
+  - [x] Resolved Windows OS Dual-Stack / IPv6 `getaddrinfo` latency by implementing a direct IPv4 `customLookup` handler using `dns.resolve4` in `src/lib/teacher/index.ts`.
+  - [x] Added `dns.setDefaultResultOrder("ipv4first")` to `src/lib/dns-fix.ts`.
+  - [x] Reverted offline fallback as requested, preserving direct NVIDIA NIM streaming (15ms TTFT, HTTP 200 OK).
+  - [x] Committed changes to GitHub repository (`main` branch) and deployed to Vercel production (`https://ai-class-ashy.vercel.app`).
 - [x] NVIDIA NIM Speech gRPC Integration & Fallbacks:
   - [x] Installed `@grpc/grpc-js` and `@grpc/proto-loader` dependencies.
   - [x] Created `src/app/api/speech/riva_tts.proto` define the Riva proto schema.
