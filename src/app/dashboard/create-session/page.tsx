@@ -184,11 +184,9 @@ export default function CreateSessionPage() {
   const handleStep3Submit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Clean up empty topics if we are using the topic list
-    if (teachingMode === "Human" || (teachingMode === "AI" && aiTab === "topics")) {
-      const cleanedTopics = topics.filter(t => t.trim() !== "")
-      setTopics(cleanedTopics)
-    }
+    // Clean up empty topics
+    const cleanedTopics = topics.filter(t => t.trim() !== "")
+    setTopics(cleanedTopics)
 
     // Generate session code
     setSessionCode(generateCode())
@@ -206,14 +204,8 @@ export default function CreateSessionPage() {
       
       const extraSettings: any = {}
       if (teachingMode) extraSettings.teachingMode = teachingMode
-      if (teachingMode === "AI" && aiInstructions) extraSettings.aiInstructions = aiInstructions
       if (teachingMode === "Human") extraSettings.aiAssistants = aiAssistants
-      if (teachingMode === "AI" && aiTab === "upload" && uploadedFile) {
-        extraSettings.uploadedFile = uploadedFile
-      } else {
-        try { await clearFiles() } catch { /* ignore */ }
-      }
-      if (teachingMode === "Human" && referenceMaterial) extraSettings.referenceMaterial = referenceMaterial
+      try { await clearFiles() } catch { /* ignore */ }
 
       const createPromise = createSession(
         user.uid,
@@ -222,7 +214,7 @@ export default function CreateSessionPage() {
         gradeLevel,
         activeDuration,
         sessionType,
-        (teachingMode === "Human" || aiTab === "topics") ? topics.filter((t) => t.trim() !== "") : [],
+        topics.filter((t) => t.trim() !== ""),
         sessionCode,
         scheduleLater ? scheduledDate : undefined,
         extraSettings
@@ -616,99 +608,12 @@ export default function CreateSessionPage() {
                 {/* ─── BRANCH: AI TEACHER ─── */}
                 {teachingMode === "AI" && (
                   <div className="space-y-6">
-                    {/* Sub-Tabs */}
-                    <div className="grid grid-cols-2 gap-1 rounded-xl bg-[#111111] border border-white/5 p-1">
-                      <button
-                        type="button"
-                        onClick={() => setAiTab("upload")}
-                        className={`rounded-lg py-2 text-xs font-bold transition-all cursor-pointer ${
-                          aiTab === "upload"
-                            ? "bg-purple-600 text-white shadow-sm"
-                            : "text-white/60 hover:text-white"
-                        }`}
-                      >
-                        Upload PPT/PDF
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setAiTab("topics")}
-                        className={`rounded-lg py-2 text-xs font-bold transition-all cursor-pointer ${
-                          aiTab === "topics"
-                            ? "bg-purple-600 text-white shadow-sm"
-                            : "text-white/60 hover:text-white"
-                        }`}
-                      >
-                        Add Topics
-                      </button>
+                    <div>
+                      <label className="text-xs font-bold uppercase tracking-wider text-white/60 block mb-3">
+                        Plan lecture topics for AI Teacher
+                      </label>
+                      {renderTopicsList()}
                     </div>
-
-                    {/* AI Tab 1: Upload */}
-                    {aiTab === "upload" && (
-                      <div className="space-y-4">
-                        <label className="text-xs font-bold uppercase tracking-wider text-white/60 block">
-                          Upload Class Presentations or Documents
-                        </label>
-                        
-                        {!uploadedFile ? (
-                          <label className="border-2 border-dashed border-white/10 hover:border-purple-500/50 bg-[#111111]/50 rounded-xl p-8 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-3 group relative">
-                            <input
-                              type="file"
-                              accept=".pdf,.ppt,.pptx"
-                              className="hidden"
-                              onChange={(e) => handleFileUpload(e, "ai")}
-                            />
-                            <div className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 group-hover:text-purple-400 group-hover:bg-purple-500/10 transition-all">
-                              <Upload className="h-5 w-5" />
-                            </div>
-                            <div>
-                              <p className="text-xs font-bold text-white">Click to upload lecture slides or syllabus</p>
-                              <p className="text-[10px] text-white/30 mt-1">Accepts .ppt, .pptx, .pdf (Max 50MB)</p>
-                            </div>
-                          </label>
-                        ) : (
-                          <div className="flex items-center justify-between bg-purple-500/5 border border-purple-500/20 p-4 rounded-xl animate-fadeIn">
-                            <div className="flex items-center gap-3 overflow-hidden">
-                              <div className="h-9 w-9 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 flex-shrink-0">
-                                <FileText className="h-4.5 w-4.5" />
-                              </div>
-                              <div className="overflow-hidden">
-                                <p className="text-xs font-semibold text-white truncate">{uploadedFile.name}</p>
-                                <p className="text-[9px] text-white/40 font-medium">{uploadedFile.size} • {uploadedFile.pages} pages</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="h-6 w-6 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-xs">
-                                ✓
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => setUploadedFile(null)}
-                                className="text-white/20 hover:text-red-400 p-1.5 transition-colors"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Optional AI Instructions */}
-                        <div className="space-y-2 pt-2">
-                          <label className="text-xs font-bold uppercase tracking-wider text-white/60">
-                            Optional Instructions for AI
-                          </label>
-                          <textarea
-                            value={aiInstructions}
-                            onChange={(e) => setAiInstructions(e.target.value)}
-                            placeholder="e.g. Focus on interactive quiz check-ins, explain in simple terms, include real-world applications..."
-                            rows={3}
-                            className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-xl text-sm focus:outline-none focus:border-purple-500 transition-all text-white placeholder-white/20 resize-none"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* AI Tab 2: Topics List */}
-                    {aiTab === "topics" && renderTopicsList()}
                   </div>
                 )}
 
@@ -872,33 +777,19 @@ export default function CreateSessionPage() {
                     </p>
                   </div>
 
-                  {teachingMode === "AI" && aiTab === "upload" && uploadedFile && (
-                    <div className="border-t border-white/5 pt-3.5 space-y-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 block">
-                        Uploaded File
-                      </span>
-                      <div className="flex items-center gap-2 text-xs text-white/70">
-                        <FileText className="h-4 w-4 text-purple-400" />
-                        <span>{uploadedFile.name}</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {((teachingMode === "Human") || (teachingMode === "AI" && aiTab === "topics")) && (
-                    <div className="border-t border-white/5 pt-3.5 space-y-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 block">
-                        Topics Flow ({topics.length})
-                      </span>
-                      <ul className="space-y-1.5 text-xs text-white/60">
-                        {topics.map((t, idx) => (
-                          <li key={idx} className="flex items-center gap-2">
-                            <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
-                            {t}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                  <div className="border-t border-white/5 pt-3.5 space-y-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 block">
+                      Topics Flow ({topics.length})
+                    </span>
+                    <ul className="space-y-1.5 text-xs text-white/60">
+                      {topics.map((t, idx) => (
+                        <li key={idx} className="flex items-center gap-2">
+                          <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+                          {t}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
 
                 {/* Session Code Panel */}

@@ -3284,6 +3284,11 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                       {warningLevel === 2 && "Sustained distraction detected. Please face forward to resume your focus score."}
                       {warningLevel === 3 && "The class stream is currently paused. Tap below when you are ready to resume."}
                     </p>
+                    <div className="pt-1">
+                      <span className="text-[11px] font-bold text-rose-400/90 bg-rose-500/10 border border-rose-500/20 rounded-lg px-2.5 py-1 inline-block">
+                        ⚠️ Warning: Receiving more than 3 focus strikes will result in being kicked from the class.
+                      </span>
+                    </div>
                   </div>
 
                   {/* Focus metrics pill */}
