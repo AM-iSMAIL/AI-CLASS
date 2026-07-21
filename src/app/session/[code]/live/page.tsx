@@ -225,6 +225,7 @@ export default function LiveClassroomPage() {
   const outOfFrameIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const phoneTimerRef = useRef<NodeJS.Timeout | null>(null)
   const phoneIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const phoneClearTimerRef = useRef<NodeJS.Timeout | null>(null)
   const [localStream, setLocalStream] = useState<MediaStream | null>(null)
   const [remoteStreams, setRemoteStreams] = useState<Record<string, MediaStream>>({})
   const peerRef = useRef<any>(null)
@@ -390,48 +391,64 @@ export default function LiveClassroomPage() {
     };
 
     if (!localMetrics.phoneDetected) {
-      clearPhoneTimers();
+      // Start a debounce timeout before clearing
+      if (!phoneClearTimerRef.current) {
+        phoneClearTimerRef.current = setTimeout(() => {
+          clearPhoneTimers();
+          phoneClearTimerRef.current = null;
+        }, 3000); // 3 seconds of no-phone before clearing
+      }
       return;
+    } else {
+      // Phone detected - cancel any pending clear timeout
+      if (phoneClearTimerRef.current) {
+        clearTimeout(phoneClearTimerRef.current);
+        phoneClearTimerRef.current = null;
+      }
     }
 
-    // Phone detected - start warning flow
-    setTimeout(() => {
-      setShowPhoneWarning(true);
-      setPhoneSecondsLeft(5);
-    }, 0);
+    // Phone detected - start warning flow (only if warning modal isn't already active)
+    if (!showPhoneWarning) {
+      setTimeout(() => {
+        setShowPhoneWarning(true);
+        setPhoneSecondsLeft(5);
+      }, 0);
 
-    phoneIntervalRef.current = setInterval(() => {
-      setPhoneSecondsLeft((prev) => {
-        if (prev === null) return null;
-        return prev > 1 ? prev - 1 : 0;
-      });
-    }, 1000);
+      phoneIntervalRef.current = setInterval(() => {
+        setPhoneSecondsLeft((prev) => {
+          if (prev === null) return null;
+          return prev > 1 ? prev - 1 : 0;
+        });
+      }, 1000);
 
-    phoneTimerRef.current = setTimeout(async () => {
-      // 5 seconds completed - escalate warning count
-      setPhoneWarningCount((prevCount) => {
-        const nextCount = prevCount + 1;
-        if (nextCount >= 3) {
-          // Kicked out on 3rd warning
-          const kickAsync = async () => {
-            const storedName = studentName || "Unknown";
-            if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
-            window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=device_usage`;
-          };
-          kickAsync();
+      phoneTimerRef.current = setTimeout(async () => {
+        // 5 seconds completed - escalate warning count
+        setPhoneWarningCount((prevCount) => {
+          const nextCount = prevCount + 1;
+          if (nextCount >= 3) {
+            // Kicked out on 3rd warning
+            const kickAsync = async () => {
+              const storedName = studentName || "Unknown";
+              if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
+              window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=device_usage`;
+            };
+            kickAsync();
+          }
+          return nextCount;
+        });
+        // Clear the current active countdown
+        if (phoneIntervalRef.current) {
+          clearInterval(phoneIntervalRef.current);
+          phoneIntervalRef.current = null;
         }
-        return nextCount;
-      });
-      // Clear the current active countdown
-      if (phoneIntervalRef.current) {
-        clearInterval(phoneIntervalRef.current);
-        phoneIntervalRef.current = null;
-      }
-      setPhoneSecondsLeft(null);
-    }, 5000);
+        setPhoneSecondsLeft(null);
+      }, 5000);
+    }
 
-    return clearPhoneTimers;
-  }, [localMetrics.phoneDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
+    return () => {
+      // Do NOT clear timers immediately on render transitions to prevent resetting on momentary drops
+    };
+  }, [localMetrics.phoneDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus, showPhoneWarning]);
   const chatEndRef = useRef<HTMLDivElement>(null)
   const transcriptEndRef = useRef<HTMLDivElement>(null)
 
