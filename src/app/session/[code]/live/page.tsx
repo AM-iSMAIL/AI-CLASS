@@ -244,7 +244,7 @@ export default function LiveClassroomPage() {
 
   // ── Warning escalation engine ──
   useEffect(() => {
-    if (isTeacher || !hasEntered || !videoOn) return;
+    if (!hasEntered || !videoOn) return;
 
     const clearPending = () => {
       if (timerRef.current) {
@@ -253,8 +253,10 @@ export default function LiveClassroomPage() {
       }
     };
 
-    // Reset when student re-focuses
-    if (localMetrics.status === "focused" && warningLevel > 0) {
+    const isUnfocused = localMetrics.status === "distracted" || localMetrics.status === "away" || localMetrics.score < 60;
+
+    // Reset when participant re-focuses
+    if (!isUnfocused && warningLevel > 0) {
       clearPending();
       setTimeout(() => {
         setWarningLevel(0);
@@ -262,22 +264,22 @@ export default function LiveClassroomPage() {
       return;
     }
 
-    const WARNING_1_DELAY = 5000;
-    const WARNING_2_DELAY = 12000;
-    const WARNING_3_DELAY = 20000;
-    const AUTO_KICK_DELAY = 45000;
+    const WARNING_1_DELAY = 1500; // 1.5s fast trigger for Heads Up warning
+    const WARNING_2_DELAY = 5000;  // 5s trigger for Focus Needed
+    const WARNING_3_DELAY = 10000; // 10s trigger for Lesson Paused
+    const AUTO_KICK_DELAY = 30000; // 30s auto-kick for students
 
     // Escalate through warning levels
-    if (localMetrics.status === "distracted" && warningLevel === 0) {
+    if (isUnfocused && warningLevel === 0) {
       clearPending();
       timerRef.current = setTimeout(() => setWarningLevel(1), WARNING_1_DELAY);
-    } else if (localMetrics.status === "distracted" && warningLevel === 1) {
+    } else if (isUnfocused && warningLevel === 1) {
       clearPending();
       timerRef.current = setTimeout(() => setWarningLevel(2), WARNING_2_DELAY);
-    } else if (localMetrics.status === "away" && warningLevel < 3) {
+    } else if (isUnfocused && warningLevel === 2) {
       clearPending();
       timerRef.current = setTimeout(() => setWarningLevel(3), WARNING_3_DELAY);
-    } else if (warningLevel === 3 && localMetrics.status === "away") {
+    } else if (warningLevel === 3 && isUnfocused && !isTeacher) {
       clearPending();
       timerRef.current = setTimeout(async () => {
         const storedName = studentName || "Unknown";
@@ -287,11 +289,11 @@ export default function LiveClassroomPage() {
     }
 
     return clearPending;
-  }, [localMetrics.status, warningLevel, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName]);
+  }, [localMetrics.status, localMetrics.score, warningLevel, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName]);
 
   // ── Out of frame auto-kick engine ──
   useEffect(() => {
-    if (isTeacher || !hasEntered || !videoOn) return;
+    if (!hasEntered || !videoOn) return;
 
     const clearOutOfFrameTimers = () => {
       if (outOfFrameTimerRef.current) {
@@ -312,7 +314,7 @@ export default function LiveClassroomPage() {
       return;
     }
 
-    // Start 5-second countdown to auto-kick if not in frame
+    // Start 5-second countdown if face is not in frame
     setTimeout(() => {
       setOutOfFrameSecondsLeft(5);
     }, 0);
@@ -324,18 +326,20 @@ export default function LiveClassroomPage() {
       });
     }, 1000);
 
-    outOfFrameTimerRef.current = setTimeout(async () => {
-      const storedName = studentName || "Unknown";
-      await kickStudent(sessionCode, studentId, storedName);
-      window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
-    }, 5000);
+    if (!isTeacher) {
+      outOfFrameTimerRef.current = setTimeout(async () => {
+        const storedName = studentName || "Unknown";
+        await kickStudent(sessionCode, studentId, storedName);
+        window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
+      }, 5000);
+    }
 
     return clearOutOfFrameTimers;
   }, [localMetrics.faceDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName]);
 
   // ── Phone usage warning and auto-kick engine ──
   useEffect(() => {
-    if (isTeacher || !hasEntered || !videoOn) return;
+    if (!hasEntered || !videoOn) return;
 
     const clearPhoneTimers = () => {
       if (phoneTimerRef.current) {
@@ -374,8 +378,8 @@ export default function LiveClassroomPage() {
       // 5 seconds completed - escalate warning count
       setPhoneWarningCount((prevCount) => {
         const nextCount = prevCount + 1;
-        if (nextCount >= 3) {
-          // Kicked out on 3rd warning
+        if (nextCount >= 3 && !isTeacher) {
+          // Kicked out on 3rd warning for student
           const kickAsync = async () => {
             const storedName = studentName || "Unknown";
             await kickStudent(sessionCode, studentId, storedName);
@@ -3197,23 +3201,28 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           {/* Warning modal overlay */}
           {warningLevel > 0 &&
             createPortal(
-              <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-md">
-                <div className="max-w-md mx-4 rounded-2xl border p-6 text-center animate-in fade-in zoom-in duration-300 border-purple-500/25 bg-[#151515] text-purple-300">
-                  <AlertCircle className="h-6 w-6 text-purple-400 mx-auto mb-2" />
-                  <p className="text-lg font-semibold mb-2">
-                    {warningLevel === 1 && "Heads up! Try to keep your eyes on the screen."}
-                    {warningLevel === 2 && "Focus needed. The lesson will pause if you don't re-engage."}
-                    {warningLevel === 3 && "Lesson paused. Take a breath, then click Resume to continue."}
+              <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
+                <div className="max-w-md mx-4 rounded-2xl border border-amber-500/40 bg-[#16141a]/95 p-6 text-center animate-in zoom-in duration-300 text-amber-300 shadow-2xl">
+                  <AlertCircle className="h-10 w-10 text-amber-400 mx-auto mb-3 animate-pulse" />
+                  <p className="text-xl font-bold mb-2 text-white">
+                    {warningLevel === 1 && "Heads up! Keep your eyes on the screen."}
+                    {warningLevel === 2 && "Focus Needed! You seem distracted."}
+                    {warningLevel === 3 && "Lesson Paused. Please re-engage to continue."}
                   </p>
-                  <p className="text-sm opacity-70">Focus score: {localMetrics.score}%</p>
-                  {warningLevel === 3 && (
-                    <button
-                      onClick={() => setWarningLevel(0)}
-                      className="mt-4 px-6 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 transition-colors text-sm font-medium cursor-pointer text-white"
-                    >
-                      Resume Learning
-                    </button>
-                  )}
+                  <p className="text-sm opacity-80 mb-3">
+                    Focus Score: <span className="font-mono font-bold text-amber-400">{localMetrics.score}%</span> ({localMetrics.status.toUpperCase()})
+                  </p>
+                  <div className="text-xs text-white/60 bg-white/5 p-3 rounded-xl border border-white/5 mb-4 leading-relaxed">
+                    {localMetrics.gazeDirection !== 'unknown' && localMetrics.gazeDirection !== 'center' 
+                      ? `Detected Gaze: ${localMetrics.gazeDirection.toUpperCase()} (${Math.round(localMetrics.effectiveDeviation)}° angle deviation)` 
+                      : "Please face forward and align your gaze with the screen."}
+                  </div>
+                  <button
+                    onClick={() => setWarningLevel(0)}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 transition-all text-xs font-bold uppercase tracking-wider cursor-pointer text-white shadow-lg shadow-purple-600/25"
+                  >
+                    I&apos;m Focused — Resume Learning
+                  </button>
                 </div>
               </div>,
               document.body
