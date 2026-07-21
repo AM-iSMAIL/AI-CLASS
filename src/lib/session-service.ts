@@ -310,6 +310,7 @@ export const updateSessionTopic = async (
 export const updateStudentEngagement = async (
   sessionCode: string,
   studentId: string,
+  studentName: string,
   score: number,
   status: "focused" | "distracted" | "away" | "offline"
 ): Promise<void> => {
@@ -317,7 +318,7 @@ export const updateStudentEngagement = async (
     const studentRef = doc(db, "sessions", sessionCode.trim().toUpperCase(), "students", studentId)
     await setDoc(studentRef, {
       id: studentId,
-      name: studentId, // Fallback if they didn't join properly
+      name: studentName,
       engagementScore: score,
       status,
       lastActive: serverTimestamp(),

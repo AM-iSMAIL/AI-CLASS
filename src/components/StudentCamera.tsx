@@ -12,8 +12,10 @@ const CAMERA_HEIGHT = 480;
 interface Props {
   sessionCode: string;
   studentId: string;
+  studentName?: string | null;
   enabled: boolean;
   isGridMode?: boolean;
+  isTeacher?: boolean;
   onLocalFocusUpdate?: (metrics: FocusMetrics) => void;
   onStreamReady?: (stream: MediaStream) => void;
 }
@@ -21,8 +23,10 @@ interface Props {
 export default function StudentCamera({
   sessionCode,
   studentId,
+  studentName,
   enabled,
   isGridMode,
+  isTeacher = false,
   onLocalFocusUpdate,
   onStreamReady,
 }: Props) {
@@ -35,19 +39,19 @@ export default function StudentCamera({
     async (m: FocusMetrics) => {
       if (onLocalFocusUpdate) onLocalFocusUpdate(m);
       try {
-        await updateStudentEngagement(sessionCode, studentId, m.score, m.status);
+        await updateStudentEngagement(sessionCode, studentId, studentName || studentId, m.score, m.status);
       } catch {
         // Silently ignore transient network failures
       }
     },
-    [sessionCode, studentId, onLocalFocusUpdate],
+    [sessionCode, studentId, studentName, onLocalFocusUpdate],
   );
 
   const { metrics } = useCVPipeline({
     videoRef,
     studentId,
     onFocusUpdate: handleFocusUpdate,
-    enabled: enabled && active,
+    enabled: enabled && active && !isTeacher,
   });
 
   // ── Camera initialisation ──

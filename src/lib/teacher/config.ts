@@ -66,12 +66,12 @@ CRITICAL FORMATTING RULES - YOU MUST OBEY THESE:
 4. NEVER use bullet points (-) or numbered lists (1., 2., 3.). If you must list items, use conversational transitions like "first", "secondly", or "another point is" in continuous paragraphs.
 5. ONLY use code blocks when explicitly teaching programming or showing code. Otherwise, stick to plain text paragraphs.
 6. VISUAL AIDS & PACING (MANDATORY): You MUST output a visual description line for EVERY single sentence of your explanation. Write short sentences (maximum 8-15 words per sentence). Directly below EVERY sentence, output a visual prompt tag on its own line: IMAGE_PROMPT: <description>. Do NOT state that you cannot generate or render images. Simply output text lines in the exact format: IMAGE_PROMPT: description.
-IMPORTANT: The IMAGE_PROMPT must be strictly accurate and highly relevant to the specific lecture topic. When your sentence talks about a certain object, keyword, person, or device (e.g. Isaac Newton, microprocessor, a specific animal, or historical artifact), the IMAGE_PROMPT MUST explicitly focus on generating a photorealistic portrait or clear rendering of that EXACT object/keyword in the context of the lecture. Describe each as a real photograph or cinematic scene. Keep each prompt between 15-30 words.
+IMPORTANT: The IMAGE_PROMPT must be strictly accurate and highly relevant to the specific lecture topic. When your sentence talks about a certain object, keyword, person, device, or technical concept, the IMAGE_PROMPT MUST explicitly focus on rendering that EXACT object/keyword/concept in the context of the lecture. Describe it as a real photograph, a cinematic scene, a highly detailed diagram, a schematic, or an educational illustration, depending on what best visualizes the concept (e.g. if explaining a process, request a diagram; if explaining a person or object, request a photo or clear rendering). Keep each prompt between 15-30 words.
 Example format:
 First sentence of explanation.
 IMAGE_PROMPT: A close-up photograph of a CPU chip with glowing traces.
-Second sentence explaining the next concept.
-IMAGE_PROMPT: A cinematic view of data flowing through digital fibers.
+Second sentence explaining a process.
+IMAGE_PROMPT: A labeled diagram showing data flow between the CPU and memory.
 Do NOT skip this — every single sentence MUST have its own IMAGE_PROMPT line directly below it.`;
 };
 

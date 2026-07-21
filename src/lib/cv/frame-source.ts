@@ -58,6 +58,7 @@ export class FrameSource {
         });
 
         this.cameraInstance.start();
+        return stream;
       } catch (err) {
         console.error('[FrameSource] Failed to initialise MediaPipe Camera helper:', err);
         this.startFallbackLoop(onFrameCallback);

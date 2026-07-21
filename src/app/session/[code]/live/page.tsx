@@ -215,6 +215,8 @@ export default function LiveClassroomPage() {
   const [phoneWarningCount, setPhoneWarningCount] = useState(0)
   const [showPhoneWarning, setShowPhoneWarning] = useState(false)
   const [phoneSecondsLeft, setPhoneSecondsLeft] = useState<number | null>(null)
+  const [endCountdown, setEndCountdown] = useState<number | null>(null)
+  const [sessionStatus, setSessionStatus] = useState<string>("Active")
 
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const outOfFrameTimerRef = useRef<NodeJS.Timeout | null>(null)
@@ -245,7 +247,7 @@ export default function LiveClassroomPage() {
 
   // ── Warning escalation engine ──
   useEffect(() => {
-    if (!hasEntered || !videoOn) return;
+    if (!hasEntered || !videoOn || isTeacher || endCountdown !== null || sessionStatus === "Completed") return;
 
     const clearPending = () => {
       if (timerRef.current) {
@@ -296,11 +298,11 @@ export default function LiveClassroomPage() {
     }
 
     return clearPending;
-  }, [localMetrics.status, localMetrics.score, warningLevel, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName]);
+  }, [localMetrics.status, localMetrics.score, warningLevel, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
 
   // ── Out of frame auto-kick engine ──
   useEffect(() => {
-    if (!hasEntered || !videoOn) return;
+    if (!hasEntered || !videoOn || isTeacher || endCountdown !== null || sessionStatus === "Completed") return;
 
     const clearOutOfFrameTimers = () => {
       if (outOfFrameTimerRef.current) {
@@ -342,11 +344,11 @@ export default function LiveClassroomPage() {
     }
 
     return clearOutOfFrameTimers;
-  }, [localMetrics.faceDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName]);
+  }, [localMetrics.faceDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
 
   // ── Phone usage warning and auto-kick engine ──
   useEffect(() => {
-    if (!hasEntered || !videoOn) return;
+    if (!hasEntered || !videoOn || isTeacher || endCountdown !== null || sessionStatus === "Completed") return;
 
     const clearPhoneTimers = () => {
       if (phoneTimerRef.current) {
@@ -405,13 +407,12 @@ export default function LiveClassroomPage() {
     }, 5000);
 
     return clearPhoneTimers;
-  }, [localMetrics.phoneDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName]);
+  }, [localMetrics.phoneDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
   const chatEndRef = useRef<HTMLDivElement>(null)
   const transcriptEndRef = useRef<HTMLDivElement>(null)
 
   const [toasts, setToasts] = useState<Array<{ id: string; text: string }>>([])
   const [showEndModal, setShowEndModal] = useState(false)
-  const [endCountdown, setEndCountdown] = useState<number | null>(null)
 
   // --- Immersive Meeting Design States & Refs ---
   const [showToolbar, setShowToolbar] = useState(true)
@@ -590,7 +591,12 @@ export default function LiveClassroomPage() {
         setSessionTitle(title)
         setSessionSubject(subject)
         if (storedTopics) {
-          try { setTopics(JSON.parse(storedTopics)) } catch { /* keep default topics */ }
+          try { 
+            const parsed = JSON.parse(storedTopics)
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setTopics(parsed)
+            }
+          } catch { /* keep default topics */ }
         }
         if (mode === "Human") setTeachingMode("Human")
         setIsTeacher(role === "teacher")
@@ -598,6 +604,16 @@ export default function LiveClassroomPage() {
         setStudentName(storedStudentName)
       }, 0)
     } catch { /* keep defaults */ }
+
+    // Fetch live session directly from Firebase to ensure topics and subject are loaded
+    const unsubscribeSessionInit = subscribeToSession(sessionCode, (updated) => {
+      if (updated) {
+        if (updated.title) setSessionTitle(updated.title)
+        if (updated.subject) setSessionSubject(updated.subject)
+        if (updated.topics && updated.topics.length > 0) setTopics(updated.topics)
+        if (updated.teachingMode) setTeachingMode(updated.teachingMode as "AI" | "Human")
+      }
+    })
 
     // PDF Loading
     const loadPdf = async () => {
@@ -653,6 +669,10 @@ export default function LiveClassroomPage() {
     }
 
     checkAccess()
+
+    return () => {
+      unsubscribeSessionInit()
+    }
   }, [sessionCode])
 
   // Context Synchronization
@@ -723,6 +743,9 @@ export default function LiveClassroomPage() {
   useEffect(() => {
     if (!sessionCode) return
     const unsubscribe = subscribeToSession(sessionCode, (updatedSession) => {
+      if (updatedSession) {
+        setSessionStatus(updatedSession.status || "Active")
+      }
       if (updatedSession?.status === "Completed") {
         stopSpeaking()
         if (localStream) {
@@ -2107,6 +2130,12 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
     setEndCountdown(5)
     stopSpeaking()
 
+    // Immediately clear all warning states to prevent overlays from lingering during countdown
+    setWarningLevel(0)
+    setOutOfFrameSecondsLeft(null)
+    setPhoneSecondsLeft(null)
+    setShowPhoneWarning(false)
+
     try {
       await endSession(sessionCode)
     } catch (e) {
@@ -2296,48 +2325,6 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
     )
   }
 
-  /* ─── ENTRY OVERLAY ─── */
-  if (!hasEntered) {
-    return (
-      <div className="fixed inset-0 bg-[#08080A] z-[99] flex flex-col items-center justify-center text-center p-6 font-sans antialiased">
-        <style>{`
-          @keyframes ep{0%,100%{box-shadow:0 0 20px rgba(147,51,234,.15)}50%{box-shadow:0 0 40px rgba(147,51,234,.35)}}
-          @keyframes fu{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
-          .ef{animation:fu .6s cubic-bezier(.16,1,.3,1) forwards}
-          .efd{animation:fu .6s cubic-bezier(.16,1,.3,1) .15s forwards;opacity:0}
-          .efd2{animation:fu .6s cubic-bezier(.16,1,.3,1) .3s forwards;opacity:0}
-        `}</style>
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
-        <div className="relative z-10 max-w-sm w-full space-y-8">
-          <div className="ef flex flex-col items-center gap-5">
-            <div className="h-20 w-20 rounded-3xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center border border-purple-400/20" style={{ animation: "ep 3s ease-in-out infinite" }}>
-              <Brain className="h-10 w-10 text-white" />
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-2xl font-black text-white tracking-tight">Ready to begin?</h1>
-              <p className="text-xs text-white/35 leading-relaxed">{isParsingPdf ? "Loading PDF..." : "Your AI-powered classroom is prepared"}</p>
-            </div>
-          </div>
-          <div className="efd bg-[#111113] border border-white/[.06] rounded-2xl p-5 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[9px] font-black uppercase tracking-[.15em] text-purple-400">Session</span>
-              <span className="text-[10px] font-mono font-bold text-white/30 bg-white/[.03] px-2 py-0.5 rounded">{sessionCode}</span>
-            </div>
-            <h3 className="text-sm font-bold text-white">{sessionTitle}</h3>
-            <p className="text-[11px] text-white/40">{sessionSubject} • {isPdfMode ? `${pdfPages.length} Pages` : `${topics.length} topics`} • {teachingMode} Mode</p>
-            <div className="flex items-center gap-2 pt-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] text-emerald-400/80 font-semibold">6 students connected</span>
-            </div>
-          </div>
-          <button id="enter-classroom-btn" disabled={isParsingPdf} onClick={handleEnterClassroom} className="efd2 w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-2xl text-sm font-black uppercase text-white tracking-widest transition-all shadow-lg shadow-purple-600/20 active:scale-[.98] cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-            <Play className="h-4 w-4 fill-current" /> {isParsingPdf ? "Loading..." : "Enter Classroom"}
-          </button>
-          <p className="text-[10px] text-white/20">Click to enable audio • M=mic V=video H=hand C=chat</p>
-        </div>
-      </div>
-    )
-  }
 
 
   const drawerWidth = getDrawerWidth()
@@ -2740,8 +2727,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                   <StudentCamera
                     sessionCode={sessionCode}
                     studentId={studentId}
+                    studentName={studentName}
                     enabled={videoOn}
                     isGridMode={true}
+                    isTeacher={isTeacher}
                     onLocalFocusUpdate={setLocalMetrics}
                     onStreamReady={handleStreamReady}
                   />
@@ -3398,6 +3387,46 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
               document.body
             )
           }
+          {/* Entry Overlay */}
+          {!hasEntered && (
+            <div className="fixed inset-0 bg-[#08080A] z-[99] flex flex-col items-center justify-center text-center p-6 font-sans antialiased col-span-full">
+              <style>{`
+                @keyframes ep{0%,100%{box-shadow:0 0 20px rgba(147,51,234,.15)}50%{box-shadow:0 0 40px rgba(147,51,234,.35)}}
+                @keyframes fu{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
+                .ef{animation:fu .6s cubic-bezier(.16,1,.3,1) forwards}
+                .efd{animation:fu .6s cubic-bezier(.16,1,.3,1) .15s forwards;opacity:0}
+                .efd2{animation:fu .6s cubic-bezier(.16,1,.3,1) .3s forwards;opacity:0}
+              `}</style>
+              <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
+              <div className="relative z-10 max-w-sm w-full space-y-8">
+                <div className="ef flex flex-col items-center gap-5">
+                  <div className="h-20 w-20 rounded-3xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center border border-purple-400/20" style={{ animation: "ep 3s ease-in-out infinite" }}>
+                    <Brain className="h-10 w-10 text-white" />
+                  </div>
+                  <div className="space-y-2">
+                    <h1 className="text-2xl font-black text-white tracking-tight">Ready to begin?</h1>
+                    <p className="text-xs text-white/35 leading-relaxed">{isParsingPdf ? "Loading PDF..." : "Your AI-powered classroom is prepared"}</p>
+                  </div>
+                </div>
+                <div className="efd bg-[#111113] border border-white/[.06] rounded-2xl p-5 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] font-black uppercase tracking-[.15em] text-purple-400">Session</span>
+                    <span className="text-[10px] font-mono font-bold text-white/30 bg-white/[.03] px-2 py-0.5 rounded">{sessionCode}</span>
+                  </div>
+                  <h3 className="text-sm font-bold text-white">{sessionTitle}</h3>
+                  <p className="text-[11px] text-white/40">{sessionSubject} • {isPdfMode ? `${pdfPages.length} Pages` : `${topics.length} topics`} • {teachingMode} Mode</p>
+                  <div className="flex items-center gap-2 pt-1">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[10px] text-emerald-400/80 font-semibold">6 students connected</span>
+                  </div>
+                </div>
+                <button id="enter-classroom-btn" disabled={isParsingPdf} onClick={handleEnterClassroom} className="efd2 w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-2xl text-sm font-black uppercase text-white tracking-widest transition-all shadow-lg shadow-purple-600/20 active:scale-[.98] cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                  <Play className="h-4 w-4 fill-current" /> {isParsingPdf ? "Loading..." : "Enter Classroom"}
+                </button>
+                <p className="text-[10px] text-white/20">Click to enable audio • M=mic V=video H=hand C=chat</p>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>

@@ -36,12 +36,34 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Prefix for educational context — helps the model generate cleaner, textless visualizations
-    const hasTextRequest = prompt.toLowerCase().includes("the end") || prompt.toLowerCase().includes("text");
-    const suffix = hasTextRequest
-      ? ". Sharp focus, beautiful lighting, high resolution."
-      : ". Sharp focus, beautiful lighting, high resolution, absolutely no text, no labels, no words, no letters, no captions, no writing.";
-    const fullPrompt = `Highly detailed, photorealistic, 4K quality, vibrant colors, professional educational visualization: ${prompt}${suffix}`;
+    // Detect if the prompt explicitly requests diagrammatic, graphic, or textual content using word boundaries
+    const promptLower = prompt.toLowerCase();
+    const hasWord = (word: string) => new RegExp(`\\b${word}\\b`, "i").test(promptLower);
+    
+    const isDiagramOrText = 
+      hasWord("diagram") || 
+      hasWord("schematic") || 
+      hasWord("sketch") || 
+      hasWord("drawing") || 
+      hasWord("chart") || 
+      hasWord("graph") || 
+      hasWord("label") || 
+      hasWord("text") || 
+      hasWord("words") || 
+      hasWord("writing") || 
+      hasWord("letters") || 
+      promptLower.includes("the end");
+
+    let prefix = "Highly detailed, photorealistic, 4K quality, vibrant colors, professional educational visualization: ";
+    let suffix = ". Sharp focus, beautiful lighting, high resolution, absolutely no text, no labels, no words, no letters, no captions, no writing.";
+
+    if (isDiagramOrText) {
+      prefix = "Highly detailed, clear, clean educational diagram and visualization: ";
+      suffix = ". Sharp focus, clean layout, high resolution, clear readable text labels and annotations.";
+    }
+
+    const fullPrompt = `${prefix}${prompt}${suffix}`;
+    console.log("[/api/image] Prompt:", prompt, "-> fullPrompt:", fullPrompt);
 
     const res = await fetch(NVIDIA_IMAGE_URL, {
       method: "POST",
