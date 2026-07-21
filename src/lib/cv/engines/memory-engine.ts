@@ -62,7 +62,7 @@ export class MemoryEngine implements CVModule<void> {
 
       // 4. Phone History
       const phoneDetected = ctx.objectDetections.some(
-        d => d.class === 'cell_phone' || d.class === 'tablet' || d.class === 'laptop',
+        d => d.class === 'cell_phone' || d.class === 'tablet',
       );
       memory.phoneHistory.push({
         detected: phoneDetected,

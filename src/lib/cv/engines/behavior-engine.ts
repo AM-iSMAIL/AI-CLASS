@@ -137,7 +137,7 @@ function inferInstantBehavior(
 
   // Phone detection
   const phoneDetected = ctx.objectDetections.some(
-    d => d.class === 'cell_phone' || d.class === 'tablet' || d.class === 'laptop',
+    d => d.class === 'cell_phone' || d.class === 'tablet',
   );
   if (phoneDetected) return 'phone_usage';
 

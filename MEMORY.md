@@ -137,7 +137,7 @@ src/
   - [x] Added `muted` attribute to remote participant video elements to bypass modern web browser autoplay restriction blocks.
 - [x] Dynamic Object Detection & Phone/Tablet usage enforcement:
   - [x] Dynamically integrated TensorFlow.js and pre-trained COCO-SSD object detection inside the local video frame hook (`useFocusTracker.ts`).
-  - [x] Configured real-time classification to scan for forbidden devices (`cell phone`, `tablet`, `laptop`) once every 300ms (lowered from 1200ms) with a lower confidence threshold of 0.20 (lowered from 0.35) to improve detection accuracy.
+  - [x] Configured real-time classification to scan for forbidden devices (`cell phone`, `tablet`) once every 300ms (lowered from 1200ms) with a lower confidence threshold of 0.20 (lowered from 0.35) to improve detection accuracy. (Note: `laptop` was removed from the forbidden list to prevent false positives for students joining via computer).
   - [x] Implemented a 3-strikes warnings modal: warning dialog pops up on screen on detection, and automatically kicks/ejects the student if detected 3 times consecutively, redirecting to a custom `device_usage` exit screen.
   - [x] Debounced the phone warning clear logic with a 3-second delay to prevent momentary model misclassifications from reset-evading the countdown.
   - [x] Pushed all updates to main GitHub repository branch and triggered live Vercel deployments.

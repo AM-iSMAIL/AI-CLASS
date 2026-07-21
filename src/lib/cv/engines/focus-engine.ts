@@ -135,7 +135,7 @@ function computeRawScore(
 
   // ── Phone Usage Penalty (60 pts) ──
   const phoneDetected = ctx?.objectDetections.some(
-    d => d.class === 'cell_phone' || d.class === 'tablet' || d.class === 'laptop' || d.rawClass?.includes('phone')
+    d => d.class === 'cell_phone' || d.class === 'tablet' || d.rawClass?.includes('phone')
   );
   if (phoneDetected) {
     score -= 60;
@@ -207,7 +207,7 @@ function computeComponents(
 
   // Phone detection component (100 = no phone, 0 = phone detected)
   const phoneDetected = ctx.objectDetections.some(
-    d => d.class === 'cell_phone' || d.class === 'tablet' || d.class === 'laptop' || d.rawClass?.includes('phone')
+    d => d.class === 'cell_phone' || d.class === 'tablet' || d.rawClass?.includes('phone')
   );
   const phoneScore = phoneDetected ? 0 : 100;
 
