@@ -15,5 +15,7 @@ try {
   console.error("Failed to configure undici dispatcher:", e);
 }
 
-// Bypassed monkeypatch to use native OS resolver (resolves IPv6 NAT64/DNS64 latency issues)
+try {
+  dns.setDefaultResultOrder("ipv4first");
+} catch (e) {}
 export {};

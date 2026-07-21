@@ -85,11 +85,23 @@ export default function SummaryPage() {
     };
   }, [sessionCode]);
 
+  const [isStudentRole, setIsStudentRole] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const role = localStorage.getItem("userRole");
+      const name = localStorage.getItem("studentName");
+      if (role === "student" || (!!name && role !== "teacher")) {
+        setIsStudentRole(true);
+      }
+    }
+  }, []);
+
   // Determine user role (computed dynamically on each render pass)
-  const isTeacher = session && currentUser
-    ? session.teacherId === currentUser.uid
-    : session
-      ? session.teacherId === "offline-teacher"
+  const isTeacher = isStudentRole
+    ? false
+    : session && currentUser
+      ? session.teacherId === currentUser.uid
       : false;
 
   // Export Attendance CSV function

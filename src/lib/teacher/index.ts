@@ -49,6 +49,21 @@ function performRequestStream(postDataBytes: Uint8Array, config: any, globalAgen
   let isClosed = false;
   return new ReadableStream({
     start(controller) {
+      const customLookup = (hostname: string, opts: any, cb: any) => {
+        if (typeof opts === "function") { cb = opts; opts = {}; }
+        dns.resolve4(hostname, (err, addrs) => {
+          if (err || !addrs || !addrs.length) {
+            dns.lookup(hostname, opts, cb);
+            return;
+          }
+          if (opts && opts.all) {
+            cb(null, addrs.map(a => ({ address: a, family: 4 })));
+          } else {
+            cb(null, addrs[0], 4);
+          }
+        });
+      };
+
       const requestOptions: https.RequestOptions = {
         hostname: "integrate.api.nvidia.com",
         port: 443,
@@ -63,6 +78,7 @@ function performRequestStream(postDataBytes: Uint8Array, config: any, globalAgen
         timeout: 45000,
         agent: globalAgent,
         servername: "integrate.api.nvidia.com",
+        lookup: customLookup,
       };
 
       const startTime = Date.now();
@@ -205,7 +221,7 @@ export async function askTeacher(question: string, options?: TeacherOptions): Pr
   const postDataBytes = new TextEncoder().encode(postData);
 
   // Return the ReadableStream directly (retries must be handled by the caller or we accept single-attempt streaming)
-  return performRequestStream(postDataBytes, config, globalAgent, async (fullText) => {
+  return performRequestStream(postDataBytes, { ...config, topic: options?.state?.topic }, globalAgent, async (fullText) => {
     if (fullText && !options?.skipMemory) {
       const assistantMessage: Message = { role: "assistant", content: fullText };
       await defaultMemoryStore.addMessage(sessionKey, assistantMessage);
