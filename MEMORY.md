@@ -473,4 +473,8 @@ src/
       - [x] Root cause: (1) `updateStudentEngagement` wrote `name: studentId`, overwriting the student's real name with their raw Firebase UID string in the Firestore database. (2) Teachers were not bypassed in CV tracking loops, which wrote their UID to Firestore with 0% focus score. (3) Warning engines lacked checks for the teacher's role, meaning teachers got distracted alerts. (4) Focus warning timers and modal overlays remained active during the 5-second session ending countdown and page unload.
       - [x] Fix: (1) Updated `updateStudentEngagement` to write the passed `studentName` prop. (2) Passed `isTeacher` and `studentName` to `StudentCamera` and bypassed CV tracking for the host. (3) Added `sessionStatus` tracking and returned early from warning engines if `isTeacher`, `endCountdown !== null`, or `sessionStatus === "Completed"`. (4) Reset all warning states immediately when `handleConfirmEnd` is triggered.
       - [x] Result: Real names and focus scores are saved in Firestore correctly. Hosts are bypassed from monitoring, and warning overlays disappear immediately when the session ends.
+- [x] Repository Clean-up:
+      - [x] Removed obsolete prototype scripts and unused testing routes (`test_nvidia_dns.js`, `architecture-a1-1784124970100.pdf`, `src/app/test-cv/page.tsx`, `src/app/test-image/page.tsx`, `src/app/test-keys/page.tsx`, `src/app/api/test-keys/route.ts`).
+      - [x] Cleared Next.js compilation cache and verified code builds cleanly via `npm run build`.
+
 
