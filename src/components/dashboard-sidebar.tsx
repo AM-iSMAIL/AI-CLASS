@@ -86,12 +86,10 @@ export default function DashboardSidebar({
                 href={item.href}
                 onClick={() => isMobile && onCloseMobile?.()}
                 title={item.label}
-                className={`sidebar-btn ${isActive ? "active" : ""}`}
+                className={`nav-item ${isActive ? "active" : ""}`}
               >
-                <div className="w-10.5 h-12 flex items-center justify-center flex-shrink-0">
-                  <item.icon className="h-[22px] w-[22px] flex-shrink-0" />
-                </div>
-                <span className="sidebar-label text-sm font-medium whitespace-nowrap ml-1.5">
+                <item.icon className="h-[22px] w-[22px] flex-shrink-0" />
+                <span className="sidebar-label text-sm font-medium whitespace-nowrap">
                   {item.label}
                 </span>
               </Link>
@@ -124,13 +122,11 @@ export default function DashboardSidebar({
 
         <button
           onClick={handleSignOut}
-          className="sidebar-btn hover:text-red-500"
+          className="nav-item hover:text-red-500"
           title="Sign Out"
         >
-          <div className="w-10.5 h-12 flex items-center justify-center flex-shrink-0">
-            <LogOut className="h-[22px] w-[22px]" />
-          </div>
-          <span className="sidebar-label text-sm font-medium whitespace-nowrap ml-1.5">
+          <LogOut className="h-[22px] w-[22px] flex-shrink-0" />
+          <span className="sidebar-label text-sm font-medium whitespace-nowrap">
             Sign Out
           </span>
         </button>
