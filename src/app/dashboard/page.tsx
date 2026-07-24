@@ -457,7 +457,7 @@ function DashboardContent() {
                   <div className="card overflow-hidden">
                     <div className="px-6 py-5 border-b border-neutral-100 flex items-center justify-between">
                       <h3 className="text-sm font-serif font-bold uppercase tracking-wider text-neutral-800">Recent Sessions</h3>
-                      <Link href="/dashboard?tab=sessions" className="text-xs text-blue-600 font-semibold hover:underline">
+                      <Link href="/dashboard?tab=sessions" className="text-xs font-semibold hover:underline" style={{ color: '#4F46E5' }}>
                         View All
                       </Link>
                     </div>
@@ -465,12 +465,12 @@ function DashboardContent() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-left border-collapse">
                         <thead>
-                          <tr className="border-b border-neutral-100 text-[10px] font-bold uppercase tracking-wider text-neutral-900 bg-neutral-50/50">
+                          <tr className="dashboard-table-header text-[10px] font-bold uppercase tracking-wider text-neutral-900">
                             <th className="px-6 py-3.5">Session Name</th>
                             <th className="px-4 py-3.5">Topics</th>
                             <th className="px-4 py-3.5">Students</th>
                             <th className="px-4 py-3.5">Date</th>
-                            <th className="px-6 py-3.5 text-right">Status</th>
+                            <th className="pl-6 pr-4 py-3.5 text-right">Status</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-neutral-100">
@@ -499,26 +499,26 @@ function DashboardContent() {
                                 <tr
                                   key={index}
                                   onClick={() => handleSessionClick(sCode, session.status)}
-                                  className="text-xs hover:bg-neutral-50/80 transition-colors cursor-pointer"
+                                  className="text-xs dashboard-table-row cursor-pointer"
                                 >
                                   <td className="px-6 py-4 font-serif font-bold text-neutral-900 max-w-[180px] truncate">
                                     {title}
-                                    <span className="block text-[10px] text-neutral-400 font-mono mt-0.5 font-normal">{sCode}</span>
+                                    <span className="block text-[10px] font-mono mt-0.5" style={{ color: '#A8AFB9', fontWeight: 500 }}>{sCode}</span>
                                   </td>
                                   <td className="px-4 py-4 text-neutral-600">
                                     <span className="inline-flex items-center gap-1">
-                                      <BookOpen className="h-3.5 w-3.5 text-blue-500" />
+                                      <BookOpen className="h-3.5 w-3.5" style={{ color: '#3B82F6', opacity: 0.9 }} />
                                       {topicsCount}
                                     </span>
                                   </td>
                                   <td className="px-4 py-4 text-neutral-600">
                                     <span className="inline-flex items-center gap-1">
-                                      <Users className="h-3.5 w-3.5 text-blue-500" />
+                                      <Users className="h-3.5 w-3.5" style={{ color: '#3B82F6', opacity: 0.9 }} />
                                       {studentCount}
                                     </span>
                                   </td>
                                   <td className="px-4 py-4 text-neutral-900 font-medium">{formatSessionDate(session)}</td>
-                                  <td className="px-6 py-4 text-right">
+                                  <td className="pl-6 pr-4 py-4 text-right">
                                     {(session.status === "Live" || session.status === "Active") && (
                                        <span className="badge-live">
                                          <span className="status-dot-live" />
@@ -635,7 +635,7 @@ function DashboardContent() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="border-b border-neutral-100 text-[10px] font-bold uppercase tracking-wider text-neutral-900 bg-neutral-50/50">
+                      <tr className="dashboard-table-header text-[10px] font-bold uppercase tracking-wider text-neutral-900">
                         <th className="px-6 py-4">Session Name & Code</th>
                         <th className="px-4 py-4">Subject & Grade</th>
                         <th className="px-4 py-4">Topics</th>
@@ -674,11 +674,11 @@ function DashboardContent() {
                             const isLive = session.status === "Live" || session.status === "Active"
 
                             return (
-                              <tr key={index} className="text-xs hover:bg-neutral-50/50 transition-colors">
+                              <tr key={index} className="text-xs dashboard-table-row">
                                 <td className="px-6 py-4 font-serif font-bold text-neutral-900">
                                   <div>{title}</div>
                                   <div className="flex items-center gap-1.5 mt-1 font-sans font-normal">
-                                    <span className="font-mono text-[10px] text-neutral-600 bg-neutral-100 px-2 py-0.5 rounded border border-neutral-200">{sCode}</span>
+                                    <span className="font-mono text-[10px] bg-neutral-100 px-2 py-0.5 rounded border border-neutral-200" style={{ color: '#A8AFB9', fontWeight: 500 }}>{sCode}</span>
                                     <button
                                       onClick={() => copyToClipboard(sCode)}
                                       className="p-1 rounded hover:bg-neutral-100 text-neutral-400 hover:text-neutral-900 transition-colors"
@@ -698,13 +698,13 @@ function DashboardContent() {
                                 </td>
                                 <td className="px-4 py-4 text-neutral-600">
                                   <span className="inline-flex items-center gap-1">
-                                    <BookOpen className="h-3.5 w-3.5 text-blue-500" />
+                                    <BookOpen className="h-3.5 w-3.5" style={{ color: '#3B82F6', opacity: 0.9 }} />
                                     {topicsCount} topics
                                   </span>
                                 </td>
                                 <td className="px-4 py-4 text-neutral-600">
                                   <span className="inline-flex items-center gap-1">
-                                    <Users className="h-3.5 w-3.5 text-blue-500" />
+                                    <Users className="h-3.5 w-3.5" style={{ color: '#3B82F6', opacity: 0.9 }} />
                                     {studentCount} joined
                                   </span>
                                 </td>
@@ -717,8 +717,8 @@ function DashboardContent() {
                                      </span>
                                    )}
                                   {session.status === "Completed" && (
-                                    <span className="inline-flex items-center gap-1 rounded-full bg-[#1b3f27] px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wider">
-                                      <span className="h-1 w-1 rounded-full bg-[#10b981]" />
+                                    <span className="badge-completed">
+                                      <span className="status-dot-completed" />
                                       Ended
                                     </span>
                                   )}
@@ -890,7 +890,7 @@ function DashboardContent() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="border-b border-neutral-100 text-[10px] font-bold uppercase tracking-wider text-neutral-400 bg-neutral-50/50">
+                      <tr className="dashboard-table-header text-[10px] font-bold uppercase tracking-wider text-neutral-400">
                         <th className="px-6 py-4">Student Name</th>
                         <th className="px-6 py-4">Classes Attended</th>
                         <th className="px-6 py-4">Average Focus Score</th>
@@ -928,7 +928,7 @@ function DashboardContent() {
                             if (student.avgEngagement < 80) ratingColor = "text-red-600"
 
                             return (
-                              <tr key={index} className="text-xs hover:bg-neutral-50/50 transition-colors">
+                              <tr key={index} className="text-xs dashboard-table-row">
                                 <td className="px-6 py-4 font-semibold text-neutral-800 flex items-center gap-3">
                                   <div className="h-8 w-8 rounded-full bg-purple-50 border border-purple-100 flex items-center justify-center text-xs font-bold text-purple-600">
                                     {nameInitial}

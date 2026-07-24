@@ -208,7 +208,7 @@
   border-radius: 22px;
   box-shadow:
     0 1px 2px rgba(15, 23, 42, 0.03),
-    0 10px 30px rgba(15, 23, 42, 0.05);
+    0 12px 32px rgba(15, 23, 42, 0.05);
   transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -310,9 +310,10 @@
 .badge-live {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 6px;
   height: 28px;
-  padding: 0 10px;
+  padding: 0 12px;
   border-radius: 999px;
   font-size: 13px;
   font-weight: 500;
@@ -329,8 +330,8 @@
 }
 
 .status-dot-live {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 999px;
   background-color: #EF4444;
   animation: breathe 3s ease-in-out infinite;
@@ -350,15 +351,16 @@
 .badge-completed {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 6px;
   height: 28px;
-  padding: 0 10px;
+  padding: 0 12px;
   border-radius: 999px;
   font-size: 13px;
   font-weight: 500;
-  background-color: #F0FDF4;
+  background-color: #F6FEF8;
   color: #166534;
-  border: 1px solid #DCFCE7;
+  border: 1px solid #DDF7E6;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 }
@@ -369,8 +371,37 @@
 }
 
 .status-dot-completed {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 999px;
   background-color: #22C55E;
+}
+
+/* Premium Table Row Hover & Spacing */
+.dashboard-table-row {
+  height: 90px;
+  transition: background-color 0.2s ease, transform 0.2s ease !important;
+}
+
+.dashboard-table-row:hover {
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.02), transparent) !important;
+}
+
+/* Premium Table Header styling */
+.dashboard-table-header {
+  background-color: #FCFCFD !important;
+  border-bottom: 1px solid #F1F5F9 !important;
+}
+
+.dashboard-table-header th {
+  color: #374151 !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+}
+
+/* Premium Soft Table Row Separators */
+tbody.divide-y > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(15, 23, 42, 0.04) !important;
 }
