@@ -50,6 +50,7 @@ function DashboardContent() {
 
   const [user, setUser] = useState<User | null>(null)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [currentDate, setCurrentDate] = useState("June 23, 2026")
   
   const [sessions, setSessions] = useState<any[]>([])
@@ -314,10 +315,12 @@ function DashboardContent() {
         activeItem={activeItem}
         isMobileOpen={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
 
       {/* ─── Main Content Area ─── */}
-      <div className="flex-1 lg:ml-64 flex flex-col">
+      <div className={`flex-1 flex flex-col transition-all duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] ${isSidebarCollapsed ? "lg:ml-[64px]" : "lg:ml-[280px]"}`}>
         
         {/* Header Topbar */}
         <header className="h-16 border-b border-neutral-200/80 bg-white px-6 md:px-8 flex items-center justify-between sticky top-0 z-20">
