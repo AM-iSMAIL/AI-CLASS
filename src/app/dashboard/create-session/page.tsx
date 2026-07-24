@@ -379,9 +379,9 @@ export default function CreateSessionPage() {
             {/* Step Indicator (Info -> Content -> Launch) */}
             <div className="relative flex items-center justify-between max-w-md mx-auto py-2">
               {/* Connector Lines */}
-              <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-[#D1D5DB] -translate-y-1/2 z-0" />
+              <div className="absolute left-0 right-0 top-1/2 h-[3px] bg-[#E5E7EB] rounded-full -translate-y-1/2 z-0" />
               <div
-                className="absolute left-0 top-1/2 h-0.5 bg-[#2563EB] -translate-y-1/2 transition-all duration-300 z-0"
+                className="absolute left-0 top-1/2 h-[3px] bg-[#2563EB] rounded-full -translate-y-1/2 transition-all duration-300 z-0"
                 style={{ width: step === 2 ? "0%" : step === 3 ? "50%" : "100%" }}
               />
 
