@@ -501,4 +501,21 @@ tbody.divide-y > :not([hidden]) ~ :not([hidden]) {
 }
 .session-topic-row:hover {
   border-color: #CBD5E1 !important;
+}
+
+/* Custom Dropdown Animation */
+.dropdown-content {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+  transform-origin: top center;
+  transition:
+    opacity 0.22s ease,
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.dropdown-content.open {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+  pointer-events: auto !important;
 }
