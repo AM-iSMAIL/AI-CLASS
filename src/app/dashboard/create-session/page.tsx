@@ -22,6 +22,8 @@ import {
   CheckSquare,
   Square,
   ChevronDown,
+  Globe,
+  Lock,
 } from "lucide-react"
 import DashboardSidebar from "@/components/dashboard-sidebar"
 import { subscribeToAuthChanges } from "@/lib/auth-service"
@@ -368,7 +370,7 @@ export default function CreateSessionPage() {
 
         {/* Form Container */}
         <main className="flex-1 p-6 md:p-8 flex justify-center items-start lg:items-center bg-[#F6F7F9]">
-          <div className="w-full max-w-[700px] bg-[#FFFFFF] border border-[rgba(15,23,42,0.08)] rounded-[24px] p-6 md:p-8 space-y-8 shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)]">
+          <div className="w-full max-w-[620px] bg-[#FFFFFF] border border-[rgba(15,23,42,0.08)] rounded-[24px] p-6 md:p-8 space-y-8 shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)]">
             
             {/* Header & Subtitle */}
             <div className="text-center space-y-2">
@@ -441,7 +443,7 @@ export default function CreateSessionPage() {
               <form onSubmit={handleStep2Submit} className="space-y-6 animate-fadeIn">
                 {/* Title */}
                 <div className="space-y-2">
-                  <label htmlFor="session-title" className="text-xs font-semibold uppercase tracking-wider text-[#374151]">
+                  <label htmlFor="session-title" className="session-label">
                     Session Title
                   </label>
                   <input
@@ -459,7 +461,7 @@ export default function CreateSessionPage() {
                 <div className="grid gap-6 md:grid-cols-2">
                   {/* Subject */}
                   <div className="space-y-2">
-                    <label htmlFor="subject-select" className="text-xs font-semibold uppercase tracking-wider text-[#374151]">
+                    <label htmlFor="subject-select" className="session-label">
                       Subject
                     </label>
                     <div className="relative">
@@ -481,7 +483,7 @@ export default function CreateSessionPage() {
 
                   {/* Grade Level */}
                   <div className="space-y-2">
-                    <label htmlFor="grade-select" className="text-xs font-semibold uppercase tracking-wider text-[#374151]">
+                    <label htmlFor="grade-select" className="session-label">
                       Grade Level
                     </label>
                     <div className="relative">
@@ -504,7 +506,7 @@ export default function CreateSessionPage() {
 
                 {/* Duration */}
                 <div className="space-y-3">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-[#374151] block">
+                  <label className="session-label block">
                     Estimated Duration
                   </label>
                   <div className="flex flex-wrap gap-2.5">
@@ -541,7 +543,7 @@ export default function CreateSessionPage() {
 
                 {/* Session Type */}
                 <div className="space-y-3">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-[#374151] block">
+                  <label className="session-label block">
                     Session Type
                   </label>
                   <div className="grid grid-cols-2 gap-4">
@@ -551,7 +553,10 @@ export default function CreateSessionPage() {
                         sessionType === "Public" ? "selected" : ""
                       }`}
                     >
-                      <span className="text-xs font-bold text-[#111827]">Public</span>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <Globe className="h-4 w-4 text-[#2563EB]" />
+                        <span className="text-xs font-bold text-[#111827]">Public</span>
+                      </div>
                       <span className="text-[10px] text-[#6B7280] leading-tight">
                         Anyone with the room code can join and participate
                       </span>
@@ -563,7 +568,10 @@ export default function CreateSessionPage() {
                         sessionType === "Private" ? "selected" : ""
                       }`}
                     >
-                      <span className="text-xs font-bold text-[#111827]">Private</span>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <Lock className="h-4 w-4 text-[#2563EB]" />
+                        <span className="text-xs font-bold text-[#111827]">Private</span>
+                      </div>
                       <span className="text-[10px] text-[#6B7280] leading-tight">
                         Only invited students or verified emails can enter
                       </span>
@@ -600,7 +608,7 @@ export default function CreateSessionPage() {
                 {teachingMode === "AI" && (
                   <div className="space-y-6">
                     <div>
-                      <label className="text-xs font-semibold uppercase tracking-wider text-[#374151] block mb-3">
+                      <label className="session-label block mb-3">
                         Plan lecture topics for AI Teacher
                       </label>
                       {renderTopicsList()}
@@ -613,7 +621,7 @@ export default function CreateSessionPage() {
                   <div className="space-y-6">
                     {/* Standard Topics List */}
                     <div>
-                      <label className="text-xs font-semibold uppercase tracking-wider text-[#374151] block mb-3">
+                      <label className="session-label block mb-3">
                         Plan lecture outline / topics
                       </label>
                       {renderTopicsList()}
@@ -621,7 +629,7 @@ export default function CreateSessionPage() {
 
                     {/* Reference Material (Smaller Box) */}
                     <div className="space-y-3 pt-2">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-[#374151] block">
+                      <label className="session-label block">
                         Reference Material (Optional)
                       </label>
                       {!referenceMaterial ? (
@@ -656,7 +664,7 @@ export default function CreateSessionPage() {
 
                     {/* AI Assistant Checkboxes */}
                     <div className="space-y-3 pt-2 border-t border-[#E5E7EB]">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-[#374151] block">
+                      <label className="session-label block">
                         AI Assistant Features
                       </label>
                       
@@ -787,7 +795,7 @@ export default function CreateSessionPage() {
                 <div className="grid gap-6 md:grid-cols-2 items-center">
                   {/* Code */}
                   <div className="space-y-2">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-[#374151]">
+                    <span className="session-label">
                       Session Code
                     </span>
                     <div className="flex items-center justify-between bg-[#EFF6FF] border border-[#BFDBFE] p-4 rounded-xl">
@@ -806,7 +814,7 @@ export default function CreateSessionPage() {
 
                   {/* QR Code Placeholder */}
                   <div className="space-y-2 flex flex-col items-center md:items-end">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-[#374151] w-full text-center md:text-right">
+                    <span className="session-label w-full text-center md:text-right">
                       QR Code Access
                     </span>
                     <div className="h-28 w-28 bg-white border border-[#E5E7EB] rounded-xl flex flex-col items-center justify-center p-3 relative group">
@@ -827,7 +835,7 @@ export default function CreateSessionPage() {
 
                 {/* Share Options */}
                 <div className="space-y-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] block">
+                  <span className="session-label block">
                     Share Access
                   </span>
                   <div className="flex flex-wrap gap-2">

@@ -441,6 +441,8 @@ tbody.divide-y > :not([hidden]) ~ :not([hidden]) {
   background-color: #111827 !important;
   color: #FFFFFF !important;
   border-color: transparent !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 8px 16px rgba(17, 24, 39, 0.12) !important;
 }
 
 .session-type-card {
@@ -463,13 +465,21 @@ tbody.divide-y > :not([hidden]) ~ :not([hidden]) {
   background-color: #111827 !important;
   color: #FFFFFF !important;
   border-radius: 16px !important;
-  height: 48px !important;
+  height: 52px !important;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 .primary-btn:hover:not(:disabled) {
   background-color: #1F2937 !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 12px 24px rgba(17, 24, 39, 0.12) !important;
+}
+
+.session-label {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
 }
 
 .secondary-btn {
