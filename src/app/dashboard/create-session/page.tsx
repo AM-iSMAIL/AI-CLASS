@@ -21,6 +21,7 @@ import {
   FileText,
   CheckSquare,
   Square,
+  ChevronDown,
 } from "lucide-react"
 import DashboardSidebar from "@/components/dashboard-sidebar"
 import { subscribeToAuthChanges } from "@/lib/auth-service"
@@ -334,7 +335,7 @@ export default function CreateSessionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#111111] text-white flex font-sans antialiased">
+    <div className="min-h-screen bg-[#F6F7F9] text-[#111827] flex font-sans antialiased">
       <DashboardSidebar
         activeItem="Dashboard"
         isMobileOpen={isMobileSidebarOpen}
@@ -345,20 +346,20 @@ export default function CreateSessionPage() {
       <div className="flex-1 flex flex-col min-h-screen lg:ml-[72px]">
         
         {/* Header Topbar */}
-        <header className="h-16 border-b border-[#1a1a1a] bg-[#111111]/80 backdrop-blur-xl px-6 md:px-8 flex items-center justify-between sticky top-0 z-20">
+        <header className="h-16 border-b border-[#E5E7EB] bg-[#FFFFFF]/80 backdrop-blur-xl px-6 md:px-8 flex items-center justify-between sticky top-0 z-20">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsMobileSidebarOpen(true)}
-              className="p-1.5 rounded-lg border border-white/10 hover:bg-white/5 lg:hidden text-white/80 hover:text-white"
+              className="p-1.5 rounded-lg border border-neutral-200 hover:bg-neutral-50 lg:hidden text-neutral-600 hover:text-neutral-900"
             >
               <Menu className="h-5 w-5" />
             </button>
             
             <div className="flex items-center gap-3">
-              <Link href="/dashboard" className="p-1 rounded-lg hover:bg-[#1a1a1a] text-white/60 hover:text-white transition-colors">
+              <Link href="/dashboard" className="p-1 rounded-lg hover:bg-neutral-100 text-neutral-500 hover:text-neutral-900 transition-colors">
                 <ArrowLeft className="h-4.5 w-4.5" />
               </Link>
-              <h1 className="text-base md:text-lg font-bold text-white tracking-tight">
+              <h1 className="text-base md:text-lg font-bold text-[#111827] tracking-tight">
                 Create New Session
               </h1>
             </div>
@@ -366,21 +367,21 @@ export default function CreateSessionPage() {
         </header>
 
         {/* Form Container */}
-        <main className="flex-1 p-6 md:p-8 flex justify-center items-start lg:items-center bg-[#111111]">
-          <div className="w-full max-w-[700px] bg-[#1a1a1a] border border-white/5 rounded-2xl p-6 md:p-8 space-y-8 shadow-xl shadow-black/10">
+        <main className="flex-1 p-6 md:p-8 flex justify-center items-start lg:items-center bg-[#F6F7F9]">
+          <div className="w-full max-w-[700px] bg-[#FFFFFF] border border-[rgba(15,23,42,0.08)] rounded-[24px] p-6 md:p-8 space-y-8 shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)]">
             
             {/* Header & Subtitle */}
             <div className="text-center space-y-2">
-              <h2 className="text-2xl font-bold text-white tracking-tight">Create New Session</h2>
-              <p className="text-xs md:text-sm text-white/40">Set up your AI-powered class in seconds</p>
+              <h2 className="text-2xl font-bold text-[#111827] tracking-tight">Create New Session</h2>
+              <p className="text-xs md:text-sm text-[#6B7280] font-normal">Set up your AI-powered class in seconds</p>
             </div>
 
             {/* Step Indicator (Info -> Content -> Launch) */}
             <div className="relative flex items-center justify-between max-w-md mx-auto py-2">
               {/* Connector Lines */}
-              <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-white/5 -translate-y-1/2 z-0" />
+              <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-[#D1D5DB] -translate-y-1/2 z-0" />
               <div
-                className="absolute left-0 top-1/2 h-0.5 bg-purple-500 -translate-y-1/2 transition-all duration-300 z-0"
+                className="absolute left-0 top-1/2 h-0.5 bg-[#2563EB] -translate-y-1/2 transition-all duration-300 z-0"
                 style={{ width: step === 2 ? "0%" : step === 3 ? "50%" : "100%" }}
               />
 
@@ -389,13 +390,13 @@ export default function CreateSessionPage() {
                 <div
                   className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold transition-all border ${
                     step >= 2
-                      ? "bg-purple-600 border-purple-500 text-white shadow-sm shadow-purple-500/30"
-                      : "bg-[#111111] border-white/10 text-white/40"
+                      ? "bg-[#2563EB] border-[#2563EB] text-white shadow-sm shadow-[#2563EB]/10"
+                      : "bg-[#E5E7EB] border-transparent text-[#6B7280]"
                   }`}
                 >
                   1
                 </div>
-                <span className={`text-[10px] md:text-xs font-semibold ${step >= 2 ? "text-purple-400" : "text-white/40"}`}>
+                <span className={`text-[10px] md:text-xs font-semibold ${step >= 2 ? "text-[#2563EB]" : "text-[#6B7280]"}`}>
                   Session Info
                 </span>
               </div>
@@ -405,13 +406,13 @@ export default function CreateSessionPage() {
                 <div
                   className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold transition-all border ${
                     step >= 3
-                      ? "bg-purple-600 border-purple-500 text-white shadow-sm shadow-purple-500/30"
-                      : "bg-[#111111] border-white/10 text-white/40"
+                      ? "bg-[#2563EB] border-[#2563EB] text-white shadow-sm shadow-[#2563EB]/10"
+                      : "bg-[#E5E7EB] border-transparent text-[#6B7280]"
                   }`}
                 >
                   2
                 </div>
-                <span className={`text-[10px] md:text-xs font-semibold ${step >= 3 ? "text-purple-400" : "text-white/40"}`}>
+                <span className={`text-[10px] md:text-xs font-semibold ${step >= 3 ? "text-[#2563EB]" : "text-[#6B7280]"}`}>
                   Content
                 </span>
               </div>
@@ -421,13 +422,13 @@ export default function CreateSessionPage() {
                 <div
                   className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold transition-all border ${
                     step >= 4
-                      ? "bg-purple-600 border-purple-500 text-white shadow-sm shadow-purple-500/30"
-                      : "bg-[#111111] border-white/10 text-white/40"
+                      ? "bg-[#2563EB] border-[#2563EB] text-white shadow-sm shadow-[#2563EB]/10"
+                      : "bg-[#E5E7EB] border-transparent text-[#6B7280]"
                   }`}
                 >
                   3
                 </div>
-                <span className={`text-[10px] md:text-xs font-semibold ${step >= 4 ? "text-purple-400" : "text-white/40"}`}>
+                <span className={`text-[10px] md:text-xs font-semibold ${step >= 4 ? "text-[#2563EB]" : "text-[#6B7280]"}`}>
                   Launch
                 </span>
               </div>
@@ -440,7 +441,7 @@ export default function CreateSessionPage() {
               <form onSubmit={handleStep2Submit} className="space-y-6 animate-fadeIn">
                 {/* Title */}
                 <div className="space-y-2">
-                  <label htmlFor="session-title" className="text-xs font-bold uppercase tracking-wider text-white/60">
+                  <label htmlFor="session-title" className="text-xs font-semibold uppercase tracking-wider text-[#374151]">
                     Session Title
                   </label>
                   <input
@@ -450,7 +451,7 @@ export default function CreateSessionPage() {
                     value={sessionTitle}
                     onChange={(e) => setSessionTitle(e.target.value)}
                     placeholder="e.g. Introduction to Physics"
-                    className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-xl text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-white placeholder-white/20"
+                    className="w-full px-4 py-3 session-input placeholder-[#9CA3AF]"
                   />
                 </div>
 
@@ -458,7 +459,7 @@ export default function CreateSessionPage() {
                 <div className="grid gap-6 md:grid-cols-2">
                   {/* Subject */}
                   <div className="space-y-2">
-                    <label htmlFor="subject-select" className="text-xs font-bold uppercase tracking-wider text-white/60">
+                    <label htmlFor="subject-select" className="text-xs font-semibold uppercase tracking-wider text-[#374151]">
                       Subject
                     </label>
                     <div className="relative">
@@ -466,23 +467,21 @@ export default function CreateSessionPage() {
                         id="subject-select"
                         value={subject}
                         onChange={(e) => setSubject(e.target.value)}
-                        className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-xl text-sm focus:outline-none focus:border-purple-500 transition-all text-white appearance-none cursor-pointer"
+                        className="w-full px-4 py-3 session-input appearance-none cursor-pointer"
                       >
                         {SUBJECTS.map((sub) => (
-                          <option key={sub} value={sub} className="bg-[#1a1a1a]">
+                          <option key={sub} value={sub}>
                             {sub}
                           </option>
                         ))}
                       </select>
-                      <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-white/40">
-                        ▼
-                      </div>
+                      <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#6B7280] h-4 w-4" />
                     </div>
                   </div>
 
                   {/* Grade Level */}
                   <div className="space-y-2">
-                    <label htmlFor="grade-select" className="text-xs font-bold uppercase tracking-wider text-white/60">
+                    <label htmlFor="grade-select" className="text-xs font-semibold uppercase tracking-wider text-[#374151]">
                       Grade Level
                     </label>
                     <div className="relative">
@@ -490,24 +489,22 @@ export default function CreateSessionPage() {
                         id="grade-select"
                         value={gradeLevel}
                         onChange={(e) => setGradeLevel(e.target.value)}
-                        className="w-full px-4 py-3 bg-[#111111] border border-white/10 rounded-xl text-sm focus:outline-none focus:border-purple-500 transition-all text-white appearance-none cursor-pointer"
+                        className="w-full px-4 py-3 session-input appearance-none cursor-pointer"
                       >
                         {GRADE_LEVELS.map((grade) => (
-                          <option key={grade} value={grade} className="bg-[#1a1a1a]">
+                          <option key={grade} value={grade}>
                             {grade}
                           </option>
                         ))}
                       </select>
-                      <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-white/40">
-                        ▼
-                      </div>
+                      <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#6B7280] h-4 w-4" />
                     </div>
                   </div>
                 </div>
 
                 {/* Duration */}
                 <div className="space-y-3">
-                  <label className="text-xs font-bold uppercase tracking-wider text-white/60 block">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-[#374151] block">
                     Estimated Duration
                   </label>
                   <div className="flex flex-wrap gap-2.5">
@@ -516,10 +513,8 @@ export default function CreateSessionPage() {
                         key={dur}
                         type="button"
                         onClick={() => setDuration(dur)}
-                        className={`px-4 py-2 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
-                          duration === dur
-                            ? "bg-purple-600 border-purple-500 text-white shadow-sm shadow-purple-500/10"
-                            : "bg-[#111111] border-white/5 text-white/60 hover:border-white/10"
+                        className={`px-4 py-2 text-xs font-semibold transition-all cursor-pointer duration-chip ${
+                          duration === dur ? "selected" : ""
                         }`}
                       >
                         {dur}
@@ -537,43 +532,39 @@ export default function CreateSessionPage() {
                         value={customDuration}
                         onChange={(e) => setCustomDuration(e.target.value)}
                         placeholder="Enter duration"
-                        className="w-32 px-4 py-2.5 bg-[#111111] border border-white/10 rounded-xl text-sm focus:outline-none focus:border-purple-500 text-white"
+                        className="w-32 px-4 py-2.5 session-input placeholder-[#9CA3AF]"
                       />
-                      <span className="text-xs text-white/50 font-medium">minutes</span>
+                      <span className="text-xs text-[#6B7280] font-medium">minutes</span>
                     </div>
                   )}
                 </div>
 
                 {/* Session Type */}
                 <div className="space-y-3">
-                  <label className="text-xs font-bold uppercase tracking-wider text-white/60 block">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-[#374151] block">
                     Session Type
                   </label>
                   <div className="grid grid-cols-2 gap-4">
                     <div
                       onClick={() => setSessionType("Public")}
-                      className={`p-4 rounded-xl border cursor-pointer transition-all flex flex-col gap-1.5 ${
-                        sessionType === "Public"
-                          ? "bg-purple-600/5 border-purple-500"
-                          : "bg-[#111111] border-white/5 opacity-60 hover:opacity-100"
+                      className={`p-4 cursor-pointer transition-all flex flex-col gap-1.5 session-type-card ${
+                        sessionType === "Public" ? "selected" : ""
                       }`}
                     >
-                      <span className="text-xs font-bold text-white">Public</span>
-                      <span className="text-[10px] text-white/40 leading-tight">
+                      <span className="text-xs font-bold text-[#111827]">Public</span>
+                      <span className="text-[10px] text-[#6B7280] leading-tight">
                         Anyone with the room code can join and participate
                       </span>
                     </div>
 
                     <div
                       onClick={() => setSessionType("Private")}
-                      className={`p-4 rounded-xl border cursor-pointer transition-all flex flex-col gap-1.5 ${
-                        sessionType === "Private"
-                          ? "bg-purple-600/5 border-purple-500"
-                          : "bg-[#111111] border-white/5 opacity-60 hover:opacity-100"
+                      className={`p-4 cursor-pointer transition-all flex flex-col gap-1.5 session-type-card ${
+                        sessionType === "Private" ? "selected" : ""
                       }`}
                     >
-                      <span className="text-xs font-bold text-white">Private</span>
-                      <span className="text-[10px] text-white/40 leading-tight">
+                      <span className="text-xs font-bold text-[#111827]">Private</span>
+                      <span className="text-[10px] text-[#6B7280] leading-tight">
                         Only invited students or verified emails can enter
                       </span>
                     </div>
@@ -584,7 +575,7 @@ export default function CreateSessionPage() {
                 <div className="space-y-4 pt-4">
                   <button
                     type="submit"
-                    className="w-full flex items-center justify-center gap-1.5 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 font-bold text-sm text-white shadow-md shadow-purple-600/20 hover:shadow-purple-600/30 transition-all cursor-pointer"
+                    className="w-full flex items-center justify-center gap-1.5 py-3.5 rounded-xl primary-btn font-bold text-sm cursor-pointer"
                   >
                     Continue
                     <ArrowRight className="h-4 w-4" />
@@ -593,7 +584,7 @@ export default function CreateSessionPage() {
                   <button
                     type="button"
                     onClick={() => router.push("/dashboard")}
-                    className="w-full text-center text-xs font-semibold text-white/40 hover:text-white/60 transition-colors cursor-pointer"
+                    className="w-full text-center text-xs font-semibold text-[#6B7280] hover:text-[#111827] transition-colors cursor-pointer"
                   >
                     Cancel & Return to Dashboard
                   </button>
@@ -609,7 +600,7 @@ export default function CreateSessionPage() {
                 {teachingMode === "AI" && (
                   <div className="space-y-6">
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-wider text-white/60 block mb-3">
+                      <label className="text-xs font-semibold uppercase tracking-wider text-[#374151] block mb-3">
                         Plan lecture topics for AI Teacher
                       </label>
                       {renderTopicsList()}
@@ -622,7 +613,7 @@ export default function CreateSessionPage() {
                   <div className="space-y-6">
                     {/* Standard Topics List */}
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-wider text-white/60 block mb-3">
+                      <label className="text-xs font-semibold uppercase tracking-wider text-[#374151] block mb-3">
                         Plan lecture outline / topics
                       </label>
                       {renderTopicsList()}
@@ -630,32 +621,32 @@ export default function CreateSessionPage() {
 
                     {/* Reference Material (Smaller Box) */}
                     <div className="space-y-3 pt-2">
-                      <label className="text-xs font-bold uppercase tracking-wider text-white/60 block">
+                      <label className="text-xs font-semibold uppercase tracking-wider text-[#374151] block">
                         Reference Material (Optional)
                       </label>
                       {!referenceMaterial ? (
-                        <label className="border border-dashed border-white/10 hover:border-purple-500/50 bg-[#111111]/30 rounded-xl p-4 text-center cursor-pointer transition-all flex items-center justify-center gap-2 group relative">
+                        <label className="border border-dashed border-[#E5E7EB] hover:border-[#2563EB]/50 bg-white rounded-xl p-4 text-center cursor-pointer transition-all flex items-center justify-center gap-2 group relative">
                           <input
                             type="file"
                             accept=".pdf,.ppt,.pptx"
                             className="hidden"
                             onChange={(e) => handleFileUpload(e, "human")}
                           />
-                          <Upload className="h-4 w-4 text-white/30 group-hover:text-purple-400" />
-                          <span className="text-xs text-white/40 group-hover:text-white/60 font-semibold">
+                          <Upload className="h-4 w-4 text-[#9CA3AF] group-hover:text-[#2563EB]" />
+                          <span className="text-xs text-[#6B7280] group-hover:text-[#374151] font-semibold">
                             Upload slides/documents for the AI assistant
                           </span>
                         </label>
                       ) : (
-                        <div className="flex items-center justify-between bg-white/[0.02] border border-white/5 p-3 rounded-xl animate-fadeIn">
+                        <div className="flex items-center justify-between bg-[#F9FAFB] border border-[#E5E7EB] p-3 rounded-xl animate-fadeIn">
                           <div className="flex items-center gap-2.5 overflow-hidden">
-                            <FileText className="h-4 w-4 text-purple-400 flex-shrink-0" />
-                            <span className="text-xs font-semibold text-white/80 truncate">{referenceMaterial.name}</span>
+                            <FileText className="h-4 w-4 text-[#2563EB] flex-shrink-0" />
+                            <span className="text-xs font-semibold text-[#374151] truncate">{referenceMaterial.name}</span>
                           </div>
                           <button
                             type="button"
                             onClick={() => setReferenceMaterial(null)}
-                            className="text-white/20 hover:text-red-400 transition-colors"
+                            className="text-[#9CA3AF] hover:text-red-500 transition-colors"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
@@ -664,8 +655,8 @@ export default function CreateSessionPage() {
                     </div>
 
                     {/* AI Assistant Checkboxes */}
-                    <div className="space-y-3 pt-2 border-t border-white/5">
-                      <label className="text-xs font-bold uppercase tracking-wider text-white/60 block">
+                    <div className="space-y-3 pt-2 border-t border-[#E5E7EB]">
+                      <label className="text-xs font-semibold uppercase tracking-wider text-[#374151] block">
                         AI Assistant Features
                       </label>
                       
@@ -673,66 +664,66 @@ export default function CreateSessionPage() {
                         {/* Checkbox 1 */}
                         <div
                           onClick={() => toggleAssistantCheckbox("generateVisuals")}
-                          className="flex items-center gap-3 p-3 bg-[#111111] border border-white/5 rounded-xl cursor-pointer hover:border-purple-500/30 transition-all"
+                          className="flex items-center gap-3 p-3 bg-white border border-[#E5E7EB] rounded-xl cursor-pointer hover:border-[#2563EB]/30 hover:bg-[#F9FAFB] transition-all"
                         >
                           {aiAssistants.generateVisuals ? (
-                            <CheckSquare className="h-4.5 w-4.5 text-purple-400" />
+                            <CheckSquare className="h-4.5 w-4.5 text-[#2563EB]" />
                           ) : (
-                            <Square className="h-4.5 w-4.5 text-white/20" />
+                            <Square className="h-4.5 w-4.5 text-[#9CA3AF]" />
                           )}
-                          <span className="text-xs font-semibold text-white/80">Generate visuals while I teach</span>
+                          <span className="text-xs font-semibold text-[#374151]">Generate visuals while I teach</span>
                         </div>
 
                         {/* Checkbox 2 */}
                         <div
                           onClick={() => toggleAssistantCheckbox("doubtChat")}
-                          className="flex items-center gap-3 p-3 bg-[#111111] border border-white/5 rounded-xl cursor-pointer hover:border-purple-500/30 transition-all"
+                          className="flex items-center gap-3 p-3 bg-white border border-[#E5E7EB] rounded-xl cursor-pointer hover:border-[#2563EB]/30 hover:bg-[#F9FAFB] transition-all"
                         >
                           {aiAssistants.doubtChat ? (
-                            <CheckSquare className="h-4.5 w-4.5 text-purple-400" />
+                            <CheckSquare className="h-4.5 w-4.5 text-[#2563EB]" />
                           ) : (
-                            <Square className="h-4.5 w-4.5 text-white/20" />
+                            <Square className="h-4.5 w-4.5 text-[#9CA3AF]" />
                           )}
-                          <span className="text-xs font-semibold text-white/80">Handle student doubt chat</span>
+                          <span className="text-xs font-semibold text-[#374151]">Handle student doubt chat</span>
                         </div>
 
                         {/* Checkbox 3 */}
                         <div
                           onClick={() => toggleAssistantCheckbox("suggestVideos")}
-                          className="flex items-center gap-3 p-3 bg-[#111111] border border-white/5 rounded-xl cursor-pointer hover:border-purple-500/30 transition-all"
+                          className="flex items-center gap-3 p-3 bg-white border border-[#E5E7EB] rounded-xl cursor-pointer hover:border-[#2563EB]/30 hover:bg-[#F9FAFB] transition-all"
                         >
                           {aiAssistants.suggestVideos ? (
-                            <CheckSquare className="h-4.5 w-4.5 text-purple-400" />
+                            <CheckSquare className="h-4.5 w-4.5 text-[#2563EB]" />
                           ) : (
-                            <Square className="h-4.5 w-4.5 text-white/20" />
+                            <Square className="h-4.5 w-4.5 text-[#9CA3AF]" />
                           )}
-                          <span className="text-xs font-semibold text-white/80">Suggest YouTube videos</span>
+                          <span className="text-xs font-semibold text-[#374151]">Suggest YouTube videos</span>
                         </div>
 
                         {/* Checkbox 4 */}
                         <div
                           onClick={() => toggleAssistantCheckbox("sessionNotes")}
-                          className="flex items-center gap-3 p-3 bg-[#111111] border border-white/5 rounded-xl cursor-pointer hover:border-purple-500/30 transition-all"
+                          className="flex items-center gap-3 p-3 bg-white border border-[#E5E7EB] rounded-xl cursor-pointer hover:border-[#2563EB]/30 hover:bg-[#F9FAFB] transition-all"
                         >
                           {aiAssistants.sessionNotes ? (
-                            <CheckSquare className="h-4.5 w-4.5 text-purple-400" />
+                            <CheckSquare className="h-4.5 w-4.5 text-[#2563EB]" />
                           ) : (
-                            <Square className="h-4.5 w-4.5 text-white/20" />
+                            <Square className="h-4.5 w-4.5 text-[#9CA3AF]" />
                           )}
-                          <span className="text-xs font-semibold text-white/80">Take live session notes</span>
+                          <span className="text-xs font-semibold text-[#374151]">Take live session notes</span>
                         </div>
 
                         {/* Checkbox 5 */}
                         <div
                           onClick={() => toggleAssistantCheckbox("postSummary")}
-                          className="flex items-center gap-3 p-3 bg-[#111111] border border-white/5 rounded-xl cursor-pointer hover:border-purple-500/30 transition-all"
+                          className="flex items-center gap-3 p-3 bg-white border border-[#E5E7EB] rounded-xl cursor-pointer hover:border-[#2563EB]/30 hover:bg-[#F9FAFB] transition-all"
                         >
                           {aiAssistants.postSummary ? (
-                            <CheckSquare className="h-4.5 w-4.5 text-purple-400" />
+                            <CheckSquare className="h-4.5 w-4.5 text-[#2563EB]" />
                           ) : (
-                            <Square className="h-4.5 w-4.5 text-white/20" />
+                            <Square className="h-4.5 w-4.5 text-[#9CA3AF]" />
                           )}
-                          <span className="text-xs font-semibold text-white/80">Post-session summary</span>
+                          <span className="text-xs font-semibold text-[#374151]">Post-session summary</span>
                         </div>
                       </div>
                     </div>
@@ -740,10 +731,10 @@ export default function CreateSessionPage() {
                 )}
 
                 {/* CTA Buttons */}
-                <div className="space-y-4 pt-4 border-t border-white/5">
+                <div className="space-y-4 pt-4 border-t border-[#E5E7EB]">
                   <button
                     type="submit"
-                    className="w-full flex items-center justify-center gap-1.5 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 font-bold text-sm text-white shadow-md shadow-purple-600/20 hover:shadow-purple-600/30 transition-all cursor-pointer"
+                    className="w-full flex items-center justify-center gap-1.5 py-3.5 rounded-xl primary-btn font-bold text-sm cursor-pointer"
                   >
                     Continue
                     <ArrowRight className="h-4 w-4" />
@@ -752,7 +743,7 @@ export default function CreateSessionPage() {
                   <button
                     type="button"
                     onClick={() => setStep(2)}
-                    className="w-full text-center text-xs font-semibold text-white/40 hover:text-white/60 transition-colors cursor-pointer"
+                    className="w-full text-center text-xs font-semibold text-[#6B7280] hover:text-[#111827] transition-colors cursor-pointer"
                   >
                     Back to Session Info
                   </button>
@@ -766,25 +757,25 @@ export default function CreateSessionPage() {
               <div className="space-y-6 animate-fadeIn">
                 
                 {/* Summary Card */}
-                <div className="bg-[#111111] border border-white/5 rounded-xl p-5 space-y-4">
+                <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-5 space-y-4">
                   <div>
-                    <h3 className="text-base font-bold text-white leading-tight">{sessionTitle}</h3>
-                    <p className="text-[10px] text-white/40 mt-1 font-semibold uppercase tracking-wider">
+                    <h3 className="text-base font-bold text-[#111827] leading-tight">{sessionTitle}</h3>
+                    <p className="text-[10px] text-[#6B7280] mt-1 font-semibold uppercase tracking-wider">
                       {subject} • {gradeLevel} • {duration === "Custom" ? `${customDuration} min` : duration} • {sessionType}
                     </p>
-                    <p className="text-[10px] text-purple-400 font-bold uppercase tracking-wider mt-1.5">
+                    <p className="text-[10px] text-[#2563EB] font-bold uppercase tracking-wider mt-1.5">
                       Teaching Mode: {teachingMode === "AI" ? "AI Teacher" : "I'll Teach (Led by human)"}
                     </p>
                   </div>
 
-                  <div className="border-t border-white/5 pt-3.5 space-y-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 block">
+                  <div className="border-t border-[#E5E7EB] pt-3.5 space-y-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280] block">
                       Topics Flow ({topics.length})
                     </span>
-                    <ul className="space-y-1.5 text-xs text-white/60">
+                    <ul className="space-y-1.5 text-xs text-[#374151]">
                       {topics.map((t, idx) => (
                         <li key={idx} className="flex items-center gap-2">
-                          <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#2563EB]" />
                           {t}
                         </li>
                       ))}
@@ -796,16 +787,16 @@ export default function CreateSessionPage() {
                 <div className="grid gap-6 md:grid-cols-2 items-center">
                   {/* Code */}
                   <div className="space-y-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-white/60">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[#374151]">
                       Session Code
                     </span>
-                    <div className="flex items-center justify-between bg-purple-500/10 border border-purple-500/20 p-4 rounded-xl">
-                      <span className="text-xl md:text-2xl font-mono font-bold tracking-widest text-purple-400">
+                    <div className="flex items-center justify-between bg-[#EFF6FF] border border-[#BFDBFE] p-4 rounded-xl">
+                      <span className="text-xl md:text-2xl font-mono font-bold tracking-widest text-[#2563EB]">
                         {sessionCode}
                       </span>
                       <button
                         onClick={copyToClipboard}
-                        className="p-2 rounded-lg bg-purple-500/15 text-purple-400 hover:bg-purple-500/25 transition-all cursor-pointer"
+                        className="p-2 rounded-lg bg-[#2563EB]/10 text-[#2563EB] hover:bg-[#2563EB]/20 transition-all cursor-pointer"
                         title="Copy Code"
                       >
                         {isCopied ? <Check className="h-4.5 w-4.5" /> : <Copy className="h-4.5 w-4.5" />}
@@ -815,19 +806,19 @@ export default function CreateSessionPage() {
 
                   {/* QR Code Placeholder */}
                   <div className="space-y-2 flex flex-col items-center md:items-end">
-                    <span className="text-xs font-bold uppercase tracking-wider text-white/60 w-full text-center md:text-right">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[#374151] w-full text-center md:text-right">
                       QR Code Access
                     </span>
-                    <div className="h-28 w-28 bg-[#111111] border border-white/5 rounded-xl flex flex-col items-center justify-center p-3 relative group">
-                      <div className="grid grid-cols-5 gap-1.5 w-full h-full opacity-30 group-hover:opacity-50 transition-opacity">
+                    <div className="h-28 w-28 bg-white border border-[#E5E7EB] rounded-xl flex flex-col items-center justify-center p-3 relative group">
+                      <div className="grid grid-cols-5 gap-1.5 w-full h-full opacity-35 group-hover:opacity-60 transition-opacity">
                         {Array.from({ length: 25 }).map((_, i) => (
                           <div
                             key={i}
-                            className={`rounded-sm ${(i % 3 === 0 || i % 7 === 0 || i < 5 || i > 20) ? "bg-purple-400" : "bg-transparent"}`}
+                            className={`rounded-sm ${(i % 3 === 0 || i % 7 === 0 || i < 5 || i > 20) ? "bg-[#2563EB]" : "bg-transparent"}`}
                           />
                         ))}
                       </div>
-                      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white/60 uppercase tracking-widest pointer-events-none">
+                      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-[#6B7280] uppercase tracking-widest pointer-events-none">
                         Scan Code
                       </span>
                     </div>
@@ -836,15 +827,15 @@ export default function CreateSessionPage() {
 
                 {/* Share Options */}
                 <div className="space-y-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-white/40 block">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] block">
                     Share Access
                   </span>
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={handleCopyLink}
-                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] text-xs font-bold text-white transition-colors cursor-pointer"
+                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#E5E7EB] bg-white hover:bg-[#F9FAFB] text-xs font-bold text-[#374151] transition-colors cursor-pointer"
                     >
-                      <Share2 className="h-3.5 w-3.5 text-purple-400" />
+                      <Share2 className="h-3.5 w-3.5 text-[#2563EB]" />
                       Copy Invite Link
                     </button>
 
@@ -852,33 +843,33 @@ export default function CreateSessionPage() {
                       href={`https://api.whatsapp.com/send?text=Join%20my%20ClassAI%20session%20using%20code:%20${sessionCode}%20at%20${getShareLink()}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] text-xs font-bold text-white transition-colors"
+                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#E5E7EB] bg-white hover:bg-[#F9FAFB] text-xs font-bold text-[#374151] transition-colors"
                     >
-                      <span className="text-emerald-400 text-sm font-semibold">WA</span>
+                      <span className="text-emerald-600 text-sm font-semibold">WA</span>
                       WhatsApp
                     </a>
 
                     <a
                       href={`mailto:?subject=ClassAI%20Session%20Code&body=Hello,%20please%20join%20my%20class%20session%20on%20ClassAI.%20Code:%20${sessionCode}%20Link:%20${getShareLink()}`}
-                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] text-xs font-bold text-white transition-colors"
+                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#E5E7EB] bg-white hover:bg-[#F9FAFB] text-xs font-bold text-[#374151] transition-colors"
                     >
-                      <span className="text-purple-400 text-sm font-semibold">@</span>
+                      <span className="text-[#2563EB] text-sm font-semibold">@</span>
                       Email Invite
                     </a>
                   </div>
                 </div>
 
                 {/* Schedule Option Toggle */}
-                <div className="pt-2 border-t border-white/5 space-y-4">
+                <div className="pt-2 border-t border-[#E5E7EB] space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-xs font-bold text-white">Schedule for Later</span>
-                      <p className="text-[10px] text-white/30 mt-0.5">Pick a specific time for the class to start</p>
+                      <span className="text-xs font-bold text-[#111827]">Schedule for Later</span>
+                      <p className="text-[10px] text-[#6B7280] mt-0.5">Pick a specific time for the class to start</p>
                     </div>
                     <button
                       onClick={() => setScheduleLater(!scheduleLater)}
                       className={`h-6 w-11 rounded-full p-0.5 transition-colors cursor-pointer relative ${
-                        scheduleLater ? "bg-purple-600" : "bg-white/10"
+                        scheduleLater ? "bg-[#2563EB]" : "bg-neutral-200"
                       }`}
                     >
                       <div
@@ -890,14 +881,14 @@ export default function CreateSessionPage() {
                   </div>
 
                   {scheduleLater && (
-                    <div className="flex items-center gap-3 bg-[#111111] p-4 rounded-xl border border-white/5 animate-slideDown">
-                      <Calendar className="h-4.5 w-4.5 text-purple-400" />
+                    <div className="flex items-center gap-3 bg-white p-4 rounded-xl border border-[#E5E7EB] animate-slideDown">
+                      <Calendar className="h-4.5 w-4.5 text-[#2563EB]" />
                       <input
                         type="datetime-local"
                         required
                         value={scheduledDate}
                         onChange={(e) => setScheduledDate(e.target.value)}
-                        className="bg-transparent text-xs text-white focus:outline-none cursor-pointer w-full scheme-dark"
+                        className="bg-transparent text-xs text-[#111827] focus:outline-none cursor-pointer w-full scheme-light"
                       />
                     </div>
                   )}
@@ -908,7 +899,7 @@ export default function CreateSessionPage() {
                   <button
                     onClick={handleLaunch}
                     disabled={isSubmitting}
-                    className="w-full flex items-center justify-center gap-1.5 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 font-bold text-sm text-white shadow-md shadow-purple-600/20 hover:shadow-purple-600/30 transition-all cursor-pointer disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-1.5 py-3.5 rounded-xl primary-btn font-bold text-sm cursor-pointer disabled:opacity-50"
                   >
                     {isSubmitting ? "Launching..." : !scheduleLater ? "Start Now" : "Confirm Schedule"}
                   </button>
@@ -916,7 +907,7 @@ export default function CreateSessionPage() {
                   <button
                     type="button"
                     onClick={() => setStep(3)}
-                    className="w-full text-center text-xs font-semibold text-white/40 hover:text-white/60 transition-colors cursor-pointer"
+                    className="w-full text-center text-xs font-semibold text-[#6B7280] hover:text-[#111827] transition-colors cursor-pointer"
                   >
                     Back to Content
                   </button>
@@ -931,14 +922,14 @@ export default function CreateSessionPage() {
 
       {topicLimitWarning && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 animate-fadeIn">
-          <div className="bg-[#1a1a1a] border border-purple-500/20 rounded-2xl p-6 max-w-md w-full mx-4 space-y-4 shadow-2xl shadow-purple-500/10">
+          <div className="bg-white border border-[#E5E7EB] rounded-2xl p-6 max-w-md w-full mx-4 space-y-4 shadow-2xl">
             <div className="flex items-start gap-3">
-              <div className="h-10 w-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400 flex-shrink-0">
+              <div className="h-10 w-10 rounded-full bg-[#2563EB]/10 flex items-center justify-center text-[#2563EB] flex-shrink-0">
                 <Sparkles className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-white">Topic Limit Reached</h3>
-                <p className="text-xs text-white/60 mt-1.5 leading-relaxed">
+                <h3 className="text-base font-bold text-[#111827]">Topic Limit Reached</h3>
+                <p className="text-xs text-[#6B7280] mt-1.5 leading-relaxed">
                   {topicLimitWarning}
                 </p>
               </div>
@@ -947,7 +938,7 @@ export default function CreateSessionPage() {
               <button
                 type="button"
                 onClick={() => setTopicLimitWarning(null)}
-                className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white rounded-xl transition-all cursor-pointer shadow-md shadow-purple-600/10"
+                className="px-4 py-2 bg-[#2563EB] hover:bg-[#1d4ed8] text-xs font-bold text-white rounded-xl transition-all cursor-pointer shadow-md"
               >
                 Got it
               </button>
@@ -971,20 +962,20 @@ export default function CreateSessionPage() {
               onDragEnter={(e) => handleDragEnter(e, index)}
               onDragEnd={handleDragEnd}
               onDragOver={(e) => e.preventDefault()}
-              className={`flex items-center gap-3 bg-[#111111] border border-white/5 p-3 rounded-xl transition-all ${
+              className={`flex items-center gap-3 session-topic-row p-3 transition-all ${
                 draggedIndex === index
-                  ? "opacity-40 border-dashed border-purple-500"
-                  : "hover:border-white/10"
+                  ? "opacity-40 border-dashed border-[#2563EB]"
+                  : ""
               }`}
             >
               <button
                 type="button"
-                className="text-white/20 hover:text-white/40 cursor-grab active:cursor-grabbing transition-colors"
+                className="text-neutral-400 hover:text-neutral-600 cursor-grab active:cursor-grabbing transition-colors"
               >
                 <GripVertical className="h-4.5 w-4.5" />
               </button>
 
-              <span className="h-6 w-6 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center text-xs font-bold">
+              <span className="h-6 w-6 rounded-lg bg-[#2563EB]/10 text-[#2563EB] flex items-center justify-center text-xs font-bold">
                 {index + 1}
               </span>
 
@@ -994,14 +985,14 @@ export default function CreateSessionPage() {
                 value={topic}
                 onChange={(e) => handleTopicChange(index, e.target.value)}
                 placeholder={`Topic #${index + 1} description`}
-                className="flex-1 bg-transparent text-sm text-white placeholder-white/20 focus:outline-none"
+                className="flex-1 bg-transparent text-sm text-[#111827] placeholder-[#9CA3AF] focus:outline-none"
               />
 
               {topics.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeTopicField(index)}
-                  className="text-white/20 hover:text-red-400 transition-colors cursor-pointer"
+                  className="text-neutral-400 hover:text-red-500 transition-colors cursor-pointer"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -1014,7 +1005,7 @@ export default function CreateSessionPage() {
           <button
             type="button"
             onClick={addTopicField}
-            className="flex items-center gap-1.5 px-4.5 py-2.5 rounded-xl border border-dashed border-purple-500/30 text-purple-400 hover:text-purple-300 hover:border-purple-500/50 text-xs font-bold transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-4.5 py-2.5 rounded-xl border border-dashed border-[#2563EB]/30 text-[#2563EB] hover:text-[#1d4ed8] hover:border-[#2563EB]/50 text-xs font-bold transition-all cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             Add another topic
@@ -1022,7 +1013,7 @@ export default function CreateSessionPage() {
         )}
 
         <div className="space-y-2">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-white/40">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#6B7280]">
             Suggested Topics
           </span>
           <div className="flex flex-wrap gap-2">
@@ -1031,7 +1022,7 @@ export default function CreateSessionPage() {
                 key={sug}
                 type="button"
                 onClick={() => handleSuggestionClick(sug)}
-                className="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-white/[0.02] border border-white/5 text-white/50 hover:bg-white/[0.04] hover:text-white transition-colors cursor-pointer"
+                className="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-white border border-[#E5E7EB] text-[#374151] hover:bg-[#F9FAFB] hover:text-[#111827] transition-colors cursor-pointer"
               >
                 + {sug}
               </button>
