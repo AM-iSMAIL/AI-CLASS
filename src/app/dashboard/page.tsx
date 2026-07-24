@@ -520,14 +520,14 @@ function DashboardContent() {
                                   <td className="px-4 py-4 text-neutral-900 font-medium">{formatSessionDate(session)}</td>
                                   <td className="px-6 py-4 text-right">
                                     {(session.status === "Live" || session.status === "Active") && (
-                                      <span className="inline-flex items-center gap-1 rounded-full bg-black px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wider">
-                                        <span className="h-1 w-1 rounded-full bg-white" />
-                                        Live
-                                      </span>
-                                    )}
+                                       <span className="badge-live">
+                                         <span className="status-dot-live" />
+                                         Live
+                                       </span>
+                                     )}
                                     {session.status === "Completed" && (
-                                      <span className="inline-flex items-center gap-1 rounded-full bg-[#1b3f27] px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wider">
-                                        <span className="h-1 w-1 rounded-full bg-[#10b981]" />
+                                      <span className="badge-completed">
+                                        <span className="status-dot-completed" />
                                         Ended
                                       </span>
                                     )}
@@ -711,11 +711,11 @@ function DashboardContent() {
                                 <td className="px-4 py-4 text-neutral-900 font-medium">{formatSessionDate(session)}</td>
                                 <td className="px-4 py-4">
                                   {isLive && (
-                                    <span className="inline-flex items-center gap-1 rounded-full bg-black px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wider">
-                                      <span className="h-1 w-1 rounded-full bg-white animate-pulse" />
-                                      Live
-                                    </span>
-                                  )}
+                                     <span className="badge-live">
+                                       <span className="status-dot-live" />
+                                       Live
+                                     </span>
+                                   )}
                                   {session.status === "Completed" && (
                                     <span className="inline-flex items-center gap-1 rounded-full bg-[#1b3f27] px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wider">
                                       <span className="h-1 w-1 rounded-full bg-[#10b981]" />

@@ -305,3 +305,73 @@
   pointer-events: auto;
   transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
 }
+
+/* Premium Status Badges */
+.badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  background-color: #111827;
+  color: #FFFFFF;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.badge-live:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.15);
+}
+
+.status-dot-live {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background-color: #EF4444;
+  animation: pulse-glow-red 1.8s infinite;
+}
+
+@keyframes pulse-glow-red {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.badge-completed {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  background-color: #ECFDF3;
+  color: #166534;
+  border: 1px solid #BBF7D0;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.badge-completed:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(34, 197, 94, 0.10);
+}
+
+.status-dot-completed {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background-color: #22C55E;
+}
