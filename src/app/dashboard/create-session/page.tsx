@@ -70,6 +70,8 @@ export default function CreateSessionPage() {
   const [duration, setDuration] = useState("60 min")
   const [customDuration, setCustomDuration] = useState("")
   const [sessionType, setSessionType] = useState<"Public" | "Private">("Public")
+  const [isSubjectDropdownOpen, setIsSubjectDropdownOpen] = useState(false)
+  const [isGradeDropdownOpen, setIsGradeDropdownOpen] = useState(false)
 
   // Step 3 State: Content Configuration (AI Mode)
   const [aiTab, setAiTab] = useState<"upload" | "topics">("upload")
@@ -461,45 +463,95 @@ export default function CreateSessionPage() {
                 <div className="grid gap-6 md:grid-cols-2">
                   {/* Subject */}
                   <div className="space-y-2">
-                    <label htmlFor="subject-select" className="session-label">
+                    <label className="session-label">
                       Subject
                     </label>
                     <div className="relative">
-                      <select
-                        id="subject-select"
-                        value={subject}
-                        onChange={(e) => setSubject(e.target.value)}
-                        className="w-full px-4 py-3 session-input appearance-none cursor-pointer"
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsSubjectDropdownOpen(!isSubjectDropdownOpen);
+                          setIsGradeDropdownOpen(false);
+                        }}
+                        className="w-full flex items-center justify-between px-4 py-3 session-input cursor-pointer text-left font-medium"
                       >
-                        {SUBJECTS.map((sub) => (
-                          <option key={sub} value={sub}>
-                            {sub}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#6B7280] h-4 w-4" />
+                        <span>{subject}</span>
+                        <ChevronDown className={`text-[#6B7280] h-4 w-4 transition-transform duration-200 ${isSubjectDropdownOpen ? "rotate-180" : ""}`} />
+                      </button>
+
+                      {isSubjectDropdownOpen && (
+                        <>
+                          <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setIsSubjectDropdownOpen(false)}
+                          />
+                          <div className="absolute left-0 right-0 mt-1.5 z-50 bg-[#FFFFFF] border border-[#E5E7EB] rounded-[16px] py-1.5 shadow-[0_10px_30px_rgba(15,23,42,0.08)] max-h-60 overflow-y-auto animate-fadeIn">
+                            {SUBJECTS.map((sub) => (
+                              <button
+                                key={sub}
+                                type="button"
+                                onClick={() => {
+                                  setSubject(sub);
+                                  setIsSubjectDropdownOpen(false);
+                                }}
+                                className="w-full px-4 py-2.5 text-xs md:text-sm text-left font-semibold text-[#374151] hover:bg-[#F9FAFB] flex items-center justify-between transition-colors cursor-pointer"
+                              >
+                                <span>{sub}</span>
+                                {subject === sub && (
+                                  <Check className="h-4 w-4 text-[#2563EB]" />
+                                )}
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
 
                   {/* Grade Level */}
                   <div className="space-y-2">
-                    <label htmlFor="grade-select" className="session-label">
+                    <label className="session-label">
                       Grade Level
                     </label>
                     <div className="relative">
-                      <select
-                        id="grade-select"
-                        value={gradeLevel}
-                        onChange={(e) => setGradeLevel(e.target.value)}
-                        className="w-full px-4 py-3 session-input appearance-none cursor-pointer"
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsGradeDropdownOpen(!isGradeDropdownOpen);
+                          setIsSubjectDropdownOpen(false);
+                        }}
+                        className="w-full flex items-center justify-between px-4 py-3 session-input cursor-pointer text-left font-medium"
                       >
-                        {GRADE_LEVELS.map((grade) => (
-                          <option key={grade} value={grade}>
-                            {grade}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#6B7280] h-4 w-4" />
+                        <span>{gradeLevel}</span>
+                        <ChevronDown className={`text-[#6B7280] h-4 w-4 transition-transform duration-200 ${isGradeDropdownOpen ? "rotate-180" : ""}`} />
+                      </button>
+
+                      {isGradeDropdownOpen && (
+                        <>
+                          <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setIsGradeDropdownOpen(false)}
+                          />
+                          <div className="absolute left-0 right-0 mt-1.5 z-50 bg-[#FFFFFF] border border-[#E5E7EB] rounded-[16px] py-1.5 shadow-[0_10px_30px_rgba(15,23,42,0.08)] max-h-60 overflow-y-auto animate-fadeIn">
+                            {GRADE_LEVELS.map((grade) => (
+                              <button
+                                key={grade}
+                                type="button"
+                                onClick={() => {
+                                  setGradeLevel(grade);
+                                  setIsGradeDropdownOpen(false);
+                                }}
+                                className="w-full px-4 py-2.5 text-xs md:text-sm text-left font-semibold text-[#374151] hover:bg-[#F9FAFB] flex items-center justify-between transition-colors cursor-pointer"
+                              >
+                                <span>{grade}</span>
+                                {gradeLevel === grade && (
+                                  <Check className="h-4 w-4 text-[#2563EB]" />
+                                )}
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
