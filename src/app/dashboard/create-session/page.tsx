@@ -54,6 +54,7 @@ export default function CreateSessionPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [step, setStep] = useState(2) // Start directly on Step 2 (Session Info)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -339,10 +340,12 @@ export default function CreateSessionPage() {
         activeItem="Dashboard"
         isMobileOpen={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 lg:ml-64 flex flex-col min-h-screen">
+      <div className={`flex-1 flex flex-col min-h-screen transition-all duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] ${isSidebarCollapsed ? "lg:ml-[64px]" : "lg:ml-[280px]"}`}>
         
         {/* Header Topbar */}
         <header className="h-16 border-b border-[#1a1a1a] bg-[#111111]/80 backdrop-blur-xl px-6 md:px-8 flex items-center justify-between sticky top-0 z-20">
