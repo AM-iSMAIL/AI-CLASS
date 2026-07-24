@@ -385,14 +385,14 @@ export default function CreateSessionPage() {
               {/* Connector Lines */}
               <div className="absolute left-0 right-0 top-1/2 h-[3px] bg-[#E5E7EB] rounded-full -translate-y-1/2 z-0" />
               <div
-                className="absolute left-0 top-1/2 h-[3px] bg-[#2563EB] rounded-full -translate-y-1/2 transition-all duration-300 z-0"
+                className="absolute left-0 top-1/2 h-[3px] bg-[#2563EB] rounded-full -translate-y-1/2 progress-line z-0"
                 style={{ width: step === 2 ? "0%" : step === 3 ? "50%" : "100%" }}
               />
 
               {/* Step 1: Info */}
               <div className="relative z-10 flex flex-col items-center gap-1.5">
                 <div
-                  className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold transition-all border ${
+                  className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold border transition-all step-circle ${step === 2 ? "active" : ""} ${
                     step >= 2
                       ? "bg-[#2563EB] border-[#2563EB] text-white shadow-sm shadow-[#2563EB]/10"
                       : "bg-[#E5E7EB] border-transparent text-[#6B7280]"
@@ -408,7 +408,7 @@ export default function CreateSessionPage() {
               {/* Step 2: Content */}
               <div className="relative z-10 flex flex-col items-center gap-1.5">
                 <div
-                  className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold transition-all border ${
+                  className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold border transition-all step-circle ${step === 3 ? "active" : ""} ${
                     step >= 3
                       ? "bg-[#2563EB] border-[#2563EB] text-white shadow-sm shadow-[#2563EB]/10"
                       : "bg-[#E5E7EB] border-transparent text-[#6B7280]"
@@ -424,7 +424,7 @@ export default function CreateSessionPage() {
               {/* Step 3: Launch */}
               <div className="relative z-10 flex flex-col items-center gap-1.5">
                 <div
-                  className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold transition-all border ${
+                  className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold border transition-all step-circle ${step === 4 ? "active" : ""} ${
                     step >= 4
                       ? "bg-[#2563EB] border-[#2563EB] text-white shadow-sm shadow-[#2563EB]/10"
                       : "bg-[#E5E7EB] border-transparent text-[#6B7280]"
@@ -473,10 +473,10 @@ export default function CreateSessionPage() {
                           setIsSubjectDropdownOpen(!isSubjectDropdownOpen);
                           setIsGradeDropdownOpen(false);
                         }}
-                        className="w-full flex items-center justify-between px-4 py-3 session-input cursor-pointer text-left font-medium"
+                        className={`w-full flex items-center justify-between px-4 py-3 session-input cursor-pointer text-left font-medium ${isSubjectDropdownOpen ? "open" : ""}`}
                       >
                         <span>{subject}</span>
-                        <ChevronDown className={`text-[#6B7280] h-4 w-4 transition-transform duration-200 ${isSubjectDropdownOpen ? "rotate-180" : ""}`} />
+                        <ChevronDown className="text-[#6B7280] h-4 w-4 chevron" />
                       </button>
 
                       {isSubjectDropdownOpen && (
@@ -516,10 +516,10 @@ export default function CreateSessionPage() {
                           setIsGradeDropdownOpen(!isGradeDropdownOpen);
                           setIsSubjectDropdownOpen(false);
                         }}
-                        className="w-full flex items-center justify-between px-4 py-3 session-input cursor-pointer text-left font-medium"
+                        className={`w-full flex items-center justify-between px-4 py-3 session-input cursor-pointer text-left font-medium ${isGradeDropdownOpen ? "open" : ""}`}
                       >
                         <span>{gradeLevel}</span>
-                        <ChevronDown className={`text-[#6B7280] h-4 w-4 transition-transform duration-200 ${isGradeDropdownOpen ? "rotate-180" : ""}`} />
+                        <ChevronDown className="text-[#6B7280] h-4 w-4 chevron" />
                       </button>
 
                       {isGradeDropdownOpen && (

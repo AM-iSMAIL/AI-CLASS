@@ -566,4 +566,28 @@ tbody.divide-y > :not([hidden]) ~ :not([hidden]) {
 .dropdown-item.selected .checkmark-icon {
   opacity: 1;
   transform: scale(1);
+}
+
+/* Chevron Rotation Transition */
+.chevron {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.open.chevron, .open .chevron {
+  transform: rotate(180deg) !important;
+}
+
+/* Smooth Progress Line Growth */
+.progress-line {
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* Step Circles Hover and Glow */
+.step-circle {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.step-circle:hover {
+  transform: scale(1.05) !important;
+}
+.step-circle.active {
+  box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.10) !important;
 }
