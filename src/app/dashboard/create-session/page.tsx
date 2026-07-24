@@ -485,7 +485,7 @@ export default function CreateSessionPage() {
                           onClick={() => setIsSubjectDropdownOpen(false)}
                         />
                       )}
-                      <div className={`dropdown-content absolute left-0 right-0 mt-1.5 z-50 bg-[#FFFFFF] border border-[#E5E7EB] rounded-[16px] py-1.5 shadow-[0_10px_30px_rgba(15,23,42,0.08)] max-h-60 overflow-y-auto ${isSubjectDropdownOpen ? "open" : ""}`}>
+                      <div className={`dropdown-content absolute left-0 right-0 mt-1.5 z-50 bg-[#FFFFFF] max-h-60 overflow-y-auto ${isSubjectDropdownOpen ? "open" : ""}`}>
                         {SUBJECTS.map((sub) => (
                           <button
                             key={sub}
@@ -494,12 +494,10 @@ export default function CreateSessionPage() {
                               setSubject(sub);
                               setIsSubjectDropdownOpen(false);
                             }}
-                            className="w-full px-4 py-2.5 text-xs md:text-sm text-left font-semibold text-[#374151] hover:bg-[#F9FAFB] flex items-center justify-between transition-colors cursor-pointer"
+                            className={`dropdown-item ${subject === sub ? "selected" : ""}`}
                           >
                             <span>{sub}</span>
-                            {subject === sub && (
-                              <Check className="h-4 w-4 text-[#2563EB]" />
-                            )}
+                            <Check className="h-4 w-4 text-[#2563EB] checkmark-icon" />
                           </button>
                         ))}
                       </div>
@@ -530,7 +528,7 @@ export default function CreateSessionPage() {
                           onClick={() => setIsGradeDropdownOpen(false)}
                         />
                       )}
-                      <div className={`dropdown-content absolute left-0 right-0 mt-1.5 z-50 bg-[#FFFFFF] border border-[#E5E7EB] rounded-[16px] py-1.5 shadow-[0_10px_30px_rgba(15,23,42,0.08)] max-h-60 overflow-y-auto ${isGradeDropdownOpen ? "open" : ""}`}>
+                      <div className={`dropdown-content absolute left-0 right-0 mt-1.5 z-50 bg-[#FFFFFF] max-h-60 overflow-y-auto ${isGradeDropdownOpen ? "open" : ""}`}>
                         {GRADE_LEVELS.map((grade) => (
                           <button
                             key={grade}
@@ -539,12 +537,10 @@ export default function CreateSessionPage() {
                               setGradeLevel(grade);
                               setIsGradeDropdownOpen(false);
                             }}
-                            className="w-full px-4 py-2.5 text-xs md:text-sm text-left font-semibold text-[#374151] hover:bg-[#F9FAFB] flex items-center justify-between transition-colors cursor-pointer"
+                            className={`dropdown-item ${gradeLevel === grade ? "selected" : ""}`}
                           >
                             <span>{grade}</span>
-                            {gradeLevel === grade && (
-                              <Check className="h-4 w-4 text-[#2563EB]" />
-                            )}
+                            <Check className="h-4 w-4 text-[#2563EB] checkmark-icon" />
                           </button>
                         ))}
                       </div>
