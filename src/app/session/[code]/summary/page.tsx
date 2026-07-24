@@ -311,8 +311,8 @@ export default function SummaryPage() {
                             </span>
                           )}
                         </td>
-                        <td className="px-4 py-4 text-white/50">{formatTimestamp(student.joinedAt)}</td>
-                        <td className="px-6 py-4 text-right font-mono">
+                        <td className="px-4 py-4 text-neutral-950 font-medium">{formatTimestamp(student.joinedAt)}</td>
+                        <td className="px-6 py-4 text-right">
                           <span className={`inline-flex px-2 py-0.5 rounded border text-[10px] font-bold ${focusColor}`}>
                             {student.engagementScore}%
                           </span>
@@ -323,25 +323,25 @@ export default function SummaryPage() {
 
                   {/* Kicked Students */}
                   {kickedList.map((kickedStud) => (
-                    <tr key={kickedStud.id} className="text-xs hover:bg-white/[0.01] transition-colors bg-rose-950/5">
-                      <td className="px-6 py-4 font-semibold text-rose-300/90">{kickedStud.name}</td>
+                    <tr key={kickedStud.id} className="text-xs hover:bg-neutral-50 transition-colors bg-rose-50/20">
+                      <td className="px-6 py-4 font-bold text-rose-600">{kickedStud.name}</td>
                       <td className="px-4 py-4">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 text-[9px] font-bold text-rose-400 uppercase font-mono">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 border border-rose-100 px-2.5 py-0.5 text-[9px] font-bold text-[#c62828] uppercase">
                           Kicked
                         </span>
                       </td>
-                      <td className="px-4 py-4 text-white/50">{formatTimestamp(kickedStud.kickedAt)}</td>
+                      <td className="px-4 py-4 text-neutral-950 font-medium">{formatTimestamp(kickedStud.kickedAt)}</td>
                       <td className="px-6 py-4 text-right">
-                        <span className="inline-flex px-2 py-0.5 rounded border border-rose-500/15 text-rose-400/50 bg-rose-500/5 text-[10px] font-bold font-mono">
+                        <span className="inline-flex px-2 py-0.5 rounded border border-rose-100 text-rose-500/80 bg-rose-50 text-[10px] font-bold">
                           --
                         </span>
                       </td>
                     </tr>
                   ))}
 
-                  {studentsList.length === 0 && kickedList.length === 0 && (
+                  {studentsOnly.length === 0 && kickedList.length === 0 && (
                     <tr>
-                      <td colSpan={4} className="px-6 py-8 text-center text-white/40 text-xs font-bold font-mono">
+                      <td colSpan={4} className="px-6 py-12 text-center text-neutral-400 text-xs font-bold">
                         No students attended this session.
                       </td>
                     </tr>
@@ -355,7 +355,7 @@ export default function SummaryPage() {
           <div className="text-center pt-2">
             <button
               onClick={() => router.push("/dashboard")}
-              className="px-6 py-3 bg-[#1a1a1a] hover:bg-[#242424] border border-white/5 rounded-xl text-xs font-bold text-white transition-all inline-flex items-center gap-2 cursor-pointer font-mono"
+              className="px-6 py-3 bg-black hover:bg-neutral-800 rounded-xl text-xs font-bold text-white transition-all inline-flex items-center gap-2 cursor-pointer"
             >
               <ArrowLeft className="h-4 w-4" />
               Return to Dashboard
@@ -368,42 +368,41 @@ export default function SummaryPage() {
 
   // ─── STUDENT VIEW ───
   return (
-    <div className="min-h-screen bg-[#0A0A0A] flex flex-col items-center justify-center text-white p-6 font-sans">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none z-0" />
+    <div className="min-h-screen bg-[#f4f6f8] flex flex-col items-center justify-center text-neutral-800 p-6 font-sans">
       
-      <div className="max-w-md w-full relative z-10 bg-[#111111] border border-white/10 p-8 rounded-3xl shadow-2xl text-center space-y-6">
+      <div className="max-w-md w-full relative z-10 bg-white border border-neutral-200/60 p-8 rounded-3xl shadow-xl text-center space-y-6">
         {kicked ? (
           <>
             <div className="w-20 h-20 bg-rose-500/10 border border-rose-500/20 rounded-full flex items-center justify-center mx-auto mb-2 animate-pulse">
               <ShieldAlert className="w-10 h-10 text-rose-500" />
             </div>
-            <h1 className="text-2xl font-black text-white">Removed from Session</h1>
-            <p className="text-sm text-white/50 leading-relaxed">
+            <h1 className="text-2xl font-black text-neutral-950">Removed from Session</h1>
+            <p className="text-sm text-neutral-500 leading-relaxed font-medium">
               {reason === "out_of_frame" ? (
-                <>You were automatically removed from <span className="font-mono text-rose-400">{sessionCode}</span> because the AI vision system detected you left the camera frame.</>
+                <>You were automatically removed from session <span className="font-bold text-rose-600">{sessionCode}</span> because the AI vision system detected you left the camera frame.</>
               ) : reason === "device_usage" ? (
-                <>You were automatically removed from <span className="font-mono text-rose-400">{sessionCode}</span> because the AI vision system detected prohibited phone/tablet usage.</>
+                <>You were automatically removed from session <span className="font-bold text-rose-600">{sessionCode}</span> because the AI vision system detected prohibited phone/tablet usage.</>
               ) : (
-                <>You were automatically removed from <span className="font-mono text-rose-400">{sessionCode}</span> because the AI vision system detected you were away from your keyboard or deeply distracted for an extended period.</>
+                <>You were automatically removed from session <span className="font-bold text-rose-600">{sessionCode}</span> because the AI vision system detected you were away from your keyboard or deeply distracted for an extended period.</>
               )}
             </p>
           </>
         ) : (
           <>
             <div className="w-20 h-20 bg-purple-500/10 border border-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-2">
-              <BarChart className="w-10 h-10 text-purple-400" />
+              <BarChart className="w-10 h-10 text-purple-600" />
             </div>
-            <h1 className="text-2xl font-black text-white font-mono">Session Concluded</h1>
-            <p className="text-sm text-white/50 leading-relaxed">
-              The lecture <span className="font-mono text-purple-400">{sessionCode}</span> has successfully ended. Your AI-generated performance summary and attendance metrics are being compiled.
+            <h1 className="text-2xl font-bold text-neutral-950">Session Concluded</h1>
+            <p className="text-sm text-neutral-500 leading-relaxed font-medium">
+              The lecture <span className="font-bold text-purple-600">{sessionCode}</span> has successfully ended. Your AI-generated performance summary and attendance metrics are being compiled.
             </p>
           </>
         )}
 
-        <div className="pt-4 border-t border-white/10">
+        <div className="pt-4 border-t border-neutral-200">
           <button
             onClick={() => router.push("/student-dashboard")}
-            className="w-full py-4 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer font-mono shadow-lg shadow-purple-600/20"
+            className="w-full py-4 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-purple-600/20"
           >
             <ArrowLeft className="w-4 h-4" />
             Return to Student Dashboard
