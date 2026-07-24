@@ -333,6 +333,18 @@
   height: 6px;
   border-radius: 999px;
   background-color: #EF4444;
+  animation: breathe 3s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(0.9);
+  }
 }
 
 .badge-completed {
