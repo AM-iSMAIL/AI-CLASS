@@ -59,54 +59,74 @@ export default function StudentCamera({
   });
 
   // ── Camera initialisation ──
-  useEffect(() => {
+  const startCamera = useCallback(async () => {
     if (!enabled) return;
-    let currentStream: MediaStream | null = null;
+    setDenied(false);
 
-    const start = async () => {
-      if (!videoRef.current) {
-        setTimeout(start, 500);
+    try {
+      let stream: MediaStream | null = null;
+
+      if (!navigator?.mediaDevices?.getUserMedia) {
+        setDenied(true);
         return;
       }
 
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
+        // Attempt 1: Ideal dimensions and facing mode
+        stream = await navigator.mediaDevices.getUserMedia({
           video: {
             width: { ideal: CAMERA_WIDTH },
             height: { ideal: CAMERA_HEIGHT },
             facingMode: "user",
           },
         });
-        currentStream = stream;
-        videoRef.current!.srcObject = stream;
-        setActive(true);
-        if (onStreamReady) onStreamReady(stream);
-      } catch {
-        setDenied(true);
+      } catch (e1) {
+        console.warn("[StudentCamera] High resolution constraints failed, attempting basic video:", e1);
+        // Attempt 2: Basic video constraints fallback (mobile browsers)
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
       }
-    };
 
-    start();
+      if (stream) {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+        setActive(true);
+        setDenied(false);
+        if (onStreamReady) onStreamReady(stream);
+      }
+    } catch (err) {
+      console.error("[StudentCamera] Camera permission denied or device locked:", err);
+      setDenied(true);
+    }
+  }, [enabled, onStreamReady]);
+
+  useEffect(() => {
+    let currentVideoNode = videoRef.current;
+    startCamera();
 
     return () => {
-      if (currentStream) currentStream.getTracks().forEach(t => t.stop());
-      if (videoRef.current?.srcObject) {
-        (videoRef.current.srcObject as MediaStream).getTracks().forEach(t => t.stop());
+      if (currentVideoNode?.srcObject) {
+        const stream = currentVideoNode.srcObject as MediaStream;
+        stream.getTracks().forEach(t => t.stop());
       }
     };
-  }, [enabled, onStreamReady]);
+  }, [startCamera]);
 
   // ── Camera denied fallback ──
   if (denied) {
     return (
-      <div className="absolute inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-rose-500/10 backdrop-blur-md border border-rose-500/20 rounded-xl p-4 text-xs text-rose-400 text-center max-w-xs shadow-2xl">
-          <p className="font-bold text-sm mb-1 text-rose-300">Camera Blocked</p>
-          <p className="text-rose-400/80 mb-2">Focus tracking is disabled.</p>
-          <p className="text-rose-400/90 font-medium bg-rose-500/20 p-2 rounded-lg text-[10px] leading-relaxed">
-            If you opened this link from <b>WhatsApp</b> or <b>Instagram</b>, your camera is blocked
-            by the app. Please tap the menu and select <b>&quot;Open in Chrome/Safari&quot;</b>.
+      <div className="absolute inset-0 z-50 flex items-center justify-center p-3 bg-white/95 backdrop-blur-md border border-rose-200 rounded-[20px] shadow-sm">
+        <div className="text-center max-w-xs space-y-2">
+          <p className="font-bold text-xs text-[#DC2626]">Camera Access Needed</p>
+          <p className="text-[10px] text-[#6B7280] leading-relaxed">
+            If joined via <b>WhatsApp</b> or <b>Instagram</b>, tap menu and select <b>&quot;Open in Chrome / Safari&quot;</b>.
           </p>
+          <button
+            onClick={() => startCamera()}
+            className="mt-1 px-3 py-1.5 bg-[#111827] hover:bg-[#1F2937] text-white rounded-xl text-[10px] font-bold shadow-xs transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer"
+          >
+            Allow / Retry Camera
+          </button>
         </div>
       </div>
     );
