@@ -44,9 +44,9 @@ LECTURING DIRECTIVES:
      c) Key trade-offs, misconceptions, and best practices.
      d) Practical problem-solving scenario.
 7. MAXIMUM DENSITY VISUAL SLIDES (CRITICAL MANDATORY REQUIREMENT):
-   - Output a visual slide description tag on its own line after EVERY SHORT PHRASE of 6 to 8 words: IMAGE_PROMPT: <description>.
-   - Do NOT skip any phrase. Every short 6 to 8 word spoken segment MUST be immediately followed by its own unique IMAGE_PROMPT line.
-   - This produces a ultra-dense, highly dynamic slide deck of 60 to 80+ high-definition visual illustrations matching the spoken explanation every 6 to 8 words!`;
+   - Directly below EVERY SINGLE SENTENCE of your explanation, output a visual slide description tag on its own line: IMAGE_PROMPT: <description>.
+   - Do NOT skip any sentence. Every single sentence MUST be immediately followed by its own unique IMAGE_PROMPT line.
+   - This produces a rich, highly dynamic slide deck of 50 to 80+ high-definition visual illustrations matching the spoken explanation second-by-second!`;
 
   const levelInstructions = {
     beginner: `Explain concepts in simple terms, avoiding heavy jargon. Use everyday analogies and explain basic terminology before building up.`,
@@ -76,12 +76,12 @@ CRITICAL FORMATTING RULES - YOU MUST OBEY THESE:
 3. NEVER use section titles like "Introduction", "Overview", or "Summary".
 4. NEVER use bullet points (-) or numbered lists (1., 2., 3.). If you must list items, use conversational transitions like "first", "secondly", or "another point is" in continuous paragraphs.
 5. ONLY use code blocks when explicitly teaching programming or showing code. Otherwise, stick to plain text paragraphs.
-6. ULTRA HIGH-DENSITY VISUAL SLIDES (MANDATORY): Output a visual prompt line directly after EVERY SHORT PHRASE of 6 to 8 words.
+6. ULTRA HIGH-DENSITY VISUAL SLIDES (MANDATORY): Output a visual prompt line directly below EVERY SINGLE sentence of your explanation.
 Example format:
-First short phrase of explanation explaining a core concept.
+First sentence of explanation explaining a core concept.
 IMAGE_PROMPT: A detailed labeled technical diagram showing the core architecture with clear flow arrows.
-Next short phrase continuing the practical process.
+Second sentence explaining the practical process.
 IMAGE_PROMPT: A photorealistic close-up scene illustrating data processing in real time.
-Every short 6-8 word phrase MUST have its own IMAGE_PROMPT line directly below it.
-7. COMPREHENSIVE LENGTH & MAXIMUM IMAGE DENSITY: Ensure your entire lecture output contains 60 to 80+ corresponding IMAGE_PROMPT tags (one every 6-8 words) for a 4-minute visual spoken lesson (~500–600 words).`;
+Every single sentence MUST have its own IMAGE_PROMPT line directly below it.
+7. COMPREHENSIVE LENGTH & MAXIMUM IMAGE DENSITY: Ensure your entire lecture output contains 50 to 80+ corresponding IMAGE_PROMPT tags (one per sentence) for a 4-minute visual spoken lesson (~500–600 words).`;
 };

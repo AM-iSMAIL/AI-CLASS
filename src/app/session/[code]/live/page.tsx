@@ -51,15 +51,16 @@ const DOUBT_RESPONSES = [
 
 const parseExplanationToSlides = (text: string) => {
   const lines = text.split("\n");
-  const slides: Array<{ text: string; imagePrompt?: string }> = [];
+  const slides: Array<{ text: string; imagePrompt: string }> = [];
   
   let currentText = "";
   for (const line of lines) {
     const trimmed = line.trim();
     if (trimmed.startsWith("IMAGE_PROMPT:")) {
       const prompt = trimmed.replace("IMAGE_PROMPT:", "").trim();
-      if (currentText.trim()) {
-        slides.push({ text: currentText.trim(), imagePrompt: prompt });
+      const textStr = currentText.trim();
+      if (textStr) {
+        slides.push({ text: textStr, imagePrompt: prompt || textStr });
         currentText = "";
       } else if (slides.length > 0) {
         slides[slides.length - 1].imagePrompt = prompt;
@@ -71,9 +72,29 @@ const parseExplanationToSlides = (text: string) => {
     }
   }
   if (currentText.trim()) {
-    slides.push({ text: currentText.trim() });
+    const textStr = currentText.trim();
+    slides.push({ text: textStr, imagePrompt: textStr });
   }
-  return slides;
+
+  const finalSlides: Array<{ text: string; imagePrompt: string }> = [];
+  for (const slide of slides) {
+    const sentences = slide.text.split(/(?<=[.!?])\s+/).filter(Boolean);
+    if (sentences.length > 1) {
+      sentences.forEach((sentence, idx) => {
+        finalSlides.push({
+          text: sentence,
+          imagePrompt: idx === 0 ? slide.imagePrompt : sentence
+        });
+      });
+    } else {
+      finalSlides.push({
+        text: slide.text,
+        imagePrompt: slide.imagePrompt || slide.text
+      });
+    }
+  }
+
+  return finalSlides;
 };
 
 
@@ -1060,7 +1081,7 @@ export default function LiveClassroomPage() {
           audio: null as HTMLAudioElement | null,
           promise: null as Promise<any> | null,
           error: false,
-          imagePrompt: clauseIdx === 0 ? slide.imagePrompt : undefined,
+          imagePrompt: (slide.imagePrompt || clause).trim(),
           imageUrl: (isFirst && clauseIdx === 0 && firstImageUrl) ? firstImageUrl : null as string | null,
           imagePromise: (isFirst && clauseIdx === 0 && firstImageUrl) ? Promise.resolve() : null as Promise<any> | null
         };
@@ -1386,7 +1407,7 @@ export default function LiveClassroomPage() {
                   audio: null as HTMLAudioElement | null,
                   promise: null as Promise<any> | null,
                   error: false,
-                  imagePrompt: clauseIdx === 0 ? (imgPrompt || undefined) : undefined,
+                  imagePrompt: (imgPrompt || clause).trim(),
                   imageUrl: null as string | null,
                   imagePromise: null as Promise<any> | null,
                 };
