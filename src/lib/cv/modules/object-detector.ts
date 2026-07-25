@@ -75,10 +75,14 @@ export class ObjectDetectorModule implements CVModule<ObjectDetection[]> {
         const mapped = mapClass(pred.class);
         if (!mapped) continue;
 
-        if (pred.score < config.objectDetectionConfidence) continue;
-
-        // Only flag forbidden objects and persons
-        const isForbidden = config.forbiddenObjects.includes(pred.class) || pred.class === 'person';
+        const normClass = pred.class.toLowerCase();
+        const isForbidden = config.forbiddenObjects.includes(pred.class) || 
+                            normClass.includes('phone') || 
+                            normClass.includes('cell') || 
+                            normClass.includes('remote') || 
+                            normClass.includes('mobile') || 
+                            normClass.includes('tablet') || 
+                            pred.class === 'person';
         if (!isForbidden) continue;
 
         detections.push({
@@ -120,6 +124,10 @@ export class ObjectDetectorModule implements CVModule<ObjectDetection[]> {
 }
 
 function mapClass(rawClass: string): DetectedObjectClass | null {
+  const norm = rawClass.toLowerCase();
+  if (norm.includes('phone') || norm.includes('cell') || norm.includes('remote') || norm.includes('mobile') || norm.includes('tablet') || norm.includes('device')) {
+    return 'cell_phone';
+  }
   switch (rawClass) {
     case 'cell phone': return 'cell_phone';
     case 'laptop': return 'laptop';

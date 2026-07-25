@@ -195,9 +195,9 @@ export const DEFAULT_CV_CONFIG: CVConfig = {
   statusDistractedMin: 40,
 
   // Object Detection
-  objectDetectionConfidence: 0.20,
-  objectDetectionIntervalMs: 300,
-  forbiddenObjects: ['cell phone', 'cell_phone', 'mobile phone', 'phone', 'tablet'],
+  objectDetectionConfidence: 0.15,
+  objectDetectionIntervalMs: 150,
+  forbiddenObjects: ['cell phone', 'cell_phone', 'mobile phone', 'phone', 'tablet', 'remote', 'book', 'handbag', 'device'],
 
   // Presence
   absentThresholdMs: 3_000,

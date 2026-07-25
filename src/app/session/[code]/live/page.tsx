@@ -302,8 +302,10 @@ export default function LiveClassroomPage() {
         setStrikeCount(3);
         const executeKick = async () => {
           isEndingSessionRef.current = true;
-          const storedName = studentName || "Unknown";
-          if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
+          const storedName = studentName || (isTeacher ? "Teacher" : "Participant");
+          if (studentId && sessionCode) {
+            await kickStudent(sessionCode, studentId, storedName).catch(() => {});
+          }
           window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=three_strikes`;
         };
         executeKick();
@@ -382,8 +384,10 @@ export default function LiveClassroomPage() {
 
       outOfFrameTimerRef.current = setTimeout(async () => {
         isEndingSessionRef.current = true;
-        const storedName = studentName || "Unknown";
-        if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
+        const storedName = studentName || (isTeacher ? "Teacher" : "Participant");
+        if (studentId && sessionCode) {
+          await kickStudent(sessionCode, studentId, storedName).catch(() => {});
+        }
         window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
       }, 5000);
     }
@@ -400,8 +404,10 @@ export default function LiveClassroomPage() {
       setKickReason("Mobile Phone / Device Usage Detected");
       setIsKicked(true);
       const executeKick = async () => {
-        const storedName = studentName || "Unknown";
-        if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
+        const storedName = studentName || (isTeacher ? "Teacher" : "Participant");
+        if (studentId && sessionCode) {
+          await kickStudent(sessionCode, studentId, storedName).catch(() => {});
+        }
         window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=device_usage`;
       };
       executeKick();
