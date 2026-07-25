@@ -191,25 +191,9 @@ export const joinSession = async (
       throw new Error("This session has already started. Late joins are not allowed.")
     }
 
-    // Check if name is blacklisted/kicked
+    // Use name as part of ID, lower-cased and stripped of spaces with high entropy timestamp
     const nameLower = studentName.trim().toLowerCase()
-    let isKicked = false
-    try {
-      const kickedColRef = collection(db, "sessions", formattedCode, "kicked")
-      const kickedQuery = query(kickedColRef, where("nameLower", "==", nameLower))
-      const kickedSnap = await getDocs(kickedQuery)
-      isKicked = !kickedSnap.empty
-    } catch (e) {
-      // ponytail: Fallback to false if kicked rules aren't deployed in the Firebase Console
-      console.warn("Failed to check blacklisted students (likely missing firestore.rules update):", e)
-    }
-
-    if (isKicked) {
-      throw new Error("You have been kicked from this session and cannot rejoin.")
-    }
-
-    // Use name as part of ID, lower-cased and stripped of spaces
-    const studentId = nameLower.replace(/\s+/g, "-") + "-" + Date.now().toString().slice(-4)
+    const studentId = nameLower.replace(/\s+/g, "-") + "-" + Date.now().toString().slice(-6)
     const studentRef = doc(db, "sessions", formattedCode, "students", studentId)
 
     const studentData: Student = {
@@ -420,18 +404,11 @@ export const kickStudent = async (
 
 // 10. Check if student name is kicked/blacklisted
 export const checkIsKicked = async (
-  sessionCode: string,
-  studentName: string
+  _sessionCode: string,
+  _studentName: string
 ): Promise<boolean> => {
-  try {
-    const code = sessionCode.trim().toUpperCase()
-    const kickedColRef = collection(db, "sessions", code, "kicked")
-    const q = query(kickedColRef, where("nameLower", "==", studentName.trim().toLowerCase()))
-    const snap = await getDocs(q)
-    return !snap.empty
-  } catch {
-    return false
-  }
+  // Name-based matching disabled to prevent cross-student kick collisions
+  return false
 }
 
 // 11. Check if student ID is kicked/blacklisted
