@@ -22,14 +22,14 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const prompt = body.prompt;
-    let width = body.width ?? 512;
-    let height = body.height ?? 512;
+    let width = body.width ?? 1024;
+    let height = body.height ?? 576;
     
-    // NVIDIA FLUX.2-klein-4b dimensions: optimal fast resolution 512x512
-    if (width > 512) width = 512;
-    if (height > 512) height = 512;
+    // NVIDIA FLUX.2-klein-4b dimensions: optimal widescreen 16:9 ratio
     if (width < 512) width = 512;
     if (height < 512) height = 512;
+    if (width > 1280) width = 1280;
+    if (height > 720) height = 720;
 
     if (!prompt || typeof prompt !== "string") {
       return NextResponse.json(

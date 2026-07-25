@@ -2593,20 +2593,21 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         {/* ─── LEFT COLUMN — Main Stage ─── */}
         <div className="flex-1 flex flex-col p-4 gap-4 min-h-[50vh] lg:min-h-0 pb-4 lg:pb-[84px] overflow-hidden">
 
-          {/* ── CONTENT / IMAGE AREA (HERO — presentation panel constrained for 100% viewport fit) ── */}
-          <div className="flex-1 max-h-[480px] bg-white border border-[rgba(15,23,42,.08)] rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] overflow-hidden flex flex-col relative min-h-0">
+          {/* ── CONTENT / IMAGE AREA (HERO — presentation panel widescreen fill) ── */}
+          <div className="flex-1 bg-white border border-[rgba(15,23,42,.08)] rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] overflow-hidden flex flex-col relative min-h-0">
             {/* Image / Fallback — fills entire area */}
-            <div className="flex-1 relative overflow-hidden min-h-0 bg-[#F8FAFC] flex items-center justify-center">
+            <div className="flex-1 relative overflow-hidden min-h-0 bg-white">
               {topicImageUrl && imageLoaded ? (
-                <div className={`absolute inset-0 flex items-center justify-center p-2 ${imageFading ? "img-out" : "img-in"}`}>
+                <div className={`absolute inset-0 ${imageFading ? "img-out" : "img-in"}`}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={topicImageUrl}
                     alt={activeLabel}
-                    className="rounded-[18px] max-h-full max-w-full"
-                    style={{ width: "auto", height: "auto", objectFit: "contain" }}
+                    className="rounded-[20px]"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     onError={() => { setImageLoaded(false); setTopicImageUrl(null) }}
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/10 via-transparent to-white/5" />
                 </div>
               ) : (
                 /* Beautiful initial fallback image instead of a blank gradient */
