@@ -51,8 +51,8 @@ const DOUBT_RESPONSES = [
 
 const parseExplanationToSlides = (text: string) => {
   const lines = text.split("\n");
-  const slides: Array<{ text: string; imagePrompt?: string }> = [];
-  
+  const slides: Array<{ text: string; imagePrompt: string }> = [];
+
   let currentText = "";
   for (const line of lines) {
     const trimmed = line.trim();
@@ -76,7 +76,25 @@ const parseExplanationToSlides = (text: string) => {
     slides.push({ text: textStr, imagePrompt: textStr });
   }
 
-  return slides;
+  const finalSlides: Array<{ text: string; imagePrompt: string }> = [];
+  for (const slide of slides) {
+    const sentences = slide.text.split(/(?<=[.!?])\s+/).filter(Boolean);
+    if (sentences.length > 1) {
+      sentences.forEach((sentence, idx) => {
+        finalSlides.push({
+          text: sentence,
+          imagePrompt: idx === 0 ? slide.imagePrompt : sentence
+        });
+      });
+    } else {
+      finalSlides.push({
+        text: slide.text,
+        imagePrompt: slide.imagePrompt || slide.text
+      });
+    }
+  }
+
+  return finalSlides;
 };
 
 
@@ -84,13 +102,13 @@ const splitIntoShortClauses = (text: string): string[] => {
   const parts = text.split(/([,;:!?.\n])/);
   const rawClauses: string[] = [];
   let currentClause = "";
-  
+
   for (let i = 0; i < parts.length; i += 2) {
     const segment = parts[i];
     const delimiter = parts[i + 1] || "";
     const combined = (segment + delimiter).trim();
     if (!combined) continue;
-    
+
     if (currentClause) {
       const wordCount = currentClause.split(/\s+/).length;
       if (wordCount < 6) {
@@ -128,7 +146,7 @@ const renderTranscriptText = (
 ) => {
   if (!text) return null;
   const parts = text.split(/\n/).filter(line => !line.trim().startsWith("IMAGE_PROMPT:"));
-  
+
   return (
     <div className="space-y-2">
       {parts.map((part, index) => {
@@ -136,9 +154,8 @@ const renderTranscriptText = (
           <p
             key={index}
             style={{ fontSize: 15, lineHeight: 1.6 }}
-            className={`font-medium transition-colors duration-300 ${
-              aiSpeechState === "speaking" ? "text-purple-300" : "text-white/35"
-            }`}
+            className={`font-medium transition-colors duration-300 ${aiSpeechState === "speaking" ? "text-purple-300" : "text-white/35"
+              }`}
           >
             {part}
           </p>
@@ -192,7 +209,7 @@ export default function LiveClassroomPage() {
   const currentSlideIdxRef = useRef(0)
   const streamCompletedRef = useRef(false)
   const hasStartedRef = useRef(false)
-  
+
   // Lecture pause/resume state machine
   const [lecturePlayState, setLecturePlayState] = useState<"PLAYING" | "PAUSED_FOR_DOUBT" | "RESUMING">("PLAYING")
   const lectureAbortRef = useRef<AbortController | null>(null)
@@ -212,8 +229,8 @@ export default function LiveClassroomPage() {
 
   const [students, setStudents] = useState<any[]>([])
   const [classFocus, setClassFocus] = useState(0)
-  const [localMetrics, setLocalMetrics] = useState<FocusMetrics>({score: 0, status: "offline", gazeDirection: "unknown", faceDetected: false, eyesOpen: false, headYaw: 0, headPitch: 0, headRoll: 0, yawning: false, blinkRate: 0, gazeYaw: 0, gazePitch: 0, irisEngagement: 50, effectiveDeviation: 0, phoneDetected: false})
-  
+  const [localMetrics, setLocalMetrics] = useState<FocusMetrics>({ score: 0, status: "offline", gazeDirection: "unknown", faceDetected: false, eyesOpen: false, headYaw: 0, headPitch: 0, headRoll: 0, yawning: false, blinkRate: 0, gazeYaw: 0, gazePitch: 0, irisEngagement: 50, effectiveDeviation: 0, phoneDetected: false })
+
   const [warningLevel, setWarningLevel] = useState(0)
   const [strikeCount, setStrikeCount] = useState(0) // Persistent strike counter across clicks
   const [tabSwitchCount, setTabSwitchCount] = useState(0)
@@ -617,7 +634,7 @@ export default function LiveClassroomPage() {
         setSessionTitle(title)
         setSessionSubject(subject)
         if (storedTopics) {
-          try { 
+          try {
             const parsed = JSON.parse(storedTopics)
             if (Array.isArray(parsed) && parsed.length > 0) {
               setTopics(parsed)
@@ -720,9 +737,9 @@ export default function LiveClassroomPage() {
 
   /* ─── WEB SPEECH ─── */
   const stopSpeaking = useCallback(() => {
-    try { window.speechSynthesis.cancel() } catch {}
+    try { window.speechSynthesis.cancel() } catch { }
     if (activeAudioRef.current) {
-      try { activeAudioRef.current.pause() } catch {}
+      try { activeAudioRef.current.pause() } catch { }
       activeAudioRef.current = null
     }
     ttsQueueRef.current = []
@@ -784,17 +801,17 @@ export default function LiveClassroomPage() {
   }, [sessionCode, localStream, stopSpeaking])
 
   const pauseSpeaking = useCallback(() => {
-    try { window.speechSynthesis.pause() } catch {}
+    try { window.speechSynthesis.pause() } catch { }
     if (activeAudioRef.current) {
-      try { activeAudioRef.current.pause() } catch {}
+      try { activeAudioRef.current.pause() } catch { }
     }
     setAiSpeechState("paused")
   }, [])
 
   const resumeSpeaking = useCallback(() => {
-    try { window.speechSynthesis.resume() } catch {}
+    try { window.speechSynthesis.resume() } catch { }
     if (activeAudioRef.current) {
-      try { activeAudioRef.current.play() } catch {}
+      try { activeAudioRef.current.play() } catch { }
     }
     setAiSpeechState("speaking")
   }, [])
@@ -803,20 +820,20 @@ export default function LiveClassroomPage() {
   const shouldFlushSpeechBuffer = (buffer: string) => {
     const trimmed = buffer.trim();
     if (!trimmed) return false;
-    
+
     // 1. Hard punctuation (end of sentence/paragraph) or soft pauses (commas, semicolons, colons)
     if (/[.!?,;:](|$)/.test(trimmed)) return true;
-    
+
     // 2. Newline: Only flush if it's a meaningful phrase (at least 3 words or 15 chars)
     if (buffer.includes("\n")) {
       const words = trimmed.split(/\s+/);
       if (words.length >= 3 || trimmed.length >= 15) return true;
     }
-    
+
     // 3. Fallback: Only flush as a safety if the sentence is long (15+ words)
     const words = trimmed.split(/\s+/);
     if (words.length >= 15 && buffer.endsWith(" ")) return true;
-    
+
     return false;
   }
 
@@ -851,12 +868,12 @@ export default function LiveClassroomPage() {
                 nextChunk.imageUrl = data.image;
               }
             })
-            .catch(() => {});
+            .catch(() => { });
         }
 
         setIsGeneratingImage(true);
         setImageError(null);
-        
+
         const showImage = () => {
           // Double-check if the run is still active
           if (nextChunk.runId !== ttsRunIdRef.current) return;
@@ -1028,7 +1045,7 @@ export default function LiveClassroomPage() {
     remainingSlides.forEach((slide, index) => {
       const isLast = index === remainingSlides.length - 1;
       const isFirst = index === 0;
-      
+
       const clauses = splitIntoShortClauses(slide.text);
       clauses.forEach((clause, clauseIdx) => {
         const cleanClause = clause.split("\n").filter(l => !l.trim().startsWith("IMAGE_PROMPT:")).join("\n").trim();
@@ -1045,7 +1062,7 @@ export default function LiveClassroomPage() {
           imageUrl: (isFirst && clauseIdx === 0 && firstImageUrl) ? firstImageUrl : null as string | null,
           imagePromise: (isFirst && clauseIdx === 0 && firstImageUrl) ? Promise.resolve() : null as Promise<any> | null
         };
-        
+
         if (speechEnabled && cleanClause) {
           item.promise = fetch("/api/tts", {
             method: "POST",
@@ -1080,30 +1097,30 @@ export default function LiveClassroomPage() {
     if (!loading && !isParsingPdf && topics.length > 0 && sessionSubject !== "" && teachingMode === "AI") {
       const currentTopic = topics[activeTopicIdx] || "";
       const currentItem = isPdfMode && pdfPages.length > 0 ? pdfPages[activeTopicIdx] : currentTopic;
-      
+
       const currentContext = classroomContext.getState();
       const prevTopics = topics.slice(0, activeTopicIdx);
       if (
-        currentContext.subject !== sessionSubject || 
+        currentContext.subject !== sessionSubject ||
         currentContext.topic !== currentTopic ||
         JSON.stringify(currentContext.previousTopics) !== JSON.stringify(prevTopics)
       ) {
-         classroomContext.updateState({
-           sessionId: sessionCode,
-           subject: sessionSubject,
-           topic: currentTopic,
-           previousTopics: prevTopics,
-         });
+        classroomContext.updateState({
+          sessionId: sessionCode,
+          subject: sessionSubject,
+          topic: currentTopic,
+          previousTopics: prevTopics,
+        });
       }
 
       const cacheKey = `${sessionCode}_${sessionSubject}_${currentTopic}`;
       if (!prefetchedLectures.current[cacheKey]) {
         console.log(`[Latency] Pre-fetching lecture stream at ${performance.now().toFixed(0)}ms for ${cacheKey}`);
-        
-        const prompt = isPdfMode 
-          ? `Please explain this page of the document: ${currentItem}` 
+
+        const prompt = isPdfMode
+          ? `Please explain this page of the document: ${currentItem}`
           : `Please give a detailed lecture explanation for the current topic to the class: ${currentItem}`;
-          
+
         const requestTime = performance.now();
         const { conversationHistory: _ih, ...initialState } = classroomContext.getState();
         const promise = fetch("/api/ai", {
@@ -1116,7 +1133,7 @@ export default function LiveClassroomPage() {
           })
         }).then(res => {
           if (!res.ok) throw new Error("Fetch failed");
-          
+
           // Asynchronously consume a clone for caching without delaying stream start!
           const cloned = res.clone();
           const bodyStream = cloned.body;
@@ -1159,7 +1176,7 @@ export default function LiveClassroomPage() {
                                   prefetchedLectures.current[cacheKey].firstAudioBase64 = data.audioContent;
                                 }
                               })
-                              .catch(() => {});
+                              .catch(() => { });
                           }
                         }
 
@@ -1183,27 +1200,27 @@ export default function LiveClassroomPage() {
                                     prefetchedLectures.current[cacheKey].firstImageUrl = data.image;
                                   }
                                 })
-                                .catch(() => {});
+                                .catch(() => { });
                             }
                           }
                         }
-                      } catch {}
+                      } catch { }
                     }
                   }
                 }
-                
+
                 const entry = prefetchedLectures.current[cacheKey];
                 if (entry) {
                   entry.fullText = fullText;
                 }
-              } catch {}
+              } catch { }
             })();
           }
           return res;
         }).catch(err => {
           console.error("Prefetch failed", err);
         });
-        
+
         prefetchedLectures.current[cacheKey] = { promise, time: requestTime, consumed: false };
       }
     }
@@ -1215,22 +1232,22 @@ export default function LiveClassroomPage() {
   const runTopicSpeech = useCallback(async (idx: number, resumeFrom?: string) => {
     async function executeTopicSpeech(targetIdx: number, targetResumeFrom?: string) {
       stopSpeaking()
-      
+
       // Create a new AbortController for this lecture stream
       lectureAbortRef.current?.abort()
       const abortController = new AbortController()
       lectureAbortRef.current = abortController
-      
+
       setLecturePlayState("PLAYING")
       streamCompletedRef.current = false
-      
+
       const items = isPdfMode ? pdfPages : topics
       if (targetIdx >= items.length) {
         speakTextChunk("That concludes our topics for today. Feel free to review the materials and ask any remaining questions.\nIMAGE_PROMPT: A beautiful, elegant, stylized 'The End' title card on a dark premium background, representing the completion of a lecture, high resolution, photorealistic, with clear readable text 'The End'")
         return
       }
       const currentItem = items[targetIdx]
-      
+
       // Only clear visual states if NOT resuming
       if (!targetResumeFrom) {
         setIsGeneratingImage(false)
@@ -1242,7 +1259,7 @@ export default function LiveClassroomPage() {
       }
 
       setAiSpeechState("speaking")
-      
+
       let explanation = targetResumeFrom || ""
       let sentenceBuffer = ""
       let firstTokenTime = 0
@@ -1276,16 +1293,16 @@ export default function LiveClassroomPage() {
           const currentTopic = topics[targetIdx] || "";
           const prevTopics = topics.slice(0, targetIdx);
           if (
-            currentContext.subject !== sessionSubject || 
+            currentContext.subject !== sessionSubject ||
             currentContext.topic !== currentTopic ||
             JSON.stringify(currentContext.previousTopics) !== JSON.stringify(prevTopics)
           ) {
-             classroomContext.updateState({
-               sessionId: sessionCode,
-               subject: sessionSubject,
-               topic: currentTopic,
-               previousTopics: prevTopics,
-             });
+            classroomContext.updateState({
+              sessionId: sessionCode,
+              subject: sessionSubject,
+              topic: currentTopic,
+              previousTopics: prevTopics,
+            });
           }
 
           const cacheKey = `${sessionCode}_${sessionSubject}_${currentTopic}`;
@@ -1298,7 +1315,7 @@ export default function LiveClassroomPage() {
             explanation = cached.fullText;
             setTimeout(() => setTranscript(explanation), 0);
             speakTextChunk(explanation, onPlaybackEnd, 0, cached.firstImageUrl);
-            
+
             // Inject pre-fetched first audio into the first queue item for instant playback
             if (cached.firstAudioBase64 && ttsQueueRef.current.length > 0) {
               const firstItem = ttsQueueRef.current[0];
@@ -1309,7 +1326,7 @@ export default function LiveClassroomPage() {
               console.log(`[Latency] Injected pre-fetched audio into first slide`);
               processTtsQueue(); // Kick the queue in case it was waiting
             }
-            
+
             streamCompleted = true;
             break;
           } else if (!targetResumeFrom && cached && !cached.consumed && retries === 0) {
@@ -1318,13 +1335,13 @@ export default function LiveClassroomPage() {
             cached.consumed = true; // Mark as consumed so it isn't read twice
             res = await cached.promise;
           } else {
-            let prompt = isPdfMode 
-              ? `Please explain this page of the document: ${currentItem}` 
+            let prompt = isPdfMode
+              ? `Please explain this page of the document: ${currentItem}`
               : `Please give a detailed lecture explanation for the current topic to the class: ${currentItem}`;
 
             // When resuming after a doubt, tell the AI to CONTINUE, not restart
             if (targetResumeFrom && targetResumeFrom.length > 50) {
-               prompt = `CONTINUATION REQUIRED: You were in the middle of explaining "${currentItem}" and got interrupted by a student question. Your lecture so far is provided in the transcript below. Pick up EXACTLY where you left off and continue teaching. Do NOT repeat anything, do NOT re-introduce the topic, do NOT greet the students again. Just seamlessly continue the explanation from the next logical point.`;
+              prompt = `CONTINUATION REQUIRED: You were in the middle of explaining "${currentItem}" and got interrupted by a student question. Your lecture so far is provided in the transcript below. Pick up EXACTLY where you left off and continue teaching. Do NOT repeat anything, do NOT re-introduce the topic, do NOT greet the students again. Just seamlessly continue the explanation from the next logical point.`;
             }
 
             const { conversationHistory: _lh, ...lectureState } = classroomContext.getState();
@@ -1355,10 +1372,10 @@ export default function LiveClassroomPage() {
             const flushSlide = (cleanText: string, imgPrompt?: string, isLast = false) => {
               const clauses = splitIntoShortClauses(cleanText);
               const currentSlideIdx = slideIdx++;
-              
+
               clauses.forEach((clause, clauseIdx) => {
                 const cleanClause = clause.split("\n").filter(l => !l.trim().startsWith("IMAGE_PROMPT:")).join("\n").trim();
-                
+
                 const item = {
                   text: clause,
                   runId: ttsRunIdRef.current,
@@ -1403,98 +1420,98 @@ export default function LiveClassroomPage() {
               if (abortController.signal.aborted) break;
               const { done, value } = await reader.read();
               if (done) break;
-              
+
               const chunk = decoder.decode(value, { stream: true });
               const lines = chunk.split("\n");
-              
+
               for (const line of lines) {
-                 if (line.startsWith("data: ") && !line.includes("[DONE]")) {
-                    try {
-                       const data = JSON.parse(line.slice(6));
-                       const delta = data.choices?.[0]?.delta?.content || "";
-                       if (delta) {
-                          if (firstTokenTime === 0) firstTokenTime = performance.now();
-                          explanation += delta;
-                          sentenceBuffer += delta;
-                          setTimeout(() => setTranscript(explanation), 0);
+                if (line.startsWith("data: ") && !line.includes("[DONE]")) {
+                  try {
+                    const data = JSON.parse(line.slice(6));
+                    const delta = data.choices?.[0]?.delta?.content || "";
+                    if (delta) {
+                      if (firstTokenTime === 0) firstTokenTime = performance.now();
+                      explanation += delta;
+                      sentenceBuffer += delta;
+                      setTimeout(() => setTranscript(explanation), 0);
 
-                          // Flush slides incrementally: check if buffer has a complete IMAGE_PROMPT line
-                          const hasImagePrompt = sentenceBuffer.includes("IMAGE_PROMPT:");
-                          if (hasImagePrompt) {
-                            const imgIdx = sentenceBuffer.indexOf("IMAGE_PROMPT:");
-                            const afterPrompt = sentenceBuffer.substring(imgIdx + 13);
-                            const newlineIdx = afterPrompt.indexOf("\n");
-                            if (newlineIdx !== -1) {
-                              // Complete IMAGE_PROMPT line — flush the slide
-                              const textBefore = sentenceBuffer.substring(0, imgIdx).trim();
-                              const imgPrompt = afterPrompt.substring(0, newlineIdx).trim();
-                              const rest = afterPrompt.substring(newlineIdx + 1);
-                              if (textBefore) {
-                                // Normal case: text + image prompt together
-                                flushSlide(textBefore, imgPrompt, false);
-                              } else if (imgPrompt) {
-                                // Text was already flushed by sentence-boundary detection.
-                                // 1. Attach image prompt to last item in queue if available
-                                const q = ttsQueueRef.current;
-                                const lastItem = q.length > 0 ? q[q.length - 1] : null;
-                                if (lastItem) {
-                                  // eslint-disable-next-line react-hooks/immutability
-                                  lastItem.imagePrompt = imgPrompt;
-                                  if (!lastItem.imagePromise) {
-                                    lastItem.imagePromise = fetch("/api/image", {
-                                      method: "POST",
-                                      headers: { "Content-Type": "application/json" },
-                                      body: JSON.stringify({ prompt: imgPrompt, width: 768, height: 512 })
-                                    })
-                                      .then(res => res.json())
-                                      .then(data => {
-                                        if (data.image) {
-                                          lastItem.imageUrl = data.image;
-                                        }
-                                      })
-                                      .catch(() => {});
-                                  }
-                                } else {
-                                  // 2. Queue is already empty/playing — trigger image generation in background directly!
-                                  setIsGeneratingImage(true);
-                                  setImageError(null);
-                                  fetch("/api/image", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ prompt: imgPrompt, width: 768, height: 512 })
+                      // Flush slides incrementally: check if buffer has a complete IMAGE_PROMPT line
+                      const hasImagePrompt = sentenceBuffer.includes("IMAGE_PROMPT:");
+                      if (hasImagePrompt) {
+                        const imgIdx = sentenceBuffer.indexOf("IMAGE_PROMPT:");
+                        const afterPrompt = sentenceBuffer.substring(imgIdx + 13);
+                        const newlineIdx = afterPrompt.indexOf("\n");
+                        if (newlineIdx !== -1) {
+                          // Complete IMAGE_PROMPT line — flush the slide
+                          const textBefore = sentenceBuffer.substring(0, imgIdx).trim();
+                          const imgPrompt = afterPrompt.substring(0, newlineIdx).trim();
+                          const rest = afterPrompt.substring(newlineIdx + 1);
+                          if (textBefore) {
+                            // Normal case: text + image prompt together
+                            flushSlide(textBefore, imgPrompt, false);
+                          } else if (imgPrompt) {
+                            // Text was already flushed by sentence-boundary detection.
+                            // 1. Attach image prompt to last item in queue if available
+                            const q = ttsQueueRef.current;
+                            const lastItem = q.length > 0 ? q[q.length - 1] : null;
+                            if (lastItem) {
+                              // eslint-disable-next-line react-hooks/immutability
+                              lastItem.imagePrompt = imgPrompt;
+                              if (!lastItem.imagePromise) {
+                                lastItem.imagePromise = fetch("/api/image", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ prompt: imgPrompt, width: 768, height: 512 })
+                                })
+                                  .then(res => res.json())
+                                  .then(data => {
+                                    if (data.image) {
+                                      lastItem.imageUrl = data.image;
+                                    }
                                   })
-                                    .then(res => res.json())
-                                    .then(data => {
-                                      if (data.image && ttsRunIdRef.current) {
-                                        setTopicImageUrl(data.image);
-                                        setImageLoaded(true);
-                                      }
-                                      setIsGeneratingImage(false);
-                                    })
-                                    .catch(() => {
-                                      setIsGeneratingImage(false);
-                                    });
-                                }
+                                  .catch(() => { });
                               }
-                              sentenceBuffer = rest;
-                            }
                             } else {
-                              // Flush on sentence boundary for fast first voice response
-                              const trimmed = sentenceBuffer.trim();
-                              const cleanUpper = trimmed.toUpperCase();
-                              const lastIdx = cleanUpper.lastIndexOf("I");
-                              const isPartiallyReceivingImagePrompt = lastIdx !== -1 && 
-                                (lastIdx === 0 || cleanUpper[lastIdx - 1] === " " || cleanUpper[lastIdx - 1] === "\n") &&
-                                "IMAGE_PROMPT:".startsWith(cleanUpper.substring(lastIdx));
-
-                              if (!isPartiallyReceivingImagePrompt && shouldFlushSpeechBuffer(sentenceBuffer)) {
-                                flushSlide(sentenceBuffer, "", false);
-                                sentenceBuffer = "";
-                              }
+                              // 2. Queue is already empty/playing — trigger image generation in background directly!
+                              setIsGeneratingImage(true);
+                              setImageError(null);
+                              fetch("/api/image", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ prompt: imgPrompt, width: 768, height: 512 })
+                              })
+                                .then(res => res.json())
+                                .then(data => {
+                                  if (data.image && ttsRunIdRef.current) {
+                                    setTopicImageUrl(data.image);
+                                    setImageLoaded(true);
+                                  }
+                                  setIsGeneratingImage(false);
+                                })
+                                .catch(() => {
+                                  setIsGeneratingImage(false);
+                                });
                             }
-                       }
-                    } catch (e) {}
-                 }
+                          }
+                          sentenceBuffer = rest;
+                        }
+                      } else {
+                        // Flush on sentence boundary for fast first voice response
+                        const trimmed = sentenceBuffer.trim();
+                        const cleanUpper = trimmed.toUpperCase();
+                        const lastIdx = cleanUpper.lastIndexOf("I");
+                        const isPartiallyReceivingImagePrompt = lastIdx !== -1 &&
+                          (lastIdx === 0 || cleanUpper[lastIdx - 1] === " " || cleanUpper[lastIdx - 1] === "\n") &&
+                          "IMAGE_PROMPT:".startsWith(cleanUpper.substring(lastIdx));
+
+                        if (!isPartiallyReceivingImagePrompt && shouldFlushSpeechBuffer(sentenceBuffer)) {
+                          flushSlide(sentenceBuffer, "", false);
+                          sentenceBuffer = "";
+                        }
+                      }
+                    }
+                  } catch (e) { }
+                }
               }
             }
 
@@ -1520,7 +1537,7 @@ export default function LiveClassroomPage() {
                         setImageLoaded(true);
                       }
                     })
-                    .catch(() => {});
+                    .catch(() => { });
                 }
               } else {
                 flushSlide(sentenceBuffer, "", true);
@@ -1532,7 +1549,7 @@ export default function LiveClassroomPage() {
                 q[q.length - 1].onEnd = onPlaybackEnd;
               }
             }
-            
+
             lastTokenTime = performance.now();
             streamCompleted = true;
             streamCompletedRef.current = true;
@@ -1544,10 +1561,10 @@ export default function LiveClassroomPage() {
               const nextCacheKey = `${sessionCode}_${sessionSubject}_${nextItem}`;
               if (!prefetchedLectures.current[nextCacheKey]) {
                 console.log(`[Latency] Pre-fetching NEXT topic stream at ${performance.now().toFixed(0)}ms for ${nextCacheKey}`);
-                const nextPrompt = isPdfMode 
-                  ? `Please explain this page of the document: ${nextItem}` 
+                const nextPrompt = isPdfMode
+                  ? `Please explain this page of the document: ${nextItem}`
                   : `Please give a detailed lecture explanation for the current topic to the class: ${nextItem}`;
-                
+
                 const { conversationHistory: _ph, ...prefetchState } = classroomContext.getState();
                 const nextPromise = fetch("/api/ai", {
                   method: "POST",
@@ -1559,7 +1576,7 @@ export default function LiveClassroomPage() {
                   })
                 }).then(async r => {
                   if (!r.ok) throw new Error("Prefetch failed");
-                  
+
                   // Read the stream to fully populate the text cache in background
                   const cloned = r.clone();
                   if (cloned.body) {
@@ -1601,7 +1618,7 @@ export default function LiveClassroomPage() {
                                         prefetchedLectures.current[nextCacheKey].firstAudioBase64 = data.audioContent;
                                       }
                                     })
-                                    .catch(() => {});
+                                    .catch(() => { });
                                 }
                               }
 
@@ -1626,19 +1643,19 @@ export default function LiveClassroomPage() {
                                           prefetchedLectures.current[nextCacheKey].firstImageUrl = data.image;
                                         }
                                       })
-                                      .catch(() => {});
+                                      .catch(() => { });
                                   }
                                 }
                               }
-                            } catch {}
+                            } catch { }
                           }
                         }
                       }
-                      
+
                       if (prefetchedLectures.current[nextCacheKey]) {
                         prefetchedLectures.current[nextCacheKey].fullText = fullText;
                         console.log(`[Latency] Pre-fetched fully cached text for ${nextCacheKey}`);
-                        
+
                         // Fallbacks in case stream finished too quickly to trigger on-the-fly hooks
                         if (!firstImgTriggered) {
                           const sentences = fullText.split("\n");
@@ -1662,10 +1679,10 @@ export default function LiveClassroomPage() {
                                   prefetchedLectures.current[nextCacheKey].firstImageUrl = data.image;
                                 }
                               })
-                              .catch(() => {});
+                              .catch(() => { });
                           }
                         }
-                        
+
                         if (!firstTtsTriggered) {
                           const nextSlides = parseExplanationToSlides(fullText);
                           if (nextSlides.length > 0 && nextSlides[0].text) {
@@ -1680,17 +1697,17 @@ export default function LiveClassroomPage() {
                                   prefetchedLectures.current[nextCacheKey].firstAudioBase64 = data.audioContent;
                                 }
                               })
-                              .catch(() => {});
+                              .catch(() => { });
                           }
                         }
                       }
-                    } catch {}
+                    } catch { }
                   }
                   return r;
                 }).catch(err => {
                   console.error("Prefetch next topic failed", err);
                 });
-                
+
                 prefetchedLectures.current[nextCacheKey] = { promise: nextPromise, time: performance.now(), consumed: false };
               }
             }
@@ -1706,7 +1723,7 @@ export default function LiveClassroomPage() {
 
             // Cache the fully resolved string for immediate playback if user returns to this topic
             if (cached) {
-               cached.fullText = explanation;
+              cached.fullText = explanation;
             }
 
           } else {
@@ -1727,9 +1744,9 @@ export default function LiveClassroomPage() {
           console.error("AI Lecture fetch failed or interrupted:", e)
           retries++;
           if (retries > MAX_RETRIES) {
-             console.warn("[Lecture]: Falling back to local offline lecture for topic:", currentItem);
-             addToast("Slow connection. Loading local offline lesson material.");
-             explanation = `Let's begin our discussion on ${currentItem}. This is an essential area of study that forms the foundation of modern technology.
+            console.warn("[Lecture]: Falling back to local offline lecture for topic:", currentItem);
+            addToast("Slow connection. Loading local offline lesson material.");
+            explanation = `Let's begin our discussion on ${currentItem}. This is an essential area of study that forms the foundation of modern technology.
 IMAGE_PROMPT: A beautiful workspace with a clean laptop displaying code on the screen, purple neon accents, cinematic lighting.
 By exploring ${currentItem}, we learn how to design, analyze, and build efficient solutions to complex problems.
 IMAGE_PROMPT: Glowing abstract connection traces showing data network flow, purple and indigo colors.
@@ -1737,30 +1754,30 @@ Understanding these concepts allows us to create innovative tools that drive pro
 IMAGE_PROMPT: Hand typing on a backlit mechanical keyboard in a dark room, close up macro shot.
 As we progress through the course, we will examine the core principles and real-world applications of this subject.
 IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and educational visuals.`;
-             setTranscript(explanation);
-             speakTextChunk(explanation, onPlaybackEnd);
-             streamCompleted = true;
-             break;
+            setTranscript(explanation);
+            speakTextChunk(explanation, onPlaybackEnd);
+            streamCompleted = true;
+            break;
           }
           // wait before retry
           await new Promise(r => setTimeout(r, 1000));
         }
       }
 
-    const totalTimeToFirstToken = firstTokenTime > 0 ? (firstTokenTime - cachedTime) : (lastTokenTime - cachedTime);
-    const totalStreamingTime = lastTokenTime - firstTokenTime;
-    
-    console.log(`[Latency] Time to First Token: ${totalTimeToFirstToken.toFixed(0)}ms | Streaming Duration: ${totalStreamingTime.toFixed(0)}ms`);
-    if (targetIdx === 0) {
-       addToast(`Latency | TTFT: ${totalTimeToFirstToken.toFixed(0)}ms | Streaming: ${totalStreamingTime.toFixed(0)}ms`);
+      const totalTimeToFirstToken = firstTokenTime > 0 ? (firstTokenTime - cachedTime) : (lastTokenTime - cachedTime);
+      const totalStreamingTime = lastTokenTime - firstTokenTime;
+
+      console.log(`[Latency] Time to First Token: ${totalTimeToFirstToken.toFixed(0)}ms | Streaming Duration: ${totalStreamingTime.toFixed(0)}ms`);
+      if (targetIdx === 0) {
+        addToast(`Latency | TTFT: ${totalTimeToFirstToken.toFixed(0)}ms | Streaming: ${totalStreamingTime.toFixed(0)}ms`);
+      }
+
+      transcriptRef.current.push(explanation)
+      setPastTranscripts((old) => [...old, explanation])
     }
 
-    transcriptRef.current.push(explanation)
-    setPastTranscripts((old) => [...old, explanation])
-  }
-
-  await executeTopicSpeech(idx, resumeFrom);
-}, [topics, pdfPages, isPdfMode, speakTextChunk, stopSpeaking, addToast, sessionCode, sessionSubject])
+    await executeTopicSpeech(idx, resumeFrom);
+  }, [topics, pdfPages, isPdfMode, speakTextChunk, stopSpeaking, addToast, sessionCode, sessionSubject])
 
   /* ─── ENTER CLASSROOM ─── */
   const handleEnterClassroom = useCallback(() => {
@@ -1791,7 +1808,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (!isTeacher && studentId && sessionCode) {
-        setStudentOffline(sessionCode, studentId).catch(() => {});
+        setStudentOffline(sessionCode, studentId).catch(() => { });
       }
       e.preventDefault();
       e.returnValue = "A live lecture is currently in progress. Leaving this page will interrupt your session!";
@@ -1802,7 +1819,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       stopSpeaking();
       lectureAbortRef.current?.abort();
       if (!isTeacher && studentId && sessionCode) {
-        setStudentOffline(sessionCode, studentId).catch(() => {});
+        setStudentOffline(sessionCode, studentId).catch(() => { });
       }
       setTabSwitchCount((prev) => prev + 1);
       setKickReason(reason);
@@ -1833,7 +1850,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       window.removeEventListener("blur", handleBlur);
 
       if (!isTeacher && studentId && sessionCode) {
-        setStudentOffline(sessionCode, studentId).catch(() => {});
+        setStudentOffline(sessionCode, studentId).catch(() => { });
       }
     };
   }, [hasEntered, isTeacher, studentId, sessionCode]);
@@ -1884,7 +1901,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           const lastActiveMs = s.lastActive.toMillis ? s.lastActive.toMillis() : (s.lastActive.seconds * 1000);
           return (now - lastActiveMs) < 15000; // 15 seconds threshold
         });
-        
+
         setStudents(activeStudents)
         // Compute Class Focus Average across all active participants (Teacher + Students)
         if (activeStudents.length > 0) {
@@ -1917,11 +1934,11 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       body: JSON.stringify({ sessionCode, studentId, isTeacher }),
       headers: { 'Content-Type': 'application/json' }
     })
-    .then(r => r.json())
-    .then(data => {
-      if (data.token) setLivekitToken(data.token);
-    })
-    .catch(console.error);
+      .then(r => r.json())
+      .then(data => {
+        if (data.token) setLivekitToken(data.token);
+      })
+      .catch(console.error);
   }, [hasEntered, sessionCode, studentId, isTeacher]);
 
   /* ─── LIVEKIT SFU INIT ─── */
@@ -1938,18 +1955,18 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
       room.on(RoomEvent.TrackSubscribed, (track: any, publication: any, participant: any) => {
         if (track.kind === 'video') {
-           const stream = new MediaStream([track.mediaStreamTrack]);
-           setRemoteStreams(prev => ({ ...prev, [participant.identity]: stream }));
+          const stream = new MediaStream([track.mediaStreamTrack]);
+          setRemoteStreams(prev => ({ ...prev, [participant.identity]: stream }));
         }
       });
 
       room.on(RoomEvent.TrackUnsubscribed, (track: any, publication: any, participant: any) => {
         if (track.kind === 'video') {
-           setRemoteStreams(prev => {
-             const copy = { ...prev };
-             delete copy[participant.identity];
-             return copy;
-           });
+          setRemoteStreams(prev => {
+            const copy = { ...prev };
+            delete copy[participant.identity];
+            return copy;
+          });
         }
       });
 
@@ -1994,14 +2011,14 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         if (videoTrack) {
           const { LocalVideoTrack } = await import('livekit-client');
           const localTk = new LocalVideoTrack(videoTrack);
-          
+
           const existingPublications = roomRef.current.localParticipant.videoTrackPublications;
           for (const pub of existingPublications.values()) {
             if (pub.track) {
               await roomRef.current.localParticipant.unpublishTrack(pub.track);
             }
           }
-          
+
           await roomRef.current.localParticipant.publishTrack(localTk);
         }
       };
@@ -2022,23 +2039,23 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
     if (isAnsweringRef.current || !chatInput.trim()) return
     isAnsweringRef.current = true
     setIsAnswering(true)
-    
+
     // Stop any active narration immediately (lecture or previous doubt voice)
     stopSpeaking()
     resumePendingRef.current = false // Reset resume pending since we got a new question
-    
+
     const question = chatInput.trim()
     const userMsgId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
     const userMsg = { id: userMsgId, sender: "You", text: question, time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), isAI: false, role: "user" as const }
     classroomContext.addMessage(userMsg)
     setChatInput("")
-    
+
     // === PAUSE LECTURE ===
     if (lecturePlayState === "PLAYING") {
       // Abort active lecture stream (if still streaming)
       lectureAbortRef.current?.abort()
       setLecturePlayState("PAUSED_FOR_DOUBT")
-      
+
       // If the stream already completed (abort had no effect), savedLectureStateRef
       // won't be set by the abort handler. Capture it now from the current transcript
       // so the resume path can continue instead of restarting the topic.
@@ -2054,7 +2071,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         }
       }, 0);
     }
-    
+
     try {
       const currentContext = classroomContext.getState();
 
@@ -2062,7 +2079,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       const res = await fetch("/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           question: question,
           target: "doubt-chat",
           sessionId: sessionCode,
@@ -2074,36 +2091,36 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       if (res.ok && res.body) {
         const msgId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
         classroomContext.addMessage({ id: msgId, sender: "Professor AI", text: "", time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), isAI: true, role: "assistant" as const })
-        
+
         const reader = res.body.getReader()
         const decoder = new TextDecoder()
         let answerText = ""
-        
+
         while (true) {
           const { done, value } = await reader.read()
           if (done) break
-          
+
           const chunk = decoder.decode(value, { stream: true })
           const lines = chunk.split("\n")
-          
+
           for (const line of lines) {
-             if (line.startsWith("data: ") && !line.includes("[DONE]")) {
-                try {
-                   const data = JSON.parse(line.slice(6))
-                   const delta = data.choices?.[0]?.delta?.content || ""
-                   if (delta) {
-                      answerText += delta
-                      
-                      const cleanText = answerText
-                        .split("\n")
-                        .filter(l => !l.trim().startsWith("IMAGE_PROMPT:"))
-                        .join("\n")
-                        .trim();
-                      
-                      classroomContext.updateMessage(msgId, { text: cleanText })
-                   }
-                } catch (e) {}
-             }
+            if (line.startsWith("data: ") && !line.includes("[DONE]")) {
+              try {
+                const data = JSON.parse(line.slice(6))
+                const delta = data.choices?.[0]?.delta?.content || ""
+                if (delta) {
+                  answerText += delta
+
+                  const cleanText = answerText
+                    .split("\n")
+                    .filter(l => !l.trim().startsWith("IMAGE_PROMPT:"))
+                    .join("\n")
+                    .trim();
+
+                  classroomContext.updateMessage(msgId, { text: cleanText })
+                }
+              } catch (e) { }
+            }
           }
         }
 
@@ -2148,7 +2165,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       setLecturePlayState("RESUMING");
       return;
     }
-    
+
     const saved = savedLectureStateRef.current;
     if (!saved) {
       // No saved state — just restart current topic
@@ -2156,15 +2173,15 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       runTopicSpeech(activeTopicIdx)
       return
     }
-    
+
     savedLectureStateRef.current = null;
-    
+
     if (streamCompletedRef.current) {
       // Stream was fully complete. Just resume playing from where we left off.
       setLecturePlayState("PLAYING")
       const items = isPdfMode ? pdfPages : topics
       const nextTopicIdx = activeTopicIdx + 1
-      
+
       const onResumePlaybackEnd = () => {
         if (nextTopicIdx < items.length) {
           addToast(isPdfMode ? `Moving to Page ${nextTopicIdx + 1}` : `Moving to Topic ${nextTopicIdx + 1}`)
@@ -2203,12 +2220,12 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         localStorage.setItem(`teacher_focus_${sessionCode}`, String(localMetrics.score));
         localStorage.setItem("classFocus", String(localMetrics.score));
         if (studentId) {
-          updateStudentEngagement(sessionCode, studentId, studentName || studentId, localMetrics.score, localMetrics.status).catch(() => {});
+          updateStudentEngagement(sessionCode, studentId, studentName || studentId, localMetrics.score, localMetrics.status).catch(() => { });
         }
         if (isTeacher) {
-          updateTeacherEngagement(sessionCode, localMetrics.score, localMetrics.status).catch(() => {});
+          updateTeacherEngagement(sessionCode, localMetrics.score, localMetrics.status).catch(() => { });
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     try {
@@ -2220,7 +2237,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
   useEffect(() => {
     if (endCountdown === null) return
-    if (endCountdown === 0) { 
+    if (endCountdown === 0) {
       // Explicitly disconnect from LiveKit and stop all tracks to ensure camera light turns off
       if (roomRef.current) {
         roomRef.current.disconnect();
@@ -2233,7 +2250,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       } else {
         router.push("/dashboard")
       }
-      return 
+      return
     }
     const t = setTimeout(() => setEndCountdown((c) => (c !== null ? c - 1 : null)), 1000)
     return () => clearTimeout(t)
@@ -2292,7 +2309,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
     window.addEventListener("mousemove", handleMouseMove)
     window.addEventListener("touchstart", handleTouchStart)
-    
+
     triggerHideWithDelay()
 
     return () => {
@@ -2369,7 +2386,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
   const totalItems = isPdfMode ? pdfPages.length : topics.length
   const progressPct = totalItems > 0 ? Math.floor(((activeTopicIdx + 1) / totalItems) * 100) : 50
   const activeLabel = isPdfMode ? `Page ${activeTopicIdx + 1} of ${totalItems}` : (topics[activeTopicIdx] || "Course Topic")
-  
+
   const focusDot = classFocus >= 80 ? "bg-emerald-500" : classFocus >= 65 ? "bg-amber-500" : "bg-rose-500"
   const focusText = classFocus >= 80 ? "text-emerald-400" : classFocus >= 65 ? "text-amber-400" : "text-rose-400"
 
@@ -2684,7 +2701,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                     <h4 className="text-sm font-bold text-[#111827]">Visual Aid Failed to Generate</h4>
                     <p className="text-xs text-[#6B7280] mt-1">{imageError}</p>
                   </div>
-                  <button 
+                  <button
                     onClick={() => {
                       setImageError(null);
                     }}
@@ -2704,12 +2721,11 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
           {/* ── PROFESSOR AI — Response Panel ── */}
           <div
-            className={`rounded-[22px] border border-[rgba(15,23,42,.08)] p-[28px] flex gap-4 flex-shrink-0 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] relative bg-white shadow-[0_8px_24px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(15,23,42,.08)] ${
-              lecturePlayState === "PAUSED_FOR_DOUBT" ? "border-amber-400/50"
-              : aiSpeechState === "speaking" ? "tile-glow"
-              : aiSpeechState === "paused" ? "border-amber-400/30"
-              : "border-[rgba(15,23,42,.08)]"
-            }`}
+            className={`rounded-[22px] border border-[rgba(15,23,42,.08)] p-[28px] flex gap-4 flex-shrink-0 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] relative bg-white shadow-[0_8px_24px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(15,23,42,.08)] ${lecturePlayState === "PAUSED_FOR_DOUBT" ? "border-amber-400/50"
+                : aiSpeechState === "speaking" ? "tile-glow"
+                  : aiSpeechState === "paused" ? "border-amber-400/30"
+                    : "border-[rgba(15,23,42,.08)]"
+              }`}
           >
             {/* LIVE / PAUSED badge */}
             {lecturePlayState === "PAUSED_FOR_DOUBT" ? (
@@ -2727,21 +2743,20 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             {/* Orb + waveform ── */}
             <div className="flex flex-col items-center gap-2 flex-shrink-0 justify-center">
               <div
-                className={`rounded-full flex items-center justify-center border-[3px] border-white transition-all duration-500 shadow-[0_10px_20px_rgba(37,99,235,.18)] ${
-                  aiSpeechState === "speaking"
+                className={`rounded-full flex items-center justify-center border-[3px] border-white transition-all duration-500 shadow-[0_10px_20px_rgba(37,99,235,.18)] ${aiSpeechState === "speaking"
                     ? "bg-[#2563EB] text-white orb-active"
                     : aiSpeechState === "paused"
-                    ? "bg-[#2563EB]/80 text-white orb-idle"
-                    : "bg-[#2563EB] text-white orb-idle"
-                }`}
+                      ? "bg-[#2563EB]/80 text-white orb-idle"
+                      : "bg-[#2563EB] text-white orb-idle"
+                  }`}
                 style={{ width: 48, height: 48 }}
               >
                 <Brain className="h-5 w-5 text-white" />
               </div>
               <div className="flex items-end justify-center gap-[2px] h-3.5 w-8">
                 {aiSpeechState === "speaking" && lecturePlayState !== "PAUSED_FOR_DOUBT"
-                  ? [1,2,3,4,5].map((i) => <div key={i} className={`w-[2.5px] rounded-full bg-[#2563EB] wv wv-${i}`} style={{height:"100%"}} />)
-                  : [1,2,3,4,5].map((i) => <div key={i} className="w-[2.5px] h-[2.5px] rounded-full bg-[#E5E7EB]" />)
+                  ? [1, 2, 3, 4, 5].map((i) => <div key={i} className={`w-[2.5px] rounded-full bg-[#2563EB] wv wv-${i}`} style={{ height: "100%" }} />)
+                  : [1, 2, 3, 4, 5].map((i) => <div key={i} className="w-[2.5px] h-[2.5px] rounded-full bg-[#E5E7EB]" />)
                 }
               </div>
             </div>
@@ -2751,12 +2766,11 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
               <div className="flex items-center gap-2">
                 <h3 className="text-[18px] font-bold text-[#111827] leading-tight">Professor AI</h3>
                 <span className="text-xs text-[#9CA3AF]">·</span>
-                <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full truncate transition-colors duration-300 ${
-                  lecturePlayState === "PAUSED_FOR_DOUBT" ? "bg-[#FEF3C7] text-[#D97706]"
-                  : aiSpeechState === "speaking" ? "bg-[#EFF6FF] text-[#2563EB]" : aiSpeechState === "paused" ? "bg-[#FEF3C7] text-[#D97706]" : "bg-[#F3F4F6] text-[#6B7280]"
-                }`}>
-                  {lecturePlayState === "PAUSED_FOR_DOUBT" ? "Answering doubt..." 
-                  : aiSpeechState === "speaking" ? activeLabel : aiSpeechState === "paused" ? "Paused" : "Waiting..."}
+                <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full truncate transition-colors duration-300 ${lecturePlayState === "PAUSED_FOR_DOUBT" ? "bg-[#FEF3C7] text-[#D97706]"
+                    : aiSpeechState === "speaking" ? "bg-[#EFF6FF] text-[#2563EB]" : aiSpeechState === "paused" ? "bg-[#FEF3C7] text-[#D97706]" : "bg-[#F3F4F6] text-[#6B7280]"
+                  }`}>
+                  {lecturePlayState === "PAUSED_FOR_DOUBT" ? "Answering doubt..."
+                    : aiSpeechState === "speaking" ? activeLabel : aiSpeechState === "paused" ? "Paused" : "Waiting..."}
                 </span>
               </div>
 
@@ -2786,7 +2800,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
         {/* ─── RIGHT SIDEBAR — Participants + Doubt Chat (16px vertical spacing) ─── */}
         <aside className="w-full lg:w-[30%] border-t-2 lg:border-t-0 lg:border-l-2 border-[#BFDBFE] bg-white flex flex-col min-h-0 pb-[84px] lg:pb-0 overflow-hidden antialiased">
-          
+
           {/* ── STUDENT TILES (16px spacing) ── */}
           <div className="flex-none p-4 pb-0 space-y-4">
             <h4 className="text-[#111827] font-bold text-xs tracking-[0.02em] uppercase font-mono pb-2.5 border-b-2 border-[#BFDBFE] flex items-center justify-between flex-shrink-0">
@@ -2829,13 +2843,13 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                 const score = student.engagementScore ?? student.score ?? 0;
                 const status = student.status ?? student.state ?? "offline";
                 const isFocused = status === "focused";
-                
+
                 return (
                   <div key={student.id} className="relative aspect-video rounded-[22px] border-2 border-[#2563EB] bg-white flex items-center justify-center hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] overflow-hidden shadow-xs p-4">
                     {remoteStreams[student.id] ? (
-                      <video 
-                        autoPlay 
-                        playsInline 
+                      <video
+                        autoPlay
+                        playsInline
                         muted
                         className="absolute inset-0 w-full h-full object-cover z-0"
                         ref={node => {
@@ -2878,11 +2892,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex flex-col gap-1 max-w-[90%] slide-up ${msg.isAI ? "self-start" : "self-end items-end"}`}>
                   <span className="text-[9px] text-[#374151] font-bold">{msg.sender} • {msg.time}</span>
-                  <div className={`text-[11px] px-3.5 py-2.5 rounded-[18px] leading-relaxed transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] ${
-                    msg.isAI
+                  <div className={`text-[11px] px-3.5 py-2.5 rounded-[18px] leading-relaxed transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] ${msg.isAI
                       ? "bg-white text-[#111827] font-semibold border-2 border-[#2563EB] rounded-tl-none flex gap-2 items-start shadow-xs"
                       : "bg-[#EFF6FF] text-[#1E40AF] border-2 border-[#2563EB] rounded-tr-none shadow-xs font-semibold"
-                  }`}>
+                    }`}>
                     {msg.isAI && <Brain className="h-3.5 w-3.5 text-[#2563EB] flex-shrink-0 mt-0.5" />}
                     <span>{msg.text}</span>
                   </div>
@@ -2927,9 +2940,8 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             }
           }, 2000)
         }}
-        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[45] flex items-center gap-3 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] ${
-          showToolbar ? "translate-y-0 opacity-100" : "translate-y-28 opacity-0 pointer-events-none"
-        }`}
+        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[45] flex items-center gap-3 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] ${showToolbar ? "translate-y-0 opacity-100" : "translate-y-28 opacity-0 pointer-events-none"
+          }`}
       >
         <div
           className="flex items-center px-3 rounded-[24px] shadow-[0_20px_40px_rgba(15,23,42,.08)] border border-[rgba(15,23,42,.08)] bg-white/95 backdrop-blur-md relative gap-1"
@@ -3086,7 +3098,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       )}
 
       {/* ─── OVERLAY ─── */}
-      <div 
+      <div
         className="drawer-overlay"
         style={overlayStyle}
         onClick={() => {
@@ -3097,7 +3109,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
       {/* ─── EDGE SWIPE ZONE (MOBILE) ─── */}
       {!isParticipantsOpen && (
-        <div 
+        <div
           className="fixed right-0 top-0 bottom-0 w-6 z-[80] bg-transparent touch-none"
           onTouchStart={handleTouchStart}
         />
@@ -3125,8 +3137,8 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           <div className="flex flex-col items-center gap-2">
             <span className="text-[10px] text-blue-600 font-bold animate-pulse">◀</span>
             <Users className="h-3.5 w-3.5 text-slate-700" />
-            <span 
-              style={{ writingMode: "vertical-rl" }} 
+            <span
+              style={{ writingMode: "vertical-rl" }}
               className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 select-none my-1"
             >
               People
@@ -3207,11 +3219,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Filters</span>
             <button
               onClick={() => setShowOnlyActive(prev => !prev)}
-              className={`px-2.5 py-1 rounded-lg border text-[10px] font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                showOnlyActive
+              className={`px-2.5 py-1 rounded-lg border text-[10px] font-bold transition-all flex items-center gap-1.5 cursor-pointer ${showOnlyActive
                   ? "bg-blue-50 border-blue-200 text-blue-600"
                   : "bg-slate-50 border-slate-200 text-slate-650 hover:bg-slate-100"
-              }`}
+                }`}
             >
               <span className={`h-1.5 w-1.5 rounded-full ${showOnlyActive ? "bg-blue-500 animate-pulse" : "bg-slate-300"}`} />
               Active Speakers
@@ -3225,7 +3236,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             filteredStudents.map((s) => {
               const isSpeaking = speakingStudentIds.has(s.id);
               const { isMuted, hasHandRaised, connectionQual } = getStudentProps(s);
-              
+
               // connection icon
               let connColor = "text-emerald-600";
               if (connectionQual === "Good") connColor = "text-amber-500";
@@ -3234,11 +3245,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
               return (
                 <div
                   key={s.id}
-                  className={`flex items-center justify-between p-2.5 rounded-xl transition-all border border-transparent ${
-                    isSpeaking 
-                      ? "bg-blue-50/50 border-blue-200" 
+                  className={`flex items-center justify-between p-2.5 rounded-xl transition-all border border-transparent ${isSpeaking
+                      ? "bg-blue-50/50 border-blue-200"
                       : "hover:bg-slate-50"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     {/* Avatar with speaking animation */}
@@ -3247,16 +3257,14 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                         <div className="absolute -inset-1 rounded-full border border-blue-500/80 animate-ping opacity-70" />
                       )}
                       <div
-                        className={`h-9 w-9 rounded-full bg-slate-50 border flex items-center justify-center text-xs font-bold shadow-sm relative z-10 transition-all ${
-                          isSpeaking ? "border-blue-500 ring-2 ring-blue-500/20 text-blue-600" : "border-slate-200 text-slate-700"
-                        }`}
+                        className={`h-9 w-9 rounded-full bg-slate-50 border flex items-center justify-center text-xs font-bold shadow-sm relative z-10 transition-all ${isSpeaking ? "border-blue-500 ring-2 ring-blue-500/20 text-blue-600" : "border-slate-200 text-slate-700"
+                          }`}
                       >
                         {s.name?.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase() || "?"}
                       </div>
                       {/* focus dot status */}
-                      <span className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border border-white z-20 ${
-                        s.status === "active" ? "bg-emerald-500" : s.status === "idle" ? "bg-amber-500" : s.status === "distracted" ? "bg-rose-500" : "bg-gray-400"
-                      }`} />
+                      <span className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border border-white z-20 ${s.status === "active" ? "bg-emerald-500" : s.status === "idle" ? "bg-amber-500" : s.status === "distracted" ? "bg-rose-500" : "bg-gray-400"
+                        }`} />
                     </div>
 
                     {/* Name & status */}
@@ -3283,11 +3291,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                     )}
 
                     {/* mic status */}
-                    <div className={`p-1.5 rounded-lg border ${
-                      isMuted 
-                        ? "bg-red-50 border-red-100 text-red-500" 
+                    <div className={`p-1.5 rounded-lg border ${isMuted
+                        ? "bg-red-50 border-red-100 text-red-500"
                         : "bg-slate-50 border-slate-200 text-slate-400"
-                    }`}>
+                      }`}>
                       {isMuted ? <MicOff className="h-3 w-3" /> : <Mic className="h-3 w-3" />}
                     </div>
 
@@ -3363,8 +3370,8 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                   <div className="relative z-10 text-xs text-slate-600 bg-[#FCFCFD] p-3.5 rounded-2xl border border-slate-200 mb-6 flex items-center justify-center gap-2">
                     <Eye className="h-4 w-4 text-blue-600 flex-shrink-0" />
                     <span>
-                      {localMetrics.gazeDirection !== 'unknown' && localMetrics.gazeDirection !== 'center' 
-                        ? `Detected Gaze: ${localMetrics.gazeDirection.toUpperCase()} (${Math.round(localMetrics.effectiveDeviation)}° angle)` 
+                      {localMetrics.gazeDirection !== 'unknown' && localMetrics.gazeDirection !== 'center'
+                        ? `Detected Gaze: ${localMetrics.gazeDirection.toUpperCase()} (${Math.round(localMetrics.effectiveDeviation)}° angle)`
                         : "Please face forward and align your gaze with the screen."}
                     </span>
                   </div>
@@ -3460,11 +3467,11 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                   <div className="w-16 h-16 bg-red-500/10 border border-red-500/30 rounded-full flex items-center justify-center mx-auto text-red-500 animate-pulse">
                     <AlertTriangle className="w-8 h-8 text-red-500" />
                   </div>
-                  
+
                   <h3 className="text-xl font-bold text-white tracking-wide">
                     Tab Switch Restricted!
                   </h3>
-                  
+
                   <p className="text-xs text-slate-300 leading-relaxed">
                     Leaving the website or switching tabs during an active live lecture is strictly restricted to ensure complete focus.
                   </p>
