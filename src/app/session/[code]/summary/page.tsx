@@ -166,9 +166,33 @@ export default function SummaryPage() {
   if (isTeacher && session) {
     const studentsOnly = studentsList.filter(s => s.id !== session.teacherId);
     const totalAttendees = studentsOnly.length + kickedList.length;
-    const avgFocusScore = studentsOnly.length > 0
-      ? Math.floor(studentsOnly.reduce((acc, s) => acc + (s.engagementScore || 0), 0) / studentsOnly.length)
-      : 0;
+
+    // 1. Compute Student Average Focus Score
+    const studentScores = studentsOnly
+      .map(s => s.engagementScore ?? (s as any).score)
+      .filter(sc => typeof sc === "number" && !isNaN(sc) && sc >= 0);
+
+    let avgFocusScore = 0;
+    if (studentScores.length > 0) {
+      avgFocusScore = Math.floor(studentScores.reduce((acc, val) => acc + val, 0) / studentScores.length);
+    } else if (typeof window !== "undefined") {
+      const cachedClassFocus = localStorage.getItem(`student_focus_${sessionCode}`) || localStorage.getItem("classFocus");
+      if (cachedClassFocus && !isNaN(Number(cachedClassFocus))) {
+        avgFocusScore = Math.floor(Number(cachedClassFocus));
+      }
+    }
+
+    // 2. Compute Teacher Focus Score
+    let teacherFocusScore: number | null = null;
+    const rawTeacherScore = (session as any).teacherEngagementScore;
+    if (typeof rawTeacherScore === "number" && !isNaN(rawTeacherScore)) {
+      teacherFocusScore = Math.floor(rawTeacherScore);
+    } else if (typeof window !== "undefined") {
+      const cachedTeacherFocus = localStorage.getItem(`teacher_focus_${sessionCode}`) || localStorage.getItem("teacherFocus");
+      if (cachedTeacherFocus && !isNaN(Number(cachedTeacherFocus))) {
+        teacherFocusScore = Math.floor(Number(cachedTeacherFocus));
+      }
+    }
 
     return (
       <div className="min-h-screen bg-[#F6F7F9] text-slate-800 font-sans relative pb-12 flex flex-col z-10">
@@ -217,7 +241,7 @@ export default function SummaryPage() {
           </div>
 
           {/* Stats Row */}
-          <section className={`grid gap-4 grid-cols-2 ${session && (session as any).teacherEngagementScore !== undefined ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
+          <section className={`grid gap-4 grid-cols-2 ${teacherFocusScore !== null ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
             {/* Attendees */}
             <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
               <div className="flex items-center justify-between text-slate-500 mb-3">
@@ -239,16 +263,14 @@ export default function SummaryPage() {
             </div>
 
             {/* Teacher Focus */}
-            {session && (session as any).teacherEngagementScore !== undefined && (
-              <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
-                <div className="flex items-center justify-between text-slate-500 mb-3">
-                  <span className="text-[10px] font-bold uppercase tracking-wider font-mono">Teacher Focus</span>
-                  <Brain className="h-4 w-4 text-purple-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-slate-900">{(session as any).teacherEngagementScore}%</h3>
-                <span className="text-[10px] text-purple-600 font-medium">Your focus average</span>
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
+              <div className="flex items-center justify-between text-slate-500 mb-3">
+                <span className="text-[10px] font-bold uppercase tracking-wider font-mono">Teacher Focus</span>
+                <Brain className="h-4 w-4 text-purple-600" />
               </div>
-            )}
+              <h3 className="text-2xl font-bold text-slate-900">{teacherFocusScore !== null ? `${teacherFocusScore}%` : `${avgFocusScore}%`}</h3>
+              <span className="text-[10px] text-purple-600 font-medium">Your focus average</span>
+            </div>
 
             {/* Present Now */}
             <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">

@@ -323,6 +323,13 @@ export const updateStudentEngagement = async (
       status,
       lastActive: serverTimestamp(),
     }, { merge: true })
+
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(`student_focus_${sessionCode.trim().toUpperCase()}_${studentId}`, String(score))
+        localStorage.setItem("classFocus", String(score))
+      } catch (e) {}
+    }
   } catch (error) {
     console.error("Error updating engagement telemetry:", error)
     throw error
@@ -342,6 +349,13 @@ export const updateTeacherEngagement = async (
       teacherEngagementStatus: status,
       teacherLastActive: serverTimestamp(),
     })
+
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(`teacher_focus_${sessionCode.trim().toUpperCase()}`, String(score))
+        localStorage.setItem("teacherFocus", String(score))
+      } catch (e) {}
+    }
   } catch (error) {
     console.error("Error updating teacher engagement:", error)
   }
