@@ -2553,7 +2553,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             <Brain className="h-4.5 w-4.5 text-[#2563EB]" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-bold text-[#111827] leading-none">Class<span className="text-[#2563EB]">AI</span></span>
+            <span className="text-sm font-black text-[#2563EB] leading-none tracking-tight">AI <span className="text-[#111827]">CLASS</span></span>
             <span className="text-[11px] text-[#6B7280] font-medium tracking-wide uppercase truncate max-w-[160px] mt-1">{sessionTitle}</span>
           </div>
         </div>
