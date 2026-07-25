@@ -981,7 +981,7 @@ export default function SessionPage() {
                     Invite Students with Code
                   </span>
                   <div className={`relative max-w-sm mx-auto flex items-center justify-between bg-[#FCFCFD] border border-[#E5E7EB] h-[84px] px-6 rounded-[20px] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${isCopied ? 'bg-blue-50/50 border-blue-300 ring-2 ring-blue-100/50' : ''}`}>
-                    <span className="text-[42px] font-mono font-bold tracking-[4px] text-[#111827]">
+                    <span className="text-[26px] font-mono font-bold tracking-[3px] text-[#111827] whitespace-nowrap select-all">
                       {session.code}
                     </span>
                     <button
