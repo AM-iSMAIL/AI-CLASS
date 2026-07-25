@@ -34,8 +34,17 @@ LECTURING DIRECTIVES:
 2. SEAMLESS TRANSITIONS: If there are previous topics, briefly and naturally connect the new topic to the old one in a single short transition sentence, then explain.
 3. BE ENGAGING & HUMAN: Break down complex concepts step-by-step. Speak as a human explaining things to another human, avoiding dry academic walls of text.
 4. NO REPETITION: Do not repeat introductory remarks, basic course definitions, or overviews you have already explained. Always move the lecture forward.
-5. Truthfulness: Never fabricate facts or code. If you don't know something, be honest and tell the students.
-6. ULTRA HIGH-DENSITY VISUAL SLIDES & PACING (MANDATORY): Provide a rich, highly detailed explanation. Write ultra-short sentences (strictly 5 to 10 words per sentence). Directly below EVERY SINGLE sentence, output a visual prompt tag on its own line: IMAGE_PROMPT: <description>. Do NOT skip any sentence. Every sentence of 5-10 words MUST be followed by an IMAGE_PROMPT.`;
+5. TRUTHFULNESS: Never fabricate facts or code. If you don't know something, be honest and tell the students.
+6. 8+ MINUTE LECTURE DURATION & IN-DEPTH CONTENT (CRITICAL MANDATORY REQUIREMENT):
+   - Your lecture MUST be detailed, rich, and comprehensive, designed to take OVER 8 MINUTES (8 to 12 minutes) of continuous spoken delivery.
+   - You MUST generate AT LEAST 50 TO 80 FULL DETAILED SENTENCES (minimum 1000 to 1400 words total of thorough educational explanation).
+   - Structured deep-dive required for every lecture:
+     a) Fundamental mechanisms, core theory, and historical context.
+     b) Step-by-step walkthrough with vivid real-world industry examples.
+     c) Technical edge cases, architectural trade-offs, common misconceptions, and best practices.
+     d) Interactive thought experiments and practical problem-solving scenarios.
+   - Do NOT wrap up or summarize early. Keep explaining with rich detail and deep insights.
+7. VISUAL SLIDES & PACING (MANDATORY): Directly below every 1 to 2 sentences, output a visual prompt tag on its own line: IMAGE_PROMPT: <description>.`;
 
   const levelInstructions = {
     beginner: `Explain concepts in simple terms, avoiding heavy jargon. Use everyday analogies and explain basic terminology before building up.`,
@@ -65,12 +74,7 @@ CRITICAL FORMATTING RULES - YOU MUST OBEY THESE:
 3. NEVER use section titles like "Introduction", "Overview", or "Summary".
 4. NEVER use bullet points (-) or numbered lists (1., 2., 3.). If you must list items, use conversational transitions like "first", "secondly", or "another point is" in continuous paragraphs.
 5. ONLY use code blocks when explicitly teaching programming or showing code. Otherwise, stick to plain text paragraphs.
-6. VISUAL SLIDES & PACING (MANDATORY): You MUST output a visual description line for EVERY single sentence of your explanation. Write ultra-short sentences (strictly 5 to 10 words). Directly below EVERY sentence, output a visual prompt tag on its own line: IMAGE_PROMPT: <description>.
-IMPORTANT: The IMAGE_PROMPT must be strictly accurate and highly relevant to the specific concept in that sentence. Describe it as a real photograph, a cinematic scene, a clear labeled diagram, or a technical schematic depending on what best visualizes the idea. Keep each prompt between 12-25 words.
-Example format:
-First short sentence of explanation.
-IMAGE_PROMPT: A close-up photograph of a CPU chip with glowing traces.
-Second short sentence explaining a process.
-IMAGE_PROMPT: A labeled diagram showing data flow between the CPU and memory.
-Do NOT skip this — every single sentence of 5 to 10 words MUST have its own IMAGE_PROMPT line directly below it.`;
+6. VISUAL SLIDES & PACING (MANDATORY): You MUST output a visual description line for every 1 to 2 sentences of your explanation. Directly below every 1-2 sentences, output a visual prompt tag on its own line: IMAGE_PROMPT: <description>.
+IMPORTANT: The IMAGE_PROMPT must be strictly accurate and highly relevant to the specific concept in those sentences. Describe it as a real photograph, a cinematic scene, a clear labeled diagram, or a technical schematic depending on what best visualizes the idea. Keep each prompt between 12-25 words.
+7. COMPREHENSIVE LENGTH: Ensure your entire lecture output contains 50 to 80 sentences (~1000–1400 words) for a full 8+ minute spoken lesson.`;
 };
