@@ -37,6 +37,8 @@ export default function StudentCamera({
   // ── Focus update → push to Firestore ──
   const handleFocusUpdate = useCallback(
     async (m: FocusMetrics) => {
+      // Ignore 0 score telemetry updates caused by camera shutdown or session ending
+      if (m.score === 0) return;
       if (onLocalFocusUpdate) onLocalFocusUpdate(m);
       try {
         if (isTeacher) {

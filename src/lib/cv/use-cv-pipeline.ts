@@ -143,12 +143,14 @@ export function useCVPipeline({
             lastPushRef.current = now;
           }
         } else {
-          // No faces detected or tracked - report absent / away immediately
+          // No faces detected or tracked - report absent / away
+          // Preserve previous non-zero focus score to prevent score dropping to 0 when camera turns off
+          const preservedScore = metrics.score > 0 ? metrics.score : 100;
           const absentOutput: CVOutput = {
             studentId: studentId || '',
             trackingId: 'local_untracked',
             verified: false,
-            focusScore: 0,
+            focusScore: preservedScore,
             currentState: 'absent',
             behavior: 'left_seat',
             gazeDirection: 'unknown',
@@ -164,7 +166,7 @@ export function useCVPipeline({
           };
 
           const fm: FocusMetrics = {
-            score: 0,
+            score: preservedScore,
             status: 'away',
             gazeDirection: 'unknown',
             faceDetected: false,
