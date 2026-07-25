@@ -2776,14 +2776,12 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                     onStreamReady={handleStreamReady}
                   />
                 </div>
-                {/* Focus badge */}
-                <div className={`absolute top-1.5 right-1.5 px-2.5 py-0.5 rounded-full border border-[#E5E7EB] flex items-center text-[9px] font-mono font-bold z-10 gap-1 shadow-xs ${
-                  localMetrics.status === "focused" ? "bg-[#22C55E]/10 text-[#16A34A]" : "bg-[#EF4444]/10 text-[#DC2626]"
-                }`}>
+                {/* Focus badge — solid white non-transparent badge */}
+                <div className="absolute top-1.5 right-1.5 px-2.5 py-1 rounded-full bg-white border border-[#E5E7EB] flex items-center text-[9px] font-mono text-[#111827] font-bold z-10 gap-1.5 shadow-sm">
                   <div className={`w-1.5 h-1.5 rounded-full ${localMetrics.status === "focused" ? "bg-[#16A34A]" : "bg-[#DC2626]"}`} />
-                  {localMetrics.score}%
+                  <span>{localMetrics.score}%</span>
                 </div>
-                <div className="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-full bg-white/90 border border-[#E5E7EB] text-[9px] font-semibold text-[#111827] z-10 shadow-xs">
+                <div className="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-full bg-white border border-[#E5E7EB] text-[9px] font-semibold text-[#111827] z-10 shadow-xs">
                   {isTeacher ? "You" : "You"}
                 </div>
               </div>
@@ -2813,14 +2811,12 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                         {student.name?.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase() || "?"}
                       </div>
                     )}
-                    <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded-full bg-white/90 border border-[#E5E7EB] text-[9px] font-semibold text-[#111827] z-10 truncate max-w-[80%] shadow-xs">
+                    <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded-full bg-white border border-[#E5E7EB] text-[9px] font-semibold text-[#111827] z-10 truncate max-w-[80%] shadow-xs">
                       {student.name || "Student"}
                     </span>
-                    <div className={`absolute top-1.5 right-1.5 px-2.5 py-0.5 rounded-full border border-[#E5E7EB] flex items-center text-[9px] font-mono font-bold z-10 gap-1 shadow-xs ${
-                      isFocused ? "bg-[#22C55E]/10 text-[#16A34A]" : "bg-[#EF4444]/10 text-[#DC2626]"
-                    }`}>
+                    <div className="absolute top-1.5 right-1.5 px-2.5 py-1 rounded-full bg-white border border-[#E5E7EB] flex items-center text-[9px] font-mono text-[#111827] font-bold z-10 gap-1.5 shadow-sm">
                       <div className={`w-1.5 h-1.5 rounded-full ${isFocused ? "bg-[#16A34A]" : "bg-[#DC2626]"}`} />
-                      {score}%
+                      <span>{score}%</span>
                     </div>
                   </div>
                 );
