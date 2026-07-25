@@ -1,0 +1,18 @@
+Created At: 2026-07-24T17:59:53Z
+Completed At: 2026-07-24T17:59:55Z
+
+				The command completed successfully.
+				Output:
+				Line 384: Found git diff DashboardSidebar
+Keys: [
+  'step_index',
+  'source',
+  'type',
+  'status',
+  'created_at',
+  'thinking',
+  'tool_calls'
+]
+Content starts with: null
+Error parsing: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined
+

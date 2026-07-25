@@ -90,7 +90,7 @@ const splitIntoShortClauses = (text: string): string[] => {
     
     if (currentClause) {
       const wordCount = currentClause.split(/\s+/).length;
-      if (wordCount < 5 || currentClause.length < 25) {
+      if (wordCount < 6) {
         currentClause += " " + combined;
         continue;
       }
@@ -105,9 +105,9 @@ const splitIntoShortClauses = (text: string): string[] => {
   const finalClauses: string[] = [];
   for (const clause of rawClauses) {
     const words = clause.split(/\s+/);
-    if (words.length > 15) {
-      for (let i = 0; i < words.length; i += 10) {
-        const subWords = words.slice(i, i + 10);
+    if (words.length > 8) {
+      for (let i = 0; i < words.length; i += 7) {
+        const subWords = words.slice(i, i + 7);
         finalClauses.push(subWords.join(" "));
       }
     } else {
