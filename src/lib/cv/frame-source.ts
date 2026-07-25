@@ -42,6 +42,10 @@ export class FrameSource {
 
       this.activeStream = stream;
       this.videoElement.srcObject = stream;
+      this.videoElement.setAttribute('playsinline', 'true');
+      this.videoElement.setAttribute('webkit-playsinline', 'true');
+      this.videoElement.muted = true;
+      this.videoElement.play().catch(() => {});
 
       // Try to initialize MediaPipe Camera helper
       try {

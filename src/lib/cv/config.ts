@@ -139,8 +139,8 @@ export const DEFAULT_CV_CONFIG: CVConfig = {
 
   // Face Detection
   maxNumFaces: 2,
-  minDetectionConfidence: 0.6,
-  minTrackingConfidence: 0.6,
+  minDetectionConfidence: 0.35,
+  minTrackingConfidence: 0.35,
   faceDebounceFrames: 3,
   landmarkBoundsMargin: 0.03,
 

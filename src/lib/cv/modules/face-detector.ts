@@ -47,6 +47,7 @@ export class FaceDetectorModule implements CVModule<DetectedFace[]> {
   /** Send a frame to MediaPipe for processing */
   async sendFrame(video: HTMLVideoElement): Promise<void> {
     if (!this.faceMesh || !this.initialized) return;
+    if (!video || video.readyState < 2 || video.paused || video.ended || video.videoWidth === 0) return;
     try {
       await this.faceMesh.send({ image: video });
     } catch (err) {
