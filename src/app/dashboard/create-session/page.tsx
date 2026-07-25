@@ -372,7 +372,7 @@ export default function CreateSessionPage() {
 
         {/* Form Container */}
         <main className="flex-1 p-6 md:p-8 flex justify-center items-start lg:items-center bg-[#F6F7F9]">
-          <div className="w-full max-w-[620px] bg-[#FFFFFF] border border-[rgba(15,23,42,0.08)] rounded-[24px] p-6 md:p-8 space-y-8 shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)]">
+          <div className="w-full max-w-[620px] bg-[#FFFFFF] border border-[rgba(15,23,42,0.08)] rounded-[24px] p-6 md:p-8 space-y-8 shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)] create-session-card">
             
             {/* Header & Subtitle */}
             <div className="text-center space-y-2">
@@ -445,7 +445,7 @@ export default function CreateSessionPage() {
 
             {/* STEP 2: SESSION INFO */}
             {step === 2 && (
-              <form onSubmit={handleStep2Submit} className="space-y-6 animate-fadeIn">
+              <form onSubmit={handleStep2Submit} className="space-y-6">
                 {/* Title */}
                 <div className="space-y-2">
                   <label htmlFor="session-title" className="session-label">
@@ -649,7 +649,7 @@ export default function CreateSessionPage() {
 
             {/* STEP 3: CONTENT / TOPICS CONFIGURATION */}
             {step === 3 && (
-              <form onSubmit={handleStep3Submit} className="space-y-6 animate-fadeIn">
+              <form onSubmit={handleStep3Submit} className="space-y-6">
                 
                 {/* ─── BRANCH: AI TEACHER ─── */}
                 {teachingMode === "AI" && (
@@ -809,7 +809,7 @@ export default function CreateSessionPage() {
 
             {/* STEP 4: LAUNCH */}
             {step === 4 && (
-              <div className="space-y-6 animate-fadeIn">
+              <div className="space-y-6">
                 
                 {/* Summary Card */}
                 <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-5 space-y-4">

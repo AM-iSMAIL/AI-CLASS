@@ -592,4 +592,22 @@ tbody.divide-y > :not([hidden]) ~ :not([hidden]) {
   box-shadow: 
     0 4px 12px rgba(15, 23, 42, 0.06), 
     0 0 0 6px rgba(37, 99, 235, 0.10) !important;
+}
+
+/* Card Entrance Animation on mount */
+.create-session-card {
+  opacity: 0;
+  transform: translateY(24px) scale(0.98);
+  animation: cardEntrance 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
