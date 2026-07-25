@@ -931,19 +931,15 @@ export default function LiveClassroomPage() {
             runQueue();
           };
           audio.onerror = (e) => {
-            console.warn("[Camb AI Audio]: Playback error, advancing:", e);
+            console.warn("[Camb AI Audio]: Playback error, falling back to Web Speech:", e);
             if (nextChunk.runId !== ttsRunIdRef.current) return;
-            isTtsPlayingRef.current = false;
-            if (nextChunk.onEnd) nextChunk.onEnd();
-            runQueue();
+            fallbackDurationProgress();
           };
 
           audio.play().catch(err => {
-            console.warn("[Camb AI Audio]: Playback exception, advancing:", err);
+            console.warn("[Camb AI Audio]: Playback exception, falling back to Web Speech:", err);
             if (nextChunk.runId !== ttsRunIdRef.current) return;
-            isTtsPlayingRef.current = false;
-            if (nextChunk.onEnd) nextChunk.onEnd();
-            runQueue();
+            fallbackDurationProgress();
           });
           return;
         }
@@ -969,14 +965,10 @@ export default function LiveClassroomPage() {
                   runQueue();
                 };
                 audio.onerror = () => {
-                  isTtsPlayingRef.current = false;
-                  if (nextChunk.onEnd) nextChunk.onEnd();
-                  runQueue();
+                  fallbackDurationProgress();
                 };
                 audio.play().catch(() => {
-                  isTtsPlayingRef.current = false;
-                  if (nextChunk.onEnd) nextChunk.onEnd();
-                  runQueue();
+                  fallbackDurationProgress();
                 });
                 return;
               }
@@ -989,6 +981,39 @@ export default function LiveClassroomPage() {
         function fallbackDurationProgress() {
           isTtsPlayingRef.current = true;
           setAiSpeechState("speaking");
+
+          if (typeof window !== "undefined" && "speechSynthesis" in window && speechEnabled) {
+            try {
+              window.speechSynthesis.cancel();
+              const utterance = new SpeechSynthesisUtterance(clean);
+              utterance.rate = 1.0;
+              utterance.pitch = 1.0;
+              
+              let finished = false;
+              const finish = () => {
+                if (finished) return;
+                finished = true;
+                if (nextChunk.runId !== ttsRunIdRef.current) return;
+                isTtsPlayingRef.current = false;
+                setAiSpeechState("idle");
+                if (nextChunk.onEnd) nextChunk.onEnd();
+                runQueue();
+              };
+
+              utterance.onend = finish;
+              utterance.onerror = finish;
+
+              window.speechSynthesis.speak(utterance);
+
+              // Backup timeout in case browser speech synth fails to emit onend
+              const estimatedMs = Math.max(2000, clean.split(/\s+/).length * 350);
+              setTimeout(finish, estimatedMs);
+              return;
+            } catch (e) {
+              console.warn("[Web Speech API Exception]:", e);
+            }
+          }
+
           const duration = Math.max(1000, clean.split(/\s+/).length * 200);
           setTimeout(() => {
             if (nextChunk.runId !== ttsRunIdRef.current) return;
