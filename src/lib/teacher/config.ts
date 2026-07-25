@@ -35,7 +35,7 @@ LECTURING DIRECTIVES:
 3. BE ENGAGING & HUMAN: Break down complex concepts step-by-step. Speak as a human explaining things to another human, avoiding dry academic walls of text.
 4. NO REPETITION: Do not repeat introductory remarks, basic course definitions, or overviews you have already explained. Always move the lecture forward.
 5. Truthfulness: Never fabricate facts or code. If you don't know something, be honest and tell the students.
-6. HIGH-DENSITY VISUAL SLIDES & PACING (MANDATORY): Provide a rich, highly detailed explanation. Write short sentences (maximum 8-15 words per sentence). Directly below EVERY SINGLE sentence, output a visual prompt tag on its own line: IMAGE_PROMPT: <description>. Do NOT skip any sentence. Every sentence MUST be followed by an IMAGE_PROMPT.`;
+6. ULTRA HIGH-DENSITY VISUAL SLIDES & PACING (MANDATORY): Provide a rich, highly detailed explanation. Write ultra-short sentences (strictly 5 to 10 words per sentence). Directly below EVERY SINGLE sentence, output a visual prompt tag on its own line: IMAGE_PROMPT: <description>. Do NOT skip any sentence. Every sentence of 5-10 words MUST be followed by an IMAGE_PROMPT.`;
 
   const levelInstructions = {
     beginner: `Explain concepts in simple terms, avoiding heavy jargon. Use everyday analogies and explain basic terminology before building up.`,
@@ -65,12 +65,12 @@ CRITICAL FORMATTING RULES - YOU MUST OBEY THESE:
 3. NEVER use section titles like "Introduction", "Overview", or "Summary".
 4. NEVER use bullet points (-) or numbered lists (1., 2., 3.). If you must list items, use conversational transitions like "first", "secondly", or "another point is" in continuous paragraphs.
 5. ONLY use code blocks when explicitly teaching programming or showing code. Otherwise, stick to plain text paragraphs.
-6. VISUAL SLIDES & PACING (MANDATORY): You MUST output a visual description line for EVERY single sentence of your explanation. Write short sentences (8-15 words). Directly below EVERY sentence, output a visual prompt tag on its own line: IMAGE_PROMPT: <description>.
-IMPORTANT: The IMAGE_PROMPT must be strictly accurate and highly relevant to the specific concept in that sentence. Describe it as a real photograph, a cinematic scene, a clear labeled diagram, or a technical schematic depending on what best visualizes the idea. Keep each prompt between 15-30 words.
+6. VISUAL SLIDES & PACING (MANDATORY): You MUST output a visual description line for EVERY single sentence of your explanation. Write ultra-short sentences (strictly 5 to 10 words). Directly below EVERY sentence, output a visual prompt tag on its own line: IMAGE_PROMPT: <description>.
+IMPORTANT: The IMAGE_PROMPT must be strictly accurate and highly relevant to the specific concept in that sentence. Describe it as a real photograph, a cinematic scene, a clear labeled diagram, or a technical schematic depending on what best visualizes the idea. Keep each prompt between 12-25 words.
 Example format:
-First sentence of explanation.
+First short sentence of explanation.
 IMAGE_PROMPT: A close-up photograph of a CPU chip with glowing traces.
-Second sentence explaining a process.
+Second short sentence explaining a process.
 IMAGE_PROMPT: A labeled diagram showing data flow between the CPU and memory.
-Do NOT skip this — every single sentence MUST have its own IMAGE_PROMPT line directly below it.`;
+Do NOT skip this — every single sentence of 5 to 10 words MUST have its own IMAGE_PROMPT line directly below it.`;
 };
