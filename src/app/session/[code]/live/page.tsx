@@ -389,84 +389,24 @@ export default function LiveClassroomPage() {
     }
   }, [localMetrics.faceDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus, startupGraceActive]);
 
-  // ── Phone usage warning engine ──
+  // ── Phone usage instant kick engine ──
   useEffect(() => {
-    if (!hasEntered || !videoOn || endCountdown !== null || sessionStatus === "Completed") return;
+    if (!hasEntered || !videoOn || endCountdown !== null || sessionStatus === "Completed" || startupGraceActive) return;
 
-    const clearPhoneTimers = () => {
-      if (phoneTimerRef.current) {
-        clearTimeout(phoneTimerRef.current);
-        phoneTimerRef.current = null;
-      }
-      if (phoneIntervalRef.current) {
-        clearInterval(phoneIntervalRef.current);
-        phoneIntervalRef.current = null;
-      }
-      setTimeout(() => {
-        setPhoneSecondsLeft(null);
-        setShowPhoneWarning(false);
-      }, 0);
-    };
-
-    if (!localMetrics.phoneDetected) {
-      // Start a debounce timeout before clearing
-      if (!phoneClearTimerRef.current) {
-        phoneClearTimerRef.current = setTimeout(() => {
-          clearPhoneTimers();
-          phoneClearTimerRef.current = null;
-        }, 3000); // 3 seconds of no-phone before clearing
-      }
-      return;
-    } else {
-      // Phone detected - cancel any pending clear timeout
-      if (phoneClearTimerRef.current) {
-        clearTimeout(phoneClearTimerRef.current);
-        phoneClearTimerRef.current = null;
-      }
+    if (localMetrics.phoneDetected) {
+      isEndingSessionRef.current = true;
+      stopSpeaking();
+      lectureAbortRef.current?.abort();
+      setKickReason("Mobile Phone / Device Usage Detected");
+      setIsKicked(true);
+      const executeKick = async () => {
+        const storedName = studentName || "Unknown";
+        if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
+        window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=device_usage`;
+      };
+      executeKick();
     }
-
-    // Phone detected - start warning flow (only if warning modal isn't already active)
-    if (!showPhoneWarning) {
-      setTimeout(() => {
-        setShowPhoneWarning(true);
-        setPhoneSecondsLeft(5);
-      }, 0);
-
-      phoneIntervalRef.current = setInterval(() => {
-        setPhoneSecondsLeft((prev) => {
-          if (prev === null) return null;
-          return prev > 1 ? prev - 1 : 0;
-        });
-      }, 1000);
-
-      phoneTimerRef.current = setTimeout(async () => {
-        // 5 seconds completed - escalate warning count
-        setPhoneWarningCount((prevCount) => {
-          const nextCount = prevCount + 1;
-          if (nextCount >= 3) {
-            // Kicked out on 3rd warning
-            const kickAsync = async () => {
-              const storedName = studentName || "Unknown";
-              if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
-              window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=device_usage`;
-            };
-            kickAsync();
-          }
-          return nextCount;
-        });
-        // Clear the current active countdown
-        if (phoneIntervalRef.current) {
-          clearInterval(phoneIntervalRef.current);
-          phoneIntervalRef.current = null;
-        }
-        setPhoneSecondsLeft(null);
-      }, 5000);
-    }
-
-    return () => {
-      // Do NOT clear timers immediately on render transitions to prevent resetting on momentary drops
-    };
-  }, [localMetrics.phoneDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus, showPhoneWarning]);
+  }, [localMetrics.phoneDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus, startupGraceActive]);
   const chatEndRef = useRef<HTMLDivElement>(null)
   const transcriptEndRef = useRef<HTMLDivElement>(null)
 
