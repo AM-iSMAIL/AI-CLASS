@@ -326,13 +326,26 @@ export default function LiveClassroomPage() {
     }
   }, [localMetrics.status, localMetrics.score, localMetrics.faceDetected, localMetrics.phoneDetected, localMetrics.effectiveDeviation, localMetrics.gazeDirection, warningLevel, strikeCount, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
 
-  // Startup grace period timer to delay detection at the start of class (4s gap)
+  // Startup grace period timer to delay detection until camera & MediaPipe initialize
+  const hasEverDetectedFaceRef = useRef(false);
+
+  useEffect(() => {
+    if (hasEntered && localMetrics.faceDetected) {
+      hasEverDetectedFaceRef.current = true;
+      setStartupGraceActive(false);
+    }
+  }, [hasEntered, localMetrics.faceDetected]);
+
   useEffect(() => {
     if (hasEntered) {
+      // 15s fallback grace period to allow camera permissions, stream startup & MediaPipe load
       const timer = setTimeout(() => {
         setStartupGraceActive(false);
-      }, 4000); // 4s startup grace period for camera initialization
+      }, 15000);
       return () => clearTimeout(timer);
+    } else {
+      setStartupGraceActive(true);
+      hasEverDetectedFaceRef.current = false;
     }
   }, [hasEntered]);
 
