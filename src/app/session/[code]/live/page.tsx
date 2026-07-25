@@ -2206,6 +2206,16 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
   }, [activeTopicIdx, runTopicSpeech, speakTextChunk, topics, pdfPages, isPdfMode, sessionCode])
 
 
+  const handleStudentLeave = async () => {
+    isEndingSessionRef.current = true;
+    stopSpeaking();
+    lectureAbortRef.current?.abort();
+    if (studentId && sessionCode) {
+      await setStudentOffline(sessionCode, studentId).catch(() => {});
+    }
+    router.push("/student-dashboard");
+  };
+
   const handleConfirmEnd = async () => {
     isEndingSessionRef.current = true;
     setShowEndModal(false)
@@ -2639,9 +2649,16 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
               <Users className="h-3.5 w-3.5 text-[#2563EB]" />{students.length}
             </span>
           </div>
-          {isTeacher && (
+          {isTeacher ? (
             <div className="flex items-center gap-2">
               <button id="end-session-btn" onClick={handleEndSession} className="px-4 py-2 bg-[#DC2626] hover:bg-[#B91C1C] hover:-translate-y-0.5 text-white rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer text-xs font-bold shadow-[0_12px_24px_rgba(220,38,38,.18)] active:scale-95">End Session</button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <button onClick={handleStudentLeave} className="px-4 py-2 bg-[#DC2626] hover:bg-[#B91C1C] hover:-translate-y-0.5 text-white rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer text-xs font-bold shadow-[0_12px_24px_rgba(220,38,38,.18)] active:scale-95 flex items-center gap-1.5">
+                <LogOut className="h-3.5 w-3.5" />
+                Leave Class
+              </button>
             </div>
           )}
         </div>
@@ -3525,7 +3542,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                   </div>
 
                   <button
-                    onClick={() => router.push("/student-dashboard")}
+                    onClick={() => {
+                      isEndingSessionRef.current = true;
+                      router.push("/student-dashboard");
+                    }}
                     className="w-full py-4 px-6 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold rounded-2xl shadow-xl transition-all transform active:scale-95 cursor-pointer uppercase tracking-wider text-xs flex items-center justify-center gap-2"
                   >
                     Return to Student Dashboard
