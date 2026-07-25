@@ -248,7 +248,7 @@ export default function SummaryPage() {
           {/* Stats Row */}
           <section className="grid gap-4 grid-cols-2 lg:grid-cols-4">
             {/* Total Attendees */}
-            <div className="bg-white rounded-[20px] border-2 border-[#111827] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
+            <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
               <div className="flex items-center justify-between text-[#111827] mb-3">
                 <span className="text-[10px] font-black uppercase tracking-wider font-mono">Total Attendees</span>
                 <Users className="h-4 w-4 text-[#2563EB]" />
@@ -258,7 +258,7 @@ export default function SummaryPage() {
             </div>
 
             {/* Student Average Focus Score */}
-            <div className="bg-white rounded-[20px] border-2 border-[#111827] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
+            <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
               <div className="flex items-center justify-between text-[#111827] mb-3">
                 <span className="text-[10px] font-black uppercase tracking-wider font-mono">Student Avg Focus</span>
                 <Brain className="h-4 w-4 text-[#16A34A]" />
@@ -268,7 +268,7 @@ export default function SummaryPage() {
             </div>
 
             {/* Present at Close */}
-            <div className="bg-white rounded-[20px] border-2 border-[#111827] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
+            <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
               <div className="flex items-center justify-between text-[#111827] mb-3">
                 <span className="text-[10px] font-black uppercase tracking-wider font-mono">Present at Close</span>
                 <CheckCircle2 className="h-4 w-4 text-[#16A34A]" />
@@ -280,7 +280,7 @@ export default function SummaryPage() {
             </div>
 
             {/* Kicked / Dismissed */}
-            <div className="bg-white rounded-[20px] border-2 border-[#111827] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
+            <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
               <div className="flex items-center justify-between text-[#111827] mb-3">
                 <span className="text-[10px] font-black uppercase tracking-wider font-mono">Kicked/Dismissed</span>
                 <ShieldAlert className="h-4 w-4 text-[#DC2626]" />
@@ -291,15 +291,15 @@ export default function SummaryPage() {
           </section>
 
           {/* Roster Table */}
-          <div className="bg-white rounded-[24px] border-2 border-[#111827] overflow-hidden shadow-[0_1px_2px_rgba(15,23,42,.03),0_12px_32px_rgba(15,23,42,.05)]">
-            <div className="px-6 py-5 border-b-2 border-[#111827] flex items-center justify-between">
+          <div className="bg-white rounded-[24px] border border-[rgba(15,23,42,.08)] overflow-hidden shadow-[0_1px_2px_rgba(15,23,42,.03),0_12px_32px_rgba(15,23,42,.05)]">
+            <div className="px-6 py-5 border-b border-[#E5E7EB] flex items-center justify-between">
               <h3 className="text-xs font-black uppercase tracking-wider text-[#000000] font-mono">Attendance Roster</h3>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b-2 border-[#111827] text-[10px] font-black uppercase tracking-wider text-[#000000] bg-[#F9FAFB] font-mono">
+                  <tr className="border-b border-[#E5E7EB] text-[10px] font-black uppercase tracking-wider text-[#000000] bg-[#F9FAFB] font-mono">
                     <th className="px-6 py-3.5">Student Name</th>
                     <th className="px-4 py-3.5">Final Status</th>
                     <th className="px-4 py-3.5">Join Time</th>
