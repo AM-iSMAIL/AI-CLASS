@@ -19,9 +19,11 @@ export async function POST(req: Request) {
 
     const roomName = `ai-class-${sessionCode}`;
 
+    const participantIdentity = isTeacher ? `${studentId}_teacher` : studentId;
+
     // Create a new access token
     const at = new AccessToken(apiKey, apiSecret, {
-      identity: studentId,
+      identity: participantIdentity,
       name: isTeacher ? 'Teacher' : 'Student',
     });
 
