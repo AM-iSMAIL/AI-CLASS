@@ -321,7 +321,7 @@ export default function LiveClassroomPage() {
     if (hasEntered) {
       const timer = setTimeout(() => {
         setStartupGraceActive(false);
-      }, 5000);
+      }, 15000); // 15s startup grace period for mobile camera warm-up
       return () => clearTimeout(timer);
     }
   }, [hasEntered]);
@@ -350,7 +350,7 @@ export default function LiveClassroomPage() {
     }
 
     setTimeout(() => {
-      setOutOfFrameSecondsLeft(5);
+      setOutOfFrameSecondsLeft(15);
     }, 0);
 
     outOfFrameIntervalRef.current = setInterval(() => {
@@ -364,7 +364,7 @@ export default function LiveClassroomPage() {
       const storedName = studentName || "Unknown";
       if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
       window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
-    }, 5000);
+    }, 15000);
 
     return () => {
       clearOutOfFrameTimers();

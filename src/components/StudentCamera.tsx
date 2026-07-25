@@ -90,6 +90,7 @@ export default function StudentCamera({
       if (stream) {
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
+          videoRef.current.play().catch((err) => console.warn("[StudentCamera] Autoplay play error:", err));
         }
         setActive(true);
         setDenied(false);
