@@ -3440,27 +3440,27 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           {/* ─── TAB SWITCH RESTRICTION MODAL ─── */}
           {showTabWarning &&
             createPortal(
-              <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-200">
-                <div className="max-w-md w-full bg-slate-900 border border-red-500/50 rounded-2xl p-6 shadow-2xl text-center space-y-4">
-                  <div className="w-16 h-16 bg-red-500/10 border border-red-500/30 rounded-full flex items-center justify-center mx-auto text-red-500 animate-pulse">
-                    <AlertTriangle className="w-8 h-8 text-red-500" />
+              <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4 animate-in fade-in duration-200">
+                <div className="max-w-md w-full bg-white border border-rose-200 rounded-3xl p-6 shadow-2xl text-center space-y-4">
+                  <div className="w-16 h-16 bg-rose-50 border border-rose-200 rounded-full flex items-center justify-center mx-auto text-rose-600 animate-pulse">
+                    <AlertTriangle className="w-8 h-8 text-rose-600" />
                   </div>
 
-                  <h3 className="text-xl font-bold text-white tracking-wide">
+                  <h3 className="text-xl font-bold text-slate-900 tracking-wide">
                     Tab Switch Restricted!
                   </h3>
 
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 border border-slate-200 rounded-xl p-3.5">
                     Leaving the website or switching tabs during an active live lecture is strictly restricted to ensure complete focus.
                   </p>
 
-                  <div className="bg-red-950/50 border border-red-900/60 rounded-xl p-3 text-xs text-red-300 font-mono">
-                    Tab Switch Infractions: <span className="font-bold text-red-400 text-sm ml-1">{tabSwitchCount}</span>
+                  <div className="bg-rose-50/70 border border-rose-200/80 rounded-xl p-3 text-xs text-rose-900 font-mono">
+                    Tab Switch Infractions: <span className="font-bold text-rose-700 text-sm ml-1">{tabSwitchCount}</span>
                   </div>
 
                   <button
                     onClick={() => setShowTabWarning(false)}
-                    className="w-full py-3.5 px-4 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold rounded-xl shadow-lg transition-all transform active:scale-95 cursor-pointer"
+                    className="w-full py-3.5 px-4 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold rounded-2xl shadow-lg shadow-rose-600/20 transition-all transform active:scale-95 cursor-pointer uppercase text-xs tracking-wider"
                   >
                     Return to Lecture Immediately
                   </button>
@@ -3472,29 +3472,29 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           {/* ─── KICKED FROM CLASSROOM OVERLAY ─── */}
           {isKicked &&
             createPortal(
-              <div className="fixed inset-0 z-[99999] bg-slate-950 flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
-                <div className="max-w-md w-full bg-slate-900 border border-red-500/60 rounded-3xl p-8 shadow-2xl space-y-6">
-                  <div className="w-20 h-20 bg-red-500/10 border-2 border-red-500/40 rounded-full flex items-center justify-center mx-auto text-red-500 animate-pulse">
+              <div className="fixed inset-0 z-[99999] bg-slate-900/40 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
+                <div className="max-w-md w-full bg-white border border-rose-200 rounded-3xl p-8 shadow-2xl space-y-6">
+                  <div className="w-20 h-20 bg-rose-50 border-2 border-rose-200 rounded-full flex items-center justify-center mx-auto text-rose-600 animate-pulse">
                     <X className="w-10 h-10 stroke-[3]" />
                   </div>
 
                   <div className="space-y-2">
-                    <span className="inline-block px-3 py-1 bg-red-500/20 border border-red-500/40 rounded-full text-[10px] font-mono font-bold text-red-400 uppercase tracking-widest">
+                    <span className="inline-block px-3.5 py-1 bg-rose-100/80 border border-rose-200 rounded-full text-[10px] font-mono font-bold text-rose-700 uppercase tracking-widest">
                       Session Terminated
                     </span>
-                    <h2 className="text-2xl font-black text-white tracking-tight">
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">
                       You Have Been Kicked
                     </h2>
                   </div>
 
-                  <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/80 border border-slate-800 rounded-xl p-4">
+                  <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 border border-slate-200 rounded-xl p-4">
                     Switching tabs or leaving the lecture window is strictly forbidden. You have been removed from this live session.
                   </p>
 
-                  <div className="bg-red-950/60 border border-red-900/80 rounded-xl p-3 text-xs text-red-300 font-mono text-left space-y-1">
-                    <div><span className="text-slate-400">Violation:</span> {kickReason || "Tab Switch Detected"}</div>
-                    <div><span className="text-slate-400">Session Code:</span> {sessionCode}</div>
-                    <div><span className="text-slate-400">Status:</span> Disqualified & Marked Offline</div>
+                  <div className="bg-rose-50/70 border border-rose-200/80 rounded-xl p-3.5 text-xs text-rose-900 font-mono text-left space-y-1">
+                    <div><span className="text-slate-500 font-medium">Violation:</span> <span className="font-bold text-rose-700">{kickReason || "Tab Switch Detected"}</span></div>
+                    <div><span className="text-slate-500 font-medium">Session Code:</span> <span className="font-bold text-slate-800">{sessionCode}</span></div>
+                    <div><span className="text-slate-500 font-medium">Status:</span> <span className="font-bold text-rose-700">Disqualified & Marked Offline</span></div>
                   </div>
 
                   <button
@@ -3502,7 +3502,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                       isEndingSessionRef.current = true;
                       router.push("/student-dashboard");
                     }}
-                    className="w-full py-4 px-6 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold rounded-2xl shadow-xl transition-all transform active:scale-95 cursor-pointer uppercase tracking-wider text-xs flex items-center justify-center gap-2"
+                    className="w-full py-4 px-6 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold rounded-2xl shadow-lg shadow-rose-600/20 transition-all transform active:scale-95 cursor-pointer uppercase tracking-wider text-xs flex items-center justify-center gap-2"
                   >
                     Return to Student Dashboard
                   </button>
