@@ -2753,11 +2753,11 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         </div>
 
         {/* ─── RIGHT SIDEBAR — Participants + Doubt Chat (16px vertical spacing) ─── */}
-        <aside className="w-full lg:w-[30%] border-t-2 lg:border-t-0 lg:border-l-2 border-[#111827] bg-white flex flex-col min-h-0 pb-[84px] lg:pb-0 overflow-hidden antialiased">
+        <aside className="w-full lg:w-[30%] border-t-2 lg:border-t-0 lg:border-l-2 border-[#BFDBFE] bg-white flex flex-col min-h-0 pb-[84px] lg:pb-0 overflow-hidden antialiased">
           
           {/* ── STUDENT TILES (16px spacing) ── */}
           <div className="flex-none p-4 pb-0 space-y-4">
-            <h4 className="text-[#111827] font-bold text-xs tracking-[0.02em] uppercase font-mono pb-2.5 border-b-2 border-[#111827] flex items-center justify-between flex-shrink-0">
+            <h4 className="text-[#111827] font-bold text-xs tracking-[0.02em] uppercase font-mono pb-2.5 border-b-2 border-[#BFDBFE] flex items-center justify-between flex-shrink-0">
               <span className="flex items-center gap-1.5">
                 <Users className="h-3.5 w-3.5 text-[#2563EB]" />
                 In Class ({students.length})
@@ -2769,7 +2769,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             </h4>
             <div className="grid grid-cols-2 gap-2.5 max-h-[220px] overflow-y-auto cscroll pb-1">
               {/* Local User Tile */}
-              <div className={`relative aspect-video rounded-[22px] border-2 border-[#111827] bg-white overflow-hidden hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] shadow-xs p-4`}>
+              <div className={`relative aspect-video rounded-[22px] border-2 border-[#2563EB] bg-white overflow-hidden hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] shadow-xs p-4`}>
                 <div className="absolute inset-0 z-0">
                   <StudentCamera
                     sessionCode={sessionCode}
@@ -2783,11 +2783,11 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                   />
                 </div>
                 {/* Focus badge — solid white non-transparent badge */}
-                <div className="absolute top-1.5 right-1.5 px-2.5 py-1 rounded-full bg-white border-2 border-[#111827] flex items-center text-[9px] font-mono text-[#111827] font-bold z-10 gap-1.5 shadow-sm">
+                <div className="absolute top-1.5 right-1.5 px-2.5 py-1 rounded-full bg-white border-2 border-[#2563EB] flex items-center text-[9px] font-mono text-[#111827] font-bold z-10 gap-1.5 shadow-sm">
                   <div className={`w-1.5 h-1.5 rounded-full ${localMetrics.status === "focused" ? "bg-[#16A34A]" : "bg-[#DC2626]"}`} />
                   <span>{localMetrics.score}%</span>
                 </div>
-                <div className="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-full bg-white border-2 border-[#111827] text-[9px] font-semibold text-[#111827] z-10 shadow-xs">
+                <div className="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-full bg-white border-2 border-[#2563EB] text-[9px] font-semibold text-[#111827] z-10 shadow-xs">
                   {isTeacher ? "You" : "You"}
                 </div>
               </div>
@@ -2799,7 +2799,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                 const isFocused = status === "focused";
                 
                 return (
-                  <div key={student.id} className="relative aspect-video rounded-[22px] border-2 border-[#111827] bg-white flex items-center justify-center hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] overflow-hidden shadow-xs p-4">
+                  <div key={student.id} className="relative aspect-video rounded-[22px] border-2 border-[#2563EB] bg-white flex items-center justify-center hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] overflow-hidden shadow-xs p-4">
                     {remoteStreams[student.id] ? (
                       <video 
                         autoPlay 
@@ -2817,10 +2817,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                         {student.name?.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase() || "?"}
                       </div>
                     )}
-                    <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded-full bg-white border-2 border-[#111827] text-[9px] font-semibold text-[#111827] z-10 truncate max-w-[80%] shadow-xs">
+                    <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded-full bg-white border-2 border-[#2563EB] text-[9px] font-semibold text-[#111827] z-10 truncate max-w-[80%] shadow-xs">
                       {student.name || "Student"}
                     </span>
-                    <div className="absolute top-1.5 right-1.5 px-2.5 py-1 rounded-full bg-white border-2 border-[#111827] flex items-center text-[9px] font-mono text-[#111827] font-bold z-10 gap-1.5 shadow-sm">
+                    <div className="absolute top-1.5 right-1.5 px-2.5 py-1 rounded-full bg-white border-2 border-[#2563EB] flex items-center text-[9px] font-mono text-[#111827] font-bold z-10 gap-1.5 shadow-sm">
                       <div className={`w-1.5 h-1.5 rounded-full ${isFocused ? "bg-[#16A34A]" : "bg-[#DC2626]"}`} />
                       <span>{score}%</span>
                     </div>
@@ -2832,7 +2832,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
           {/* ── DOUBT CHAT (16px spacing) ── */}
           <div className="flex-1 p-4 pt-4 flex flex-col overflow-hidden min-h-0 space-y-4">
-            <h4 className="text-[#111827] font-bold text-xs tracking-[0.02em] uppercase font-mono pb-2.5 border-t-2 border-b-2 border-[#111827] pt-2 flex items-center justify-between flex-shrink-0">
+            <h4 className="text-[#111827] font-bold text-xs tracking-[0.02em] uppercase font-mono pb-2.5 border-t-2 border-b-2 border-[#BFDBFE] pt-2 flex items-center justify-between flex-shrink-0">
               <span className="flex items-center gap-1.5">
                 <MessageSquare className="h-3.5 w-3.5 text-[#2563EB]" />
                 Doubt Chat
@@ -2848,7 +2848,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                   <span className="text-[9px] text-[#374151] font-bold">{msg.sender} • {msg.time}</span>
                   <div className={`text-[11px] px-3.5 py-2.5 rounded-[18px] leading-relaxed transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] ${
                     msg.isAI
-                      ? "bg-white text-[#111827] font-semibold border-2 border-[#111827] rounded-tl-none flex gap-2 items-start shadow-xs"
+                      ? "bg-white text-[#111827] font-semibold border-2 border-[#2563EB] rounded-tl-none flex gap-2 items-start shadow-xs"
                       : "bg-[#EFF6FF] text-[#1E40AF] border-2 border-[#2563EB] rounded-tr-none shadow-xs font-semibold"
                   }`}>
                     {msg.isAI && <Brain className="h-3.5 w-3.5 text-[#2563EB] flex-shrink-0 mt-0.5" />}
@@ -2859,13 +2859,13 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
               <div ref={chatEndRef} />
             </div>
             {/* Input (52px height) */}
-            <div className="flex flex-col gap-2 pt-3 border-t-2 border-[#111827] flex-shrink-0">
+            <div className="flex flex-col gap-2 pt-3 border-t-2 border-[#BFDBFE] flex-shrink-0">
               <form onSubmit={handleSendDoubt} className="flex gap-2 w-full">
                 <input
                   id="doubt-chat-input" type="text" required value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)} placeholder={isAnswering ? "Professor is answering..." : "Ask a doubt..."}
                   disabled={isAnswering}
-                  className="flex-1 h-[52px] px-4 bg-white border-2 border-[#111827] rounded-[18px] text-xs focus:outline-none focus:border-[#2563EB] focus:ring-0 focus:shadow-[0_0_0_3px_rgba(37,99,235,.08)] text-[#111827] font-semibold placeholder:text-[#6B7280] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] disabled:opacity-50"
+                  className="flex-1 h-[52px] px-4 bg-white border-2 border-[#2563EB] rounded-[18px] text-xs focus:outline-none focus:border-[#2563EB] focus:ring-0 focus:shadow-[0_0_0_3px_rgba(37,99,235,.08)] text-[#111827] font-semibold placeholder:text-[#6B7280] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] disabled:opacity-50"
                 />
                 <button type="submit" disabled={isAnswering} className="h-[52px] px-4 bg-[#111827] hover:bg-[#1F2937] hover:-translate-y-0.5 rounded-[16px] text-white shadow-[0_12px_24px_rgba(17,24,39,.12)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group flex items-center justify-center">
                   <Send className="h-4 w-4 group-hover:translate-x-0.5 transition-transform duration-300" />
