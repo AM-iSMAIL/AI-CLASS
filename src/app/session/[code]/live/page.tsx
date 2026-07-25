@@ -1919,8 +1919,26 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       room = new Room();
       roomRef.current = room;
 
+      const updateRemoteStreams = () => {
+        if (!room) return;
+        const newStreams: Record<string, MediaStream> = {};
+        room.remoteParticipants.forEach((participant: any) => {
+          participant.trackPublications.forEach((pub: any) => {
+            if (pub.track && pub.track.kind === 'video' && pub.track.mediaStreamTrack) {
+              const stream = new MediaStream([pub.track.mediaStreamTrack]);
+              const cleanId = participant.identity.replace('_teacher', '');
+              newStreams[participant.identity] = stream;
+              newStreams[cleanId] = stream;
+            }
+          });
+        });
+        if (Object.keys(newStreams).length > 0) {
+          setRemoteStreams(prev => ({ ...prev, ...newStreams }));
+        }
+      };
+
       room.on(RoomEvent.TrackSubscribed, (track: any, publication: any, participant: any) => {
-        if (track.kind === 'video') {
+        if (track && track.kind === 'video' && track.mediaStreamTrack) {
           const stream = new MediaStream([track.mediaStreamTrack]);
           const cleanId = participant.identity.replace('_teacher', '');
           setRemoteStreams(prev => ({
@@ -1932,7 +1950,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       });
 
       room.on(RoomEvent.TrackUnsubscribed, (track: any, publication: any, participant: any) => {
-        if (track.kind === 'video') {
+        if (track && track.kind === 'video') {
           const cleanId = participant.identity.replace('_teacher', '');
           setRemoteStreams(prev => {
             const copy = { ...prev };
@@ -1941,6 +1959,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             return copy;
           });
         }
+      });
+
+      room.on(RoomEvent.ParticipantConnected, () => {
+        updateRemoteStreams();
       });
 
       room.on(RoomEvent.ActiveSpeakersChanged, (speakers: any[]) => {
@@ -1957,12 +1979,15 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         await room.connect(livekitUrl, livekitToken);
         console.log("Joined LiveKit room successfully!");
 
-        if (localStreamRef.current) {
-          const videoTrack = localStreamRef.current.getVideoTracks()[0];
+        updateRemoteStreams();
+
+        const streamToPublish = localStreamRef.current || localStream;
+        if (streamToPublish) {
+          const videoTrack = streamToPublish.getVideoTracks()[0];
           if (videoTrack) {
-            const { LocalVideoTrack } = await import('livekit-client');
-            const localTk = new LocalVideoTrack(videoTrack);
-            await room.localParticipant.publishTrack(localTk);
+            await room.localParticipant.publishTrack(videoTrack).catch((e: any) => {
+              console.warn("Failed initial video track publish:", e);
+            });
           }
         }
       } catch (err) {
@@ -1982,17 +2007,17 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       const publishTrackAsync = async () => {
         const videoTrack = localStream.getVideoTracks()[0];
         if (videoTrack) {
-          const { LocalVideoTrack } = await import('livekit-client');
-          const localTk = new LocalVideoTrack(videoTrack);
-
-          const existingPublications = roomRef.current.localParticipant.videoTrackPublications;
-          for (const pub of existingPublications.values()) {
-            if (pub.track) {
-              await roomRef.current.localParticipant.unpublishTrack(pub.track);
+          try {
+            const existingPublications = roomRef.current.localParticipant.videoTrackPublications;
+            for (const pub of existingPublications.values()) {
+              if (pub.track) {
+                await roomRef.current.localParticipant.unpublishTrack(pub.track).catch(() => {});
+              }
             }
+            await roomRef.current.localParticipant.publishTrack(videoTrack).catch(() => {});
+          } catch (e) {
+            console.warn("Video track update error:", e);
           }
-
-          await roomRef.current.localParticipant.publishTrack(localTk);
         }
       };
       publishTrackAsync();
