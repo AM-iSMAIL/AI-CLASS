@@ -215,6 +215,8 @@ export default function LiveClassroomPage() {
   const [strikeCount, setStrikeCount] = useState(0) // Persistent strike counter across clicks
   const [tabSwitchCount, setTabSwitchCount] = useState(0)
   const [showTabWarning, setShowTabWarning] = useState(false)
+  const [isKicked, setIsKicked] = useState(false)
+  const [kickReason, setKickReason] = useState<string | null>(null)
   const [outOfFrameSecondsLeft, setOutOfFrameSecondsLeft] = useState<number | null>(null)
   const [phoneWarningCount, setPhoneWarningCount] = useState(0)
   const [showPhoneWarning, setShowPhoneWarning] = useState(false)
@@ -1802,7 +1804,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
     }
   }, [hasEntered, loading, isParsingPdf, teachingMode, isPdfMode, pdfPages, topics, runTopicSpeech]);
 
-  /* ─── TAB SWITCH & LEAVING RESTRICTION GUARD ─── */
+  /* ─── TAB SWITCH & LEAVING RESTRICTION GUARD (KICK ON TAB SWITCH) ─── */
   useEffect(() => {
     if (!hasEntered) return;
 
@@ -1815,16 +1817,27 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       return e.returnValue;
     };
 
+    const triggerKick = (reason: string) => {
+      stopSpeaking();
+      lectureAbortRef.current?.abort();
+      if (!isTeacher && studentId && sessionCode) {
+        setStudentOffline(sessionCode, studentId).catch(() => {});
+      }
+      setTabSwitchCount((prev) => prev + 1);
+      setKickReason(reason);
+      setIsKicked(true);
+    };
+
     const handleVisibilityChange = () => {
-      if (document.hidden) {
-        setTabSwitchCount((prev) => prev + 1);
-        setShowTabWarning(true);
+      if (document.hidden && !isTeacher) {
+        triggerKick("Tab Switch / Window Minimized");
       }
     };
 
     const handleBlur = () => {
-      setTabSwitchCount((prev) => prev + 1);
-      setShowTabWarning(true);
+      if (!isTeacher) {
+        triggerKick("Window Lost Focus / Navigated Away");
+      }
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -3490,6 +3503,46 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
               document.body
             )
           }
+          {/* ─── KICKED FROM CLASSROOM OVERLAY ─── */}
+          {isKicked &&
+            createPortal(
+              <div className="fixed inset-0 z-[99999] bg-slate-950 flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
+                <div className="max-w-md w-full bg-slate-900 border border-red-500/60 rounded-3xl p-8 shadow-2xl space-y-6">
+                  <div className="w-20 h-20 bg-red-500/10 border-2 border-red-500/40 rounded-full flex items-center justify-center mx-auto text-red-500 animate-pulse">
+                    <X className="w-10 h-10 stroke-[3]" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <span className="inline-block px-3 py-1 bg-red-500/20 border border-red-500/40 rounded-full text-[10px] font-mono font-bold text-red-400 uppercase tracking-widest">
+                      Session Terminated
+                    </span>
+                    <h2 className="text-2xl font-black text-white tracking-tight">
+                      You Have Been Kicked
+                    </h2>
+                  </div>
+
+                  <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/80 border border-slate-800 rounded-xl p-4">
+                    Switching tabs or leaving the lecture window is strictly forbidden. You have been removed from this live session.
+                  </p>
+
+                  <div className="bg-red-950/60 border border-red-900/80 rounded-xl p-3 text-xs text-red-300 font-mono text-left space-y-1">
+                    <div><span className="text-slate-400">Violation:</span> {kickReason || "Tab Switch Detected"}</div>
+                    <div><span className="text-slate-400">Session Code:</span> {sessionCode}</div>
+                    <div><span className="text-slate-400">Status:</span> Disqualified & Marked Offline</div>
+                  </div>
+
+                  <button
+                    onClick={() => router.push("/student-dashboard")}
+                    className="w-full py-4 px-6 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold rounded-2xl shadow-xl transition-all transform active:scale-95 cursor-pointer uppercase tracking-wider text-xs flex items-center justify-center gap-2"
+                  >
+                    Return to Student Dashboard
+                  </button>
+                </div>
+              </div>,
+              document.body
+            )
+          }
+
           {/* Entry Overlay */}
           {!hasEntered && (
             <div className="fixed inset-0 bg-[#F6F7F9] z-[99] flex flex-col items-center justify-center text-center p-6 font-sans antialiased col-span-full">
