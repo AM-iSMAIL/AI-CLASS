@@ -213,6 +213,8 @@ export default function LiveClassroomPage() {
   
   const [warningLevel, setWarningLevel] = useState(0)
   const [strikeCount, setStrikeCount] = useState(0) // Persistent strike counter across clicks
+  const [tabSwitchCount, setTabSwitchCount] = useState(0)
+  const [showTabWarning, setShowTabWarning] = useState(false)
   const [outOfFrameSecondsLeft, setOutOfFrameSecondsLeft] = useState<number | null>(null)
   const [phoneWarningCount, setPhoneWarningCount] = useState(0)
   const [showPhoneWarning, setShowPhoneWarning] = useState(false)
@@ -1800,26 +1802,47 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
     }
   }, [hasEntered, loading, isParsingPdf, teachingMode, isPdfMode, pdfPages, topics, runTopicSpeech]);
 
-  /* ─── CLEANUP: kill speech on unmount (navigation away) ─── */
+  /* ─── TAB SWITCH & LEAVING RESTRICTION GUARD ─── */
   useEffect(() => {
-    // Add beforeunload to explicitly set student offline in Firebase
-    const handleBeforeUnload = () => {
+    if (!hasEntered) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!isTeacher && studentId && sessionCode) {
+        setStudentOffline(sessionCode, studentId).catch(() => {});
+      }
+      e.preventDefault();
+      e.returnValue = "A live lecture is currently in progress. Leaving this page will interrupt your session!";
+      return e.returnValue;
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setTabSwitchCount((prev) => prev + 1);
+        setShowTabWarning(true);
+      }
+    };
+
+    const handleBlur = () => {
+      setTabSwitchCount((prev) => prev + 1);
+      setShowTabWarning(true);
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("blur", handleBlur);
+
+    return () => {
+      stopSpeaking();
+      lectureAbortRef.current?.abort();
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("blur", handleBlur);
+
       if (!isTeacher && studentId && sessionCode) {
         setStudentOffline(sessionCode, studentId).catch(() => {});
       }
     };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    
-    return () => {
-      stopSpeaking()
-      lectureAbortRef.current?.abort()
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      
-      if (!isTeacher && studentId && sessionCode) {
-        setStudentOffline(sessionCode, studentId).catch(() => {});
-      }
-    }
-  }, [isTeacher, studentId, sessionCode])
+  }, [hasEntered, isTeacher, studentId, sessionCode]);
 
   /* ─── TIMER ─── */
   useEffect(() => {
@@ -3429,6 +3452,39 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                       ? `Please put away the device. Warning strike in ${phoneSecondsLeft} seconds.`
                       : "Put the device completely away to resume learning."}
                   </p>
+                </div>
+              </div>,
+              document.body
+            )
+          }
+
+          {/* ─── TAB SWITCH RESTRICTION MODAL ─── */}
+          {showTabWarning &&
+            createPortal(
+              <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-200">
+                <div className="max-w-md w-full bg-slate-900 border border-red-500/50 rounded-2xl p-6 shadow-2xl text-center space-y-4">
+                  <div className="w-16 h-16 bg-red-500/10 border border-red-500/30 rounded-full flex items-center justify-center mx-auto text-red-500 animate-pulse">
+                    <AlertTriangle className="w-8 h-8 text-red-500" />
+                  </div>
+                  
+                  <h3 className="text-xl font-bold text-white tracking-wide">
+                    Tab Switch Restricted!
+                  </h3>
+                  
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    Leaving the website or switching tabs during an active live lecture is strictly restricted to ensure complete focus.
+                  </p>
+
+                  <div className="bg-red-950/50 border border-red-900/60 rounded-xl p-3 text-xs text-red-300 font-mono">
+                    Tab Switch Infractions: <span className="font-bold text-red-400 text-sm ml-1">{tabSwitchCount}</span>
+                  </div>
+
+                  <button
+                    onClick={() => setShowTabWarning(false)}
+                    className="w-full py-3.5 px-4 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold rounded-xl shadow-lg transition-all transform active:scale-95 cursor-pointer"
+                  >
+                    Return to Lecture Immediately
+                  </button>
                 </div>
               </div>,
               document.body
