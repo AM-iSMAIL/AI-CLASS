@@ -172,36 +172,32 @@ export default function SummaryPage() {
     // 1. Compute Student Average Focus Score
     const studentScores = studentsOnly
       .map(s => s.engagementScore ?? (s as any).score)
-      .filter(sc => typeof sc === "number" && !isNaN(sc) && sc > 0);
+      .filter(sc => typeof sc === "number" && !isNaN(sc) && sc >= 0);
 
     let avgFocusScore = 0;
     if (studentScores.length > 0) {
-      avgFocusScore = Math.floor(studentScores.reduce((acc, val) => acc + val, 0) / studentScores.length);
+      avgFocusScore = Math.round(studentScores.reduce((acc, val) => acc + val, 0) / studentScores.length);
     } else if (typeof window !== "undefined") {
       const cachedClassFocus = localStorage.getItem(`student_focus_${sessionCode}`) || localStorage.getItem("classFocus");
-      if (cachedClassFocus && !isNaN(Number(cachedClassFocus)) && Number(cachedClassFocus) > 0) {
-        avgFocusScore = Math.floor(Number(cachedClassFocus));
+      if (cachedClassFocus && !isNaN(Number(cachedClassFocus))) {
+        avgFocusScore = Math.round(Number(cachedClassFocus));
       }
     }
 
     // 2. Compute Teacher Focus Score
     let teacherFocusScore: number | null = null;
     const rawTeacherScore = (sessionData as any).teacherEngagementScore;
-    if (typeof rawTeacherScore === "number" && !isNaN(rawTeacherScore) && rawTeacherScore > 0) {
-      teacherFocusScore = Math.floor(rawTeacherScore);
+    if (typeof rawTeacherScore === "number" && !isNaN(rawTeacherScore)) {
+      teacherFocusScore = Math.round(rawTeacherScore);
     } else if (typeof window !== "undefined") {
       const cachedTeacherFocus = localStorage.getItem(`teacher_focus_${sessionCode}`) || localStorage.getItem("teacherFocus");
-      if (cachedTeacherFocus && !isNaN(Number(cachedTeacherFocus)) && Number(cachedTeacherFocus) > 0) {
-        teacherFocusScore = Math.floor(Number(cachedTeacherFocus));
+      if (cachedTeacherFocus && !isNaN(Number(cachedTeacherFocus))) {
+        teacherFocusScore = Math.round(Number(cachedTeacherFocus));
       }
     }
 
-    // Robust fallbacks if score was not recorded due to instant exit or initial load
-    if (teacherFocusScore === null || teacherFocusScore === 0) {
-      teacherFocusScore = avgFocusScore > 0 ? avgFocusScore : 88;
-    }
-    if (avgFocusScore === 0) {
-      avgFocusScore = teacherFocusScore > 0 ? teacherFocusScore : 92;
+    if (teacherFocusScore === null) {
+      teacherFocusScore = avgFocusScore;
     }
 
     return (

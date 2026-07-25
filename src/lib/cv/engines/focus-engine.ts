@@ -57,12 +57,16 @@ export class FocusEngine implements CVModule<Map<string, FocusScore>> {
       const effectivePitch = (headPose?.pitch ?? 0) + (gaze?.combined.pitch ?? 0);
       const effectiveDeviation = Math.sqrt(effectiveYaw ** 2 + effectivePitch ** 2);
 
-      // If face is absent/occluded, drop score instantly to 0 and clear history (prevent keyboard phone cheats)
+      // ── Presence status evaluation ──
       const presenceStatus = analysis?.presence?.status;
-      const isAbsent = !presenceStatus || presenceStatus === 'absent' || presenceStatus === 'no_face' || presenceStatus === 'left_seat' || presenceStatus === 'camera_blocked' || presenceStatus === 'partial_face';
+      const isWarmupOrLoading = !analysis || !analysis.presence;
+      const isAbsent = presenceStatus === 'absent' || presenceStatus === 'no_face' || presenceStatus === 'left_seat' || presenceStatus === 'camera_blocked';
 
-      let smoothed = 0;
-      if (isAbsent) {
+      let smoothed = 100;
+      if (isWarmupOrLoading) {
+        // Initializing camera / MediaPipe models — maintain neutral high score (100)
+        smoothed = s.history.length > 0 ? Math.round(s.history.average()) : 100;
+      } else if (isAbsent) {
         smoothed = 0;
         s.ema.reset();
         s.history.clear();
