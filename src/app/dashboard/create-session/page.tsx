@@ -232,7 +232,11 @@ export default function CreateSessionPage() {
         )
       ])
       
-      window.location.href = `/session/${sessionCode}`
+      if (typeof window !== "undefined") {
+        localStorage.setItem(`teacher_session_${sessionCode}`, "true")
+        localStorage.setItem("userRole", "teacher")
+      }
+      window.location.href = `/session/${sessionCode}?role=teacher`
     } catch (err: any) {
       console.warn("Session creation failed:", err)
       alert("Failed to create session: " + err.message)

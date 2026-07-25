@@ -1,9 +1,9 @@
 "use client"
 
-import React, { useState, useEffect, useRef, useCallback } from "react"
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { useParams, useRouter } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import {
   Mic,
   MicOff,
@@ -274,23 +274,34 @@ export default function SessionPage() {
     }
   }, [sessionCode])
 
-  // Determine user role (computed dynamically on each render pass)
-  const isTeacher = session && currentUser
-    ? session.teacherId === currentUser.uid
-    : session
-      ? session.teacherId === "offline-teacher"
-      : false;
+  const searchParams = useSearchParams()
+
+  // Determine user role (computed cleanly without assigning teacher role to unauthenticated students)
+  const isTeacher = useMemo(() => {
+    const roleParam = searchParams?.get("role")
+    if (roleParam === "student") return false
+    if (roleParam === "teacher") return true
+
+    if (session && currentUser) {
+      if (session.teacherId === currentUser.uid) return true
+      return false
+    }
+
+    if (typeof window !== "undefined") {
+      const storedRole = localStorage.getItem("userRole")
+      if (storedRole === "student") return false
+      const isTeacherSession = localStorage.getItem(`teacher_session_${sessionCode}`) === "true"
+      if (isTeacherSession) return true
+    }
+
+    return false
+  }, [searchParams, session, currentUser, sessionCode])
 
   // 4b. Enforce admission checks for student
   useEffect(() => {
     if (!session || loading || authLoading) return
 
-    // Calculate synchronously to avoid state update race conditions
-    const isUserTeacher = currentUser 
-      ? session.teacherId === currentUser.uid 
-      : session.teacherId === "offline-teacher"
-
-    if (isUserTeacher) return // Skip access checks for teacher
+    if (isTeacher) return // Skip access checks for teacher
 
     const verifyAccess = async () => {
       // 1. Check if kicked
