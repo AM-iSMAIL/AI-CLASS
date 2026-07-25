@@ -2402,26 +2402,23 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
     return matchesSearch && matchesSpeaker
   })
 
-  /* ═══════════════════════════════════════════
-     FULL CLASSROOM — PRODUCTION LAYOUT
-     ═══════════════════════════════════════════ */
   return (
-    <div className="fixed inset-0 bg-[#0A0A0A] text-white flex flex-col font-sans antialiased overflow-hidden select-none z-50">
+    <div className="fixed inset-0 bg-[#F6F7F9] text-slate-800 flex flex-col font-sans antialiased overflow-hidden select-none z-50">
       <style>{`
         @keyframes orbPulse {
-          0% { box-shadow: 0 0 0 0 rgba(124,58,237,0.7); }
-          70% { box-shadow: 0 0 0 20px rgba(124,58,237,0); }
-          100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); }
+          0% { box-shadow: 0 0 0 0 rgba(37,99,235,0.4); }
+          70% { box-shadow: 0 0 0 20px rgba(37,99,235,0); }
+          100% { box-shadow: 0 0 0 0 rgba(37,99,235,0); }
         }
         @keyframes orbInner {
-          0%,100% { box-shadow: inset 0 0 20px rgba(124,58,237,0.2), 0 0 15px rgba(124,58,237,0.25); }
-          50% { box-shadow: inset 0 0 30px rgba(124,58,237,0.35), 0 0 30px rgba(124,58,237,0.4); }
+          0%,100% { box-shadow: inset 0 0 20px rgba(37,99,235,0.12), 0 0 15px rgba(37,99,235,0.15); }
+          50% { box-shadow: inset 0 0 30px rgba(37,99,235,0.25), 0 0 30px rgba(37,99,235,0.3); }
         }
         .orb-active {
           animation: orbPulse 2s ease-out infinite, orbInner 2.5s ease-in-out infinite;
         }
         .orb-idle {
-          box-shadow: inset 0 0 8px rgba(124,58,237,0.05);
+          box-shadow: inset 0 0 8px rgba(37,99,235,0.03);
         }
 
         @keyframes wv { 0%,100%{transform:scaleY(.12)} 50%{transform:scaleY(1)} }
@@ -2430,8 +2427,8 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         .wv-4{animation-delay:.26s} .wv-5{animation-delay:.13s}
 
         @keyframes tileGlow {
-          0%,100%{border-color:rgba(124,58,237,.4);box-shadow:0 0 20px rgba(124,58,237,.12),0 0 40px rgba(124,58,237,.05)}
-          50%{border-color:rgba(124,58,237,.65);box-shadow:0 0 25px rgba(124,58,237,.2),0 0 50px rgba(124,58,237,.08)}
+          0%,100%{border-color:rgba(37,99,235,.3);box-shadow:0 0 20px rgba(37,99,235,.08),0 0 40px rgba(37,99,235,.03)}
+          50%{border-color:rgba(37,99,235,.5);box-shadow:0 0 25px rgba(37,99,235,.15),0 0 50px rgba(37,99,235,.05)}
         }
         .tile-glow{animation:tileGlow 2.5s ease-in-out infinite}
 
@@ -2443,18 +2440,19 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         .slide-up{animation:slideUp .25s ease-out}
 
         .cscroll::-webkit-scrollbar{width:3px}
-        .cscroll::-webkit-scrollbar-track{background:transparent}
-        .cscroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.06);border-radius:10px}
+        .cscroll::-webkit-scrollbar-track{background:#F3F4F6}
+        .cscroll::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:10px}
+        .cscroll::-webkit-scrollbar-thumb:hover{background:#94A3B8}
 
         @keyframes audioRing {
-          0% { transform: scale(1); opacity: 1; border-color: rgba(168, 85, 247, 0.85); box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); }
-          50% { transform: scale(1.08); opacity: 0.5; border-color: rgba(168, 85, 247, 0.4); box-shadow: 0 0 8px 2px rgba(168, 85, 247, 0.2); }
-          100% { transform: scale(1.15); opacity: 0; border-color: rgba(168, 85, 247, 0); box-shadow: 0 0 12px 4px rgba(168, 85, 247, 0); }
+          0% { transform: scale(1); opacity: 1; border-color: rgba(37, 99, 235, 0.7); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.3); }
+          50% { transform: scale(1.08); opacity: 0.5; border-color: rgba(37, 99, 235, 0.3); box-shadow: 0 0 8px 2px rgba(37, 99, 235, 0.15); }
+          100% { transform: scale(1.15); opacity: 0; border-color: rgba(37, 99, 235, 0); box-shadow: 0 0 12px 4px rgba(37, 99, 235, 0); }
         }
         .audio-ring {
           position: absolute;
           inset: -2px;
-          border: 2px solid rgba(168, 85, 247, 0.65);
+          border: 2px solid rgba(37, 99, 235, 0.55);
           border-radius: 12px;
           animation: audioRing 1.6s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
           pointer-events: none;
@@ -2466,7 +2464,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           position: fixed;
           inset: 0;
           z-index: 100;
-          background-color: rgba(0, 0, 0, 0.25);
+          background-color: rgba(0, 0, 0, 0.2);
           backdrop-filter: blur(10px);
           -webkit-backdrop-filter: blur(10px);
           will-change: opacity, backdrop-filter;
@@ -2479,9 +2477,9 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           right: 0;
           bottom: 0;
           z-index: 110;
-          background-color: #0E0E10;
-          border-left: 1px solid rgba(255, 255, 255, 0.06);
-          box-shadow: -10px 0 30px rgba(0, 0, 0, 0.6);
+          background-color: #FFFFFF;
+          border-left: 1px solid rgba(15, 23, 42, 0.08);
+          box-shadow: 0 1px 2px rgba(15,23,42,.03), 0 12px 32px rgba(15,23,42,.05);
           will-change: transform;
           width: 85vw;
         }
@@ -2503,10 +2501,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           top: 50%;
           transform: translateY(-50%);
           z-index: 90;
-          background-color: #111113;
-          border-top: 1px solid rgba(147, 51, 234, 0.3);
-          border-left: 1px solid rgba(147, 51, 234, 0.3);
-          border-bottom: 1px solid rgba(147, 51, 234, 0.3);
+          background-color: #FFFFFF;
+          border-top: 1px solid rgba(15, 23, 42, 0.08);
+          border-left: 1px solid rgba(15, 23, 42, 0.08);
+          border-bottom: 1px solid rgba(15, 23, 42, 0.08);
           border-radius: 12px 0 0 12px;
           width: 24px;
           height: 120px;
@@ -2516,13 +2514,13 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          box-shadow: -2px 0 15px rgba(124, 58, 237, 0.15);
+          box-shadow: -2px 0 15px rgba(15, 23, 42, 0.05);
         }
         .drawer-handle:hover {
           width: 32px;
-          background-color: #16161a;
-          box-shadow: -4px 0 20px rgba(124, 58, 237, 0.35);
-          border-color: rgba(147, 51, 234, 0.5);
+          background-color: #F8FAFC;
+          box-shadow: -4px 0 20px rgba(15, 23, 42, 0.08);
+          border-color: rgba(37, 99, 235, 0.3);
         }
 
         /* Instagram-style Hint Indicator */
@@ -2549,41 +2547,41 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       `}</style>
 
       {/* ═══ TOP BAR ═══ */}
-      <header className="h-14 bg-[#111111] border-b border-white/[.06] px-5 flex items-center justify-between flex-shrink-0 z-30">
+      <header className="h-14 bg-white border-b border-slate-200 px-5 flex items-center justify-between flex-shrink-0 z-30">
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center border border-purple-400/20">
-            <Brain className="h-4 w-4 text-white" />
+          <div className="h-8 w-8 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100">
+            <Brain className="h-4 w-4 text-blue-600" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xs font-black text-white leading-none">Class<span className="text-purple-400">AI</span></span>
-            <span className="text-[10px] text-white/35 font-semibold tracking-wide uppercase truncate max-w-[140px] mt-0.5">{sessionTitle}</span>
+            <span className="text-xs font-black text-[#111827] leading-none">Class<span className="text-blue-600">AI</span></span>
+            <span className="text-[10px] text-slate-500 font-semibold tracking-wide uppercase truncate max-w-[140px] mt-0.5">{sessionTitle}</span>
           </div>
         </div>
         <div className="flex flex-col items-center gap-1.5 w-72">
-          <div className="flex items-center gap-2 text-xs text-white/70 font-medium">
-            <span className="text-purple-400 font-bold uppercase text-[9px] tracking-wider">{isPdfMode ? "PDF Page " : "Topic "} {activeTopicIdx + 1}/{totalItems}:</span>
+          <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
+            <span className="text-blue-600 font-bold uppercase text-[9px] tracking-wider">{isPdfMode ? "PDF Page " : "Topic "} {activeTopicIdx + 1}/{totalItems}:</span>
             <span className="truncate max-w-[160px]">{activeLabel}</span>
           </div>
-          <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full transition-all duration-700" style={{ width: `${progressPct}%` }} />
+          <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+            <div className="h-full bg-blue-600 rounded-full transition-all duration-700" style={{ width: `${progressPct}%` }} />
           </div>
         </div>
         <div className="flex items-center gap-3 text-xs font-semibold">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[.02] border border-white/5">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-slate-200">
             <span className={`h-2 w-2 rounded-full ${focusDot} animate-pulse`} />
-            <span className="text-white/40">Focus:</span>
+            <span className="text-slate-500">Focus:</span>
             <span className={focusText}>{classFocus}%</span>
           </div>
-          <div className="flex items-center gap-2.5 bg-white/[.02] border border-white/5 px-3 py-1.5 rounded-lg font-mono text-white/80">
-            <Clock className="h-3.5 w-3.5 text-white/30" />
+          <div className="flex items-center gap-2.5 bg-white border border-slate-200 px-3 py-1.5 rounded-lg font-mono text-slate-800">
+            <Clock className="h-3.5 w-3.5 text-slate-400" />
             <span>{fmt(elapsedSeconds)}</span>
-            <span className="border-l border-white/10 pl-2.5 flex items-center gap-1">
-              <Users className="h-3.5 w-3.5 text-purple-400" />{students.length}
+            <span className="border-l border-slate-200 pl-2.5 flex items-center gap-1">
+              <Users className="h-3.5 w-3.5 text-blue-600" />{students.length}
             </span>
           </div>
           {isTeacher && (
             <div className="flex items-center gap-2">
-              <button id="end-session-btn" onClick={handleEndSession} className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl transition-colors cursor-pointer text-xs font-bold shadow-lg shadow-red-600/20 active:scale-95">End Session</button>
+              <button id="end-session-btn" onClick={handleEndSession} className="px-4 py-2 bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-xl transition-colors cursor-pointer text-xs font-bold shadow-lg shadow-red-600/10 active:scale-95">End Session</button>
             </div>
           )}
         </div>
@@ -2596,7 +2594,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         <div className="flex-1 flex flex-col p-3 gap-3 min-h-[50vh] lg:min-h-0 pb-3 lg:pb-[84px] overflow-hidden">
 
           {/* ── CONTENT / IMAGE AREA (HERO — fills most space) ── */}
-          <div className="flex-1 bg-[#111111] rounded-2xl overflow-hidden flex flex-col relative min-h-0 border border-white/[.06]">
+          <div className="flex-1 bg-white border border-slate-900/8 rounded-[24px] shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)] overflow-hidden flex flex-col relative min-h-0">
             {/* Image / Fallback — fills entire area */}
             <div className="flex-1 relative overflow-hidden min-h-0">
               {topicImageUrl && imageLoaded ? (
@@ -2608,49 +2606,49 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                     style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     onError={() => { setImageLoaded(false); setTopicImageUrl(null) }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/10 via-transparent to-white/5" />
                 </div>
               ) : (
-                /* Beautiful glassmorphic initial fallback image instead of a blank gradient */
+                /* Beautiful initial fallback image instead of a blank gradient */
                 <div className="absolute inset-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1024&auto=format&fit=crop"
                     alt="Classroom Visual Aid"
-                    style={{ width: "100%", height: "100%", objectFit: "cover", filter: "brightness(0.6)" }}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", filter: "brightness(0.95)" }}
                   />
-                  <div className="absolute inset-0 bg-[#0A0A0A]/50 backdrop-blur-[2px]" />
+                  <div className="absolute inset-0 bg-[#F6F7F9]/50 backdrop-blur-[2px]" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center space-y-3 px-8">
-                      <h2 className="text-3xl font-black text-white/80 tracking-tight">{activeLabel}</h2>
-                      <p className="text-sm text-white/40">{isPdfMode ? "Page" : "Topic"} {activeTopicIdx + 1} of {totalItems}</p>
+                      <h2 className="text-3xl font-black text-[#111827] tracking-tight">{activeLabel}</h2>
+                      <p className="text-sm text-slate-500">{isPdfMode ? "Page" : "Topic"} {activeTopicIdx + 1} of {totalItems}</p>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Overlaid visual aid loading state (non-blocking glassmorphic design) */}
+              {/* Overlaid visual aid loading state */}
               {isGeneratingImage && (
-                <div className="absolute bottom-3 left-3 bg-black/75 backdrop-blur-md border border-white/10 rounded-full px-3.5 py-1.5 flex items-center gap-2 z-20 shadow-lg shadow-black/40 animate-pulse">
-                  <Loader2 className="animate-spin text-purple-500 h-3.5 w-3.5" />
-                  <span className="text-[10px] text-white/80 font-bold tracking-wider uppercase">Generating AI Visual Aid...</span>
+                <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-md border border-slate-200 rounded-full px-3.5 py-1.5 flex items-center gap-2 z-20 shadow-lg animate-pulse">
+                  <Loader2 className="animate-spin text-blue-600 h-3.5 w-3.5" />
+                  <span className="text-[10px] text-slate-700 font-bold tracking-wider uppercase">Generating AI Visual Aid...</span>
                 </div>
               )}
 
               {imageError && (
-                <div className="absolute inset-0 bg-[#1a0f0f]/95 backdrop-blur-md flex flex-col items-center justify-center gap-3 border border-red-500/20 px-8 text-center z-20">
-                  <div className="h-10 w-10 rounded-full bg-red-500/10 flex items-center justify-center">
-                    <span className="text-red-400 text-lg">⚠️</span>
+                <div className="absolute inset-0 bg-rose-50/95 backdrop-blur-md flex flex-col items-center justify-center gap-3 border border-red-200 px-8 text-center z-20">
+                  <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <span className="text-red-600 text-lg">⚠️</span>
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-white/95">Visual Aid Failed to Generate</h4>
-                    <p className="text-xs text-white/45 mt-1">{imageError}</p>
+                    <h4 className="text-sm font-bold text-slate-900">Visual Aid Failed to Generate</h4>
+                    <p className="text-xs text-slate-500 mt-1">{imageError}</p>
                   </div>
                   <button 
                     onClick={() => {
                       setImageError(null);
                     }}
-                    className="mt-1 px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-[10px] text-white/80 font-bold tracking-wide transition-colors cursor-pointer"
+                    className="mt-1 px-3 py-1 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg text-[10px] text-slate-800 font-bold tracking-wide transition-colors cursor-pointer"
                   >
                     Clear Error
                   </button>
@@ -2658,54 +2656,54 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
               )}
             </div>
             {/* Caption bar */}
-            <div className="h-10 border-t border-white/[.06] bg-[#0E0E10] flex items-center justify-between px-4 flex-shrink-0 relative z-10">
-              <span className="text-xs font-semibold text-white/50 truncate max-w-[80%]">{activeLabel}</span>
-              <span className="px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/15 text-[8px] font-black text-purple-400 uppercase tracking-[.12em]">IMAGE</span>
+            <div className="h-10 border-t border-slate-100 bg-[#FCFCFD] flex items-center justify-between px-4 flex-shrink-0 relative z-10">
+              <span className="text-xs font-semibold text-slate-600 truncate max-w-[80%]">{activeLabel}</span>
+              <span className="px-2.5 py-0.5 rounded bg-[#EFF6FF] border border-blue-100 text-[8px] font-black text-[#2563EB] uppercase tracking-[.12em]">IMAGE</span>
             </div>
           </div>
 
           {/* ── PROFESSOR AI — Compact Bar ── */}
           <div
-            className={`rounded-xl border p-3 flex gap-3 flex-shrink-0 transition-all duration-500 relative ${
-              lecturePlayState === "PAUSED_FOR_DOUBT" ? "bg-[#131316] border-amber-500/30"
-              : aiSpeechState === "speaking" ? "bg-[#131316] tile-glow"
-              : aiSpeechState === "paused" ? "bg-[#131316] border-amber-500/20"
-              : "bg-[#111111] border-white/[.06]"
+            className={`rounded-2xl border p-3 flex gap-3 flex-shrink-0 transition-all duration-500 relative bg-white border-slate-200 shadow-sm ${
+              lecturePlayState === "PAUSED_FOR_DOUBT" ? "border-amber-400/50"
+              : aiSpeechState === "speaking" ? "tile-glow"
+              : aiSpeechState === "paused" ? "border-amber-400/30"
+              : "border-slate-200"
             }`}
           >
             {/* LIVE / PAUSED badge */}
             {lecturePlayState === "PAUSED_FOR_DOUBT" ? (
-              <div className="absolute top-2.5 right-3 flex items-center gap-1.5 bg-amber-950/40 border border-amber-500/30 px-2 py-0.5 rounded-full z-10">
-                <span className="h-[5px] w-[5px] rounded-full bg-amber-400" />
-                <span className="text-[7px] font-black text-amber-400 uppercase tracking-[.12em]">Paused</span>
+              <div className="absolute top-2.5 right-3 flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full z-10">
+                <span className="h-[5px] w-[5px] rounded-full bg-amber-500" />
+                <span className="text-[7px] font-black text-amber-600 uppercase tracking-[.12em]">Paused</span>
               </div>
             ) : (
-              <div className="absolute top-2.5 right-3 flex items-center gap-1.5 bg-red-950/40 border border-red-500/20 px-2 py-0.5 rounded-full z-10">
-                <span className="h-[5px] w-[5px] rounded-full bg-red-500 animate-pulse" />
-                <span className="text-[7px] font-black text-red-400 uppercase tracking-[.15em]">Live</span>
+              <div className="absolute top-2.5 right-3 flex items-center gap-1.5 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full z-10">
+                <span className="h-[5px] w-[5px] rounded-full bg-red-600 animate-pulse" />
+                <span className="text-[7px] font-black text-red-600 uppercase tracking-[.15em]">Live</span>
               </div>
             )}
 
-            {/* Orb + waveform — compact */}
+            {/* Orb + waveform ── */}
             <div className="flex flex-col items-center gap-2 flex-shrink-0 justify-center">
               <div
                 className={`rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
                   aiSpeechState === "speaking"
-                    ? "bg-gradient-to-br from-purple-600 via-violet-500 to-indigo-600 border-purple-400/30 orb-active"
+                    ? "bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 border-blue-400/30 orb-active"
                     : aiSpeechState === "paused"
-                    ? "bg-gradient-to-br from-purple-700/50 via-violet-600/50 to-indigo-700/50 border-amber-500/20 orb-idle"
-                    : "bg-[#1a1a1e] border-white/[.08] orb-idle"
+                    ? "bg-gradient-to-br from-blue-700/50 via-blue-600/50 to-indigo-700/50 border-amber-400/30 orb-idle"
+                    : "bg-[#F8FAFC] border-slate-200 orb-idle"
                 }`}
                 style={{ width: 48, height: 48 }}
               >
                 <Brain className={`transition-all duration-300 ${
-                  aiSpeechState === "speaking" ? "text-white h-5 w-5" : aiSpeechState === "paused" ? "text-white/50 h-4 w-4" : "text-white/20 h-4 w-4"
+                  aiSpeechState === "speaking" ? "text-white h-5 w-5" : aiSpeechState === "paused" ? "text-white/70 h-4 w-4" : "text-slate-400 h-4 w-4"
                 }`} />
               </div>
               <div className="flex items-end justify-center gap-[2px] h-3 w-8">
                 {aiSpeechState === "speaking" && lecturePlayState !== "PAUSED_FOR_DOUBT"
-                  ? [1,2,3,4,5].map((i) => <div key={i} className={`w-[2px] rounded-full bg-purple-400 wv wv-${i}`} style={{height:"100%"}} />)
-                  : [1,2,3,4,5].map((i) => <div key={i} className="w-[2px] h-[2px] rounded-full bg-white/8" />)
+                  ? [1,2,3,4,5].map((i) => <div key={i} className={`w-[2px] rounded-full bg-blue-500 wv wv-${i}`} style={{height:"100%"}} />)
+                  : [1,2,3,4,5].map((i) => <div key={i} className="w-[2px] h-[2px] rounded-full bg-slate-200" />)
                 }
               </div>
             </div>
@@ -2713,29 +2711,33 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             {/* Name, topic, transcript */}
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden gap-0.5">
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-black text-white leading-tight">Professor AI</h3>
-                <span className="text-[10px] text-white/20">·</span>
+                <h3 className="text-sm font-black text-[#111827] leading-tight">Professor AI</h3>
+                <span className="text-[10px] text-slate-300">·</span>
                 <span className={`text-[10px] font-bold truncate transition-colors duration-300 ${
-                  lecturePlayState === "PAUSED_FOR_DOUBT" ? "text-amber-400"
-                  : aiSpeechState === "speaking" ? "text-purple-400" : aiSpeechState === "paused" ? "text-amber-400" : "text-white/20"
+                  lecturePlayState === "PAUSED_FOR_DOUBT" ? "text-amber-600"
+                  : aiSpeechState === "speaking" ? "text-blue-600" : aiSpeechState === "paused" ? "text-amber-600" : "text-slate-400"
                 }`}>
                   {lecturePlayState === "PAUSED_FOR_DOUBT" ? "Answering doubt..." 
                   : aiSpeechState === "speaking" ? activeLabel : aiSpeechState === "paused" ? "Paused" : "Waiting..."}
                 </span>
               </div>
 
-              {/* Transcript — compact, ~3 lines visible */}
+              {/* Transcript — compact */}
               <div className="flex-1 relative min-h-[3.5rem] max-h-24 overflow-hidden">
-                <div className="absolute inset-0 overflow-y-auto cscroll pr-2" style={{ maskImage: "linear-gradient(to bottom, black 60%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, black 60%, transparent 100%)" }}>
+                <div className="absolute inset-0 overflow-y-auto cscroll pr-2">
                   {pastTranscripts.map((pt, i) => (
-                    <p key={i} style={{ fontSize: 12, lineHeight: 1.5 }} className="text-white/15 mb-1">{pt}</p>
+                    <p key={i} style={{ fontSize: 12, lineHeight: 1.5 }} className="text-slate-400 mb-1">{pt}</p>
                   ))}
-                  {transcript && renderTranscriptText(transcript, aiSpeechState)}
+                  {transcript && (
+                    <p style={{ fontSize: 12, lineHeight: 1.5 }} className="text-slate-800 font-medium">
+                      {transcript}
+                    </p>
+                  )}
                   {lecturePlayState === "PAUSED_FOR_DOUBT" && (
-                    <p style={{ fontSize: 11, lineHeight: 1.5 }} className="text-amber-400/70 italic mt-1">Lecture paused — will resume automatically.</p>
+                    <p style={{ fontSize: 11, lineHeight: 1.5 }} className="text-amber-600 italic mt-1">Lecture paused — will resume automatically.</p>
                   )}
                   {!transcript && !pastTranscripts.length && (
-                    <p style={{ fontSize: 12, lineHeight: 1.5 }} className="text-white/12 italic">Transcript appears when lecture starts...</p>
+                    <p style={{ fontSize: 12, lineHeight: 1.5 }} className="text-slate-400 italic">Transcript appears when lecture starts...</p>
                   )}
                   <div ref={transcriptEndRef} />
                 </div>
@@ -2745,23 +2747,23 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         </div>
 
         {/* ─── RIGHT SIDEBAR — Participants + Doubt Chat ─── */}
-        <aside className="w-full lg:w-[30%] border-t lg:border-t-0 lg:border-l border-white/[.06] bg-[#0A0A0A] flex flex-col min-h-0 pb-[84px] lg:pb-0 overflow-hidden">
+        <aside className="w-full lg:w-[30%] border-t lg:border-t-0 lg:border-l border-slate-200 bg-white flex flex-col min-h-0 pb-[84px] lg:pb-0 overflow-hidden">
           
-          {/* ── STUDENT TILES — Compact Grid ── */}
+          {/* ── STUDENT TILES ── */}
           <div className="flex-none p-3 pb-0">
-            <h4 className="text-[10px] font-black uppercase tracking-[.12em] text-white/50 pb-2 mb-2 border-b border-white/[.06] flex items-center justify-between flex-shrink-0">
+            <h4 className="text-[10px] font-black uppercase tracking-[.12em] text-slate-400 pb-2 mb-2 border-b border-slate-100 flex items-center justify-between flex-shrink-0">
               <span className="flex items-center gap-1.5">
-                <Users className="h-3 w-3 text-purple-400" />
+                <Users className="h-3 w-3 text-blue-600" />
                 In Class ({students.length})
               </span>
-              <span className="text-emerald-400 flex items-center gap-1">
+              <span className="text-emerald-600 flex items-center gap-1">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="text-[9px] font-bold">Active</span>
               </span>
             </h4>
             <div className="grid grid-cols-2 gap-2 max-h-[220px] overflow-y-auto cscroll pb-2">
               {/* Local User Tile */}
-              <div className={`relative aspect-video rounded-lg border ${localMetrics.status === "focused" ? "border-emerald-500/60" : localMetrics.status === "distracted" ? "border-amber-500/60" : localMetrics.status === "away" ? "border-rose-500/60" : "border-white/[.06]"} bg-[#14141b] overflow-hidden transition-all duration-500`}>
+              <div className={`relative aspect-video rounded-lg border ${localMetrics.status === "focused" ? "border-emerald-500/60" : localMetrics.status === "distracted" ? "border-amber-500/60" : localMetrics.status === "away" ? "border-rose-500/60" : "border-slate-200"} bg-[#FCFCFD] overflow-hidden transition-all duration-500`}>
                 <div className="absolute inset-0 z-0">
                   <StudentCamera
                     sessionCode={sessionCode}
@@ -2775,11 +2777,11 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                   />
                 </div>
                 {/* Focus badge */}
-                <div className="absolute top-1 right-1 px-1.5 py-0.5 rounded bg-[#0a0a0f]/80 backdrop-blur-md border border-white/10 flex items-center text-[9px] font-mono text-white/80 z-10 gap-1">
+                <div className="absolute top-1 right-1 px-1.5 py-0.5 rounded bg-white/90 border border-slate-100 flex items-center text-[9px] font-mono text-slate-800 z-10 gap-1 shadow-sm">
                   <div className={`w-1.5 h-1.5 rounded-full ${localMetrics.status === "focused" ? "bg-emerald-500" : localMetrics.status === "distracted" ? "bg-amber-500" : localMetrics.status === "away" ? "bg-rose-500" : "bg-gray-500"}`} />
                   {localMetrics.score}%
                 </div>
-                <div className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-md border border-white/10 text-[9px] font-medium text-white z-10">
+                <div className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-white/90 border border-slate-100 text-[9px] font-medium text-slate-800 z-10 shadow-sm">
                   {isTeacher ? "You" : "You"}
                 </div>
               </div>
@@ -2792,10 +2794,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                   status === "focused" ? "border-emerald-500/60" :
                   status === "distracted" ? "border-amber-500/60" :
                   status === "away" ? "border-rose-500/60" :
-                  "border-white/[.06]";
+                  "border-slate-200";
                 
                 return (
-                  <div key={student.id} className={`relative aspect-video rounded-lg border ${ringColor} bg-[#14141b] flex items-center justify-center transition-all duration-500 overflow-hidden`}>
+                  <div key={student.id} className={`relative aspect-video rounded-lg border ${ringColor} bg-[#FCFCFD] flex items-center justify-center transition-all duration-500 overflow-hidden`}>
                     {remoteStreams[student.id] ? (
                       <video 
                         autoPlay 
@@ -2809,14 +2811,14 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                         }}
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-[#1e1e2e] border border-white/5 flex items-center justify-center text-[10px] font-bold text-white/60 relative z-10">
+                      <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 relative z-10">
                         {student.name?.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase() || "?"}
                       </div>
                     )}
-                    <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-md border border-white/10 text-[9px] font-medium text-white z-10 truncate max-w-[80%]">
+                    <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-white/90 border border-slate-100 text-[9px] font-medium text-slate-800 z-10 truncate max-w-[80%] shadow-sm">
                       {student.name || "Student"}
                     </span>
-                    <div className="absolute top-1 right-1 px-1.5 py-0.5 rounded bg-[#0a0a0f]/80 backdrop-blur-md border border-white/10 flex items-center text-[9px] font-mono text-white/80 z-10 gap-1">
+                    <div className="absolute top-1 right-1 px-1.5 py-0.5 rounded bg-white/90 border border-slate-100 flex items-center text-[9px] font-mono text-slate-800 z-10 gap-1 shadow-sm">
                       <div className={`w-1.5 h-1.5 rounded-full ${status === "focused" ? "bg-emerald-500" : status === "distracted" ? "bg-amber-500" : status === "away" ? "bg-rose-500" : "bg-gray-500"}`} />
                       {score}%
                     </div>
@@ -2828,26 +2830,26 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
           {/* ── DOUBT CHAT ── */}
           <div className="flex-1 p-3 pt-0 flex flex-col overflow-hidden min-h-0">
-            <h4 className="text-[10px] font-black uppercase tracking-[.12em] text-white/50 pb-2 mb-2 border-t border-b border-white/[.06] pt-2 flex items-center justify-between flex-shrink-0">
+            <h4 className="text-[10px] font-black uppercase tracking-[.12em] text-slate-400 pb-2 mb-2 border-t border-b border-slate-100 pt-2 flex items-center justify-between flex-shrink-0">
               <span className="flex items-center gap-1.5">
-                <MessageSquare className="h-3 w-3 text-purple-400" />
+                <MessageSquare className="h-3 w-3 text-blue-600" />
                 Doubt Chat
               </span>
               <span className="flex items-center gap-1">
                 <span className="h-[6px] w-[6px] rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-emerald-400 text-[8px] font-bold">Live</span>
+                <span className="text-emerald-600 text-[8px] font-bold">Live</span>
               </span>
             </h4>
             <div className="flex-1 overflow-y-auto cscroll space-y-2 pr-1 flex flex-col min-h-0">
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex flex-col gap-0.5 max-w-[90%] slide-up ${msg.isAI ? "self-start" : "self-end items-end"}`}>
-                  <span className="text-[8px] text-white/15 font-bold">{msg.sender} • {msg.time}</span>
+                  <span className="text-[8px] text-slate-400 font-bold">{msg.sender} • {msg.time}</span>
                   <div className={`text-[11px] px-3 py-2 rounded-xl leading-relaxed ${
                     msg.isAI
-                      ? "bg-[#151517] text-white/80 border border-white/[.05] rounded-tl-none flex gap-1.5 items-start"
-                      : "bg-purple-600 text-white rounded-tr-none"
+                      ? "bg-[#FCFCFD] text-[#374151] border border-slate-200 rounded-tl-none flex gap-1.5 items-start"
+                      : "bg-[#111827] text-white rounded-tr-none"
                   }`}>
-                    {msg.isAI && <Brain className="h-3 w-3 text-purple-400 flex-shrink-0 mt-0.5" />}
+                    {msg.isAI && <Brain className="h-3 w-3 text-blue-600 flex-shrink-0 mt-0.5" />}
                     <span>{msg.text}</span>
                   </div>
                 </div>
@@ -2855,15 +2857,15 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
               <div ref={chatEndRef} />
             </div>
             {/* Input */}
-            <div className="flex flex-col gap-2 pt-2 border-t border-white/[.06] mt-2 flex-shrink-0">
+            <div className="flex flex-col gap-2 pt-2 border-t border-slate-100 mt-2 flex-shrink-0">
               <form onSubmit={handleSendDoubt} className="flex gap-2 w-full">
                 <input
                   id="doubt-chat-input" type="text" required value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)} placeholder={isAnswering ? "Professor is answering..." : "Ask a doubt..."}
                   disabled={isAnswering}
-                  className="flex-1 px-3 py-2 bg-[#1A1A1A] border border-white/8 rounded-xl text-xs focus:outline-none focus:border-purple-500/40 text-white placeholder:text-white/15 disabled:opacity-50"
+                  className="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-50/80 text-slate-800 placeholder:text-slate-400 disabled:opacity-50"
                 />
-                <button type="submit" disabled={isAnswering} className="px-3 py-2 bg-purple-600 hover:bg-purple-500 rounded-xl text-white transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                <button type="submit" disabled={isAnswering} className="px-3 py-2 bg-[#111827] hover:bg-[#1F2937] rounded-xl text-white transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                   <Send className="h-3.5 w-3.5" />
                 </button>
               </form>
@@ -2872,7 +2874,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         </aside>
       </div>
 
-      {/* ═══ IM-ARRANGEABLE TOOLBAR — floats, auto-hides ═══ */}
+      {/* ═══ FLOATING TOOLBAR ═══ */}
       <div
         onMouseEnter={() => {
           isHoveringToolbarRef.current = true
@@ -2896,35 +2898,35 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         }`}
       >
         <div
-          className="flex items-center px-2 rounded-2xl shadow-2xl border border-white/[.08] backdrop-blur-md relative"
-          style={{ height: 64, background: "rgba(26, 26, 26, 0.85)" }}
+          className="flex items-center px-2 rounded-2xl shadow-2xl border border-slate-200 backdrop-blur-md relative"
+          style={{ height: 64, background: "rgba(255, 255, 255, 0.95)" }}
         >
           {/* Mic */}
           <button id="mic-toggle" onClick={() => { setMicOn(v => !v); addToast(micOn ? "Mic off" : "Mic on") }}
-            className={`flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-xl transition-all cursor-pointer ${micOn ? "text-white hover:bg-white/5" : "text-red-400 bg-red-600/10"}`}>
+            className={`flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-xl transition-all cursor-pointer ${micOn ? "text-slate-700 hover:bg-slate-100" : "text-red-600 bg-red-50"}`}>
             {micOn ? <Mic className="h-[18px] w-[18px]" /> : <MicOff className="h-[18px] w-[18px]" />}
-            <span className="text-[11px] text-white/35 font-medium">Mic</span>
+            <span className="text-[11px] text-slate-400 font-medium">Mic</span>
           </button>
 
           {/* Camera */}
           <button id="camera-toggle" onClick={() => { setVideoOn(v => !v); addToast(videoOn ? "Camera off" : "Camera on") }}
-            className={`flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-xl transition-all cursor-pointer ${videoOn ? "text-white hover:bg-white/5" : "text-red-400 bg-red-600/10"}`}>
+            className={`flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-xl transition-all cursor-pointer ${videoOn ? "text-slate-700 hover:bg-slate-100" : "text-red-600 bg-red-50"}`}>
             {videoOn ? <Video className="h-[18px] w-[18px]" /> : <VideoOff className="h-[18px] w-[18px]" />}
-            <span className="text-[11px] text-white/35 font-medium">Camera</span>
+            <span className="text-[11px] text-slate-400 font-medium">Camera</span>
           </button>
 
           {/* Screen Share */}
           <button id="screenshare-toggle" onClick={() => { setScreenSharing(v => !v); addToast(screenSharing ? "Screen share stopped" : "Screen sharing started") }}
-            className={`flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-xl transition-all cursor-pointer ${screenSharing ? "text-purple-400 bg-purple-600/10" : "text-white hover:bg-white/5"}`}>
+            className={`flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-xl transition-all cursor-pointer ${screenSharing ? "text-blue-600 bg-blue-50" : "text-slate-700 hover:bg-slate-100"}`}>
             <ScreenShare className="h-[18px] w-[18px]" />
-            <span className="text-[11px] text-white/35 font-medium">Share</span>
+            <span className="text-[11px] text-slate-400 font-medium">Share</span>
           </button>
 
           {/* Hand */}
           <button id="hand-raise-toggle" onClick={() => { setHandRaised(v => !v); addToast(handRaised ? "Hand lowered" : "Hand raised") }}
-            className={`flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-xl transition-all cursor-pointer ${handRaised ? "text-amber-400 bg-amber-600/10" : "text-white/50 hover:bg-white/5"}`}>
+            className={`flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-xl transition-all cursor-pointer ${handRaised ? "text-amber-600 bg-amber-50" : "text-slate-500 hover:bg-slate-100"}`}>
             <Hand className="h-[18px] w-[18px]" />
-            <span className="text-[11px] text-white/35 font-medium">Hand</span>
+            <span className="text-[11px] text-slate-400 font-medium">Hand</span>
           </button>
 
           {/* Participants Panel Toggle */}
@@ -2936,26 +2938,26 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             }
             localStorage.setItem("participantsOpen", next ? "true" : "false")
           }}
-            className={`flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-xl transition-all cursor-pointer ${isParticipantsOpen ? "text-purple-400 bg-purple-600/10" : "text-white/50 hover:bg-white/5"}`}>
+            className={`flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-xl transition-all cursor-pointer ${isParticipantsOpen ? "text-blue-600 bg-blue-50" : "text-slate-500 hover:bg-slate-100"}`}>
             <Users className="h-[18px] w-[18px]" />
-            <span className="text-[11px] text-white/35 font-medium">People</span>
+            <span className="text-[11px] text-slate-400 font-medium">People</span>
           </button>
 
           {/* More Popover Button */}
           <div className="relative h-full flex items-center">
             <button
               onClick={() => setShowMoreMenu(v => !v)}
-              className={`flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-xl transition-all cursor-pointer ${showMoreMenu ? "text-purple-400 bg-purple-600/10" : "text-white/50 hover:bg-white/5"}`}
+              className={`flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-xl transition-all cursor-pointer ${showMoreMenu ? "text-blue-600 bg-blue-50" : "text-slate-500 hover:bg-slate-100"}`}
             >
               <MoreHorizontal className="h-[18px] w-[18px]" />
-              <span className="text-[11px] text-white/35 font-medium">More</span>
+              <span className="text-[11px] text-slate-400 font-medium">More</span>
             </button>
 
-            {/* Premium Popover for Extra Controls */}
+            {/* Popover Menu */}
             {showMoreMenu && (
               <div
                 ref={moreMenuRef}
-                className="absolute bottom-20 right-0 bg-[#16161a]/95 border border-white/[.08] rounded-xl p-2 w-48 shadow-2xl flex flex-col gap-1 z-50 backdrop-blur-md"
+                className="absolute bottom-20 right-0 bg-white border border-slate-200 rounded-xl p-2 w-48 shadow-2xl flex flex-col gap-1 z-50 backdrop-blur-md"
               >
                 {/* Voice speech synthesizer toggle */}
                 <button
@@ -2967,29 +2969,29 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                       return next
                     })
                   }}
-                  className="w-full px-3 py-2 text-left hover:bg-white/5 rounded-lg text-xs font-semibold flex items-center justify-between text-white/80"
+                  className="w-full px-3 py-2 text-left hover:bg-slate-50 rounded-lg text-xs font-semibold flex items-center justify-between text-slate-700"
                 >
                   <span className="flex items-center gap-2">
-                    {speechEnabled ? <Volume2 className="h-3.5 w-3.5 text-purple-400" /> : <VolumeX className="h-3.5 w-3.5 text-red-400" />}
+                    {speechEnabled ? <Volume2 className="h-3.5 w-3.5 text-blue-600" /> : <VolumeX className="h-3.5 w-3.5 text-red-600" />}
                     AI Voice
                   </span>
-                  <span className="text-[10px] text-white/30">{speechEnabled ? "On" : "Off"}</span>
+                  <span className="text-[10px] text-slate-400">{speechEnabled ? "On" : "Off"}</span>
                 </button>
 
                 {/* Record session */}
                 <button
                   onClick={() => { const v = !isRecording; setIsRecording(v); addToast(v ? "Recording session started" : "Recording saved") }}
-                  className="w-full px-3 py-2 text-left hover:bg-white/5 rounded-lg text-xs font-semibold flex items-center justify-between text-white/80"
+                  className="w-full px-3 py-2 text-left hover:bg-slate-50 rounded-lg text-xs font-semibold flex items-center justify-between text-slate-700"
                 >
                   <span className="flex items-center gap-2">
-                    <span className={`h-2 w-2 rounded-full ${isRecording ? "bg-red-500 animate-pulse" : "bg-white/35"}`} />
+                    <span className={`h-2 w-2 rounded-full ${isRecording ? "bg-red-500 animate-pulse" : "bg-slate-350"}`} />
                     Record Class
                   </span>
-                  <span className="text-[10px] text-white/30">{isRecording ? "Recording" : "Start"}</span>
+                  <span className="text-[10px] text-slate-400">{isRecording ? "Recording" : "Start"}</span>
                 </button>
 
                 {/* Divider if teacher */}
-                {isTeacher && teachingMode === "AI" && <div className="h-px bg-white/5 my-1" />}
+                {isTeacher && teachingMode === "AI" && <div className="h-px bg-slate-100 my-1" />}
 
                 {/* Teacher-only: Pause/Resume AI */}
                 {isTeacher && teachingMode === "AI" && (
@@ -3004,9 +3006,9 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                       }
                       setShowMoreMenu(false)
                     }}
-                    className="w-full px-3 py-2 text-left hover:bg-white/5 rounded-lg text-xs font-semibold flex items-center gap-2 text-white/80"
+                    className="w-full px-3 py-2 text-left hover:bg-slate-50 rounded-lg text-xs font-semibold flex items-center gap-2 text-slate-700"
                   >
-                    {aiSpeechState === "speaking" ? <Pause className="h-3.5 w-3.5 text-amber-400" /> : <Play className="h-3.5 w-3.5 text-emerald-400" />}
+                    {aiSpeechState === "speaking" ? <Pause className="h-3.5 w-3.5 text-amber-500" /> : <Play className="h-3.5 w-3.5 text-emerald-500" />}
                     {aiSpeechState === "speaking" ? "Pause Lecture" : "Resume Lecture"}
                   </button>
                 )}
@@ -3015,7 +3017,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                 {isTeacher && teachingMode === "AI" && (
                   <button
                     onClick={() => { setTeachingMode("Human"); stopSpeaking(); addToast("You took over classroom"); setShowMoreMenu(false) }}
-                    className="w-full px-3 py-2 text-left hover:bg-white/5 rounded-lg text-xs font-semibold flex items-center gap-2 text-purple-400"
+                    className="w-full px-3 py-2 text-left hover:bg-slate-50 rounded-lg text-xs font-semibold flex items-center gap-2 text-blue-600"
                   >
                     <Eye className="h-3.5 w-3.5" />
                     Take Over Class
@@ -3029,8 +3031,8 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         {/* Leave — separate red pill */}
         <button
           onClick={handleLeaveSession}
-          className="flex flex-col items-center justify-center gap-0.5 px-5 rounded-2xl text-red-400 hover:bg-red-600/15 transition-all cursor-pointer active:scale-95"
-          style={{ height: 64, background: "rgba(220,38,38,.08)", backdropFilter: "blur(20px)", border: "1px solid rgba(239,68,68,.12)" }}
+          className="flex flex-col items-center justify-center gap-0.5 px-5 rounded-2xl text-red-600 hover:bg-red-50 transition-all cursor-pointer active:scale-95 border border-red-100"
+          style={{ height: 64, background: "rgba(220,38,38,.05)" }}
         >
           <LogOut className="h-[18px] w-[18px]" />
           <span className="text-[11px] font-medium">Leave</span>
@@ -3040,7 +3042,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       {/* ═══ TOASTS ═══ */}
       <div className="fixed bottom-24 left-6 z-[60] flex flex-col gap-2 max-w-xs pointer-events-none">
         {toasts.map((t) => (
-          <div key={t.id} className="flex items-center gap-2 bg-[#1A1A1A]/95 border border-white/8 p-3 rounded-xl shadow-2xl slide-up text-xs text-white/80 pointer-events-auto">
+          <div key={t.id} className="flex items-center gap-2 bg-white border border-slate-200 p-3 rounded-xl shadow-2xl slide-up text-xs text-slate-700 pointer-events-auto">
             <span>{t.text}</span>
           </div>
         ))}
@@ -3048,16 +3050,16 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
       {/* ═══ END MODAL ═══ */}
       {showEndModal && (
-        <div className="fixed inset-0 z-[99] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-          <div className="bg-[#141416] border border-white/8 w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl">
+        <div className="fixed inset-0 z-[99] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white border border-slate-200 w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl">
             <div className="p-6 text-center space-y-4">
               <AlertCircle className="h-10 w-10 text-red-500 mx-auto" />
-              <h3 className="font-bold text-white text-base">End this session?</h3>
-              <p className="text-xs text-white/40">This will end the lecture for all participants.</p>
+              <h3 className="font-bold text-slate-900 text-base">End this session?</h3>
+              <p className="text-xs text-slate-500">This will end the lecture for all participants.</p>
             </div>
-            <div className="px-6 py-4 border-t border-white/[.04] bg-black/20 flex gap-3">
-              <button onClick={() => setShowEndModal(false)} className="flex-1 py-2.5 bg-white/5 rounded-xl text-xs font-bold text-white/50 hover:text-white transition-all cursor-pointer">Cancel</button>
-              <button onClick={handleConfirmEnd} className="flex-1 py-2.5 bg-red-600 hover:bg-red-500 rounded-xl text-xs font-bold text-white transition-all cursor-pointer">End Session</button>
+            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex gap-3">
+              <button onClick={() => setShowEndModal(false)} className="flex-1 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 transition-all cursor-pointer">Cancel</button>
+              <button onClick={handleConfirmEnd} className="flex-1 py-2.5 bg-[#DC2626] hover:bg-[#B91C1C] rounded-xl text-xs font-bold text-white transition-all cursor-pointer">End Session</button>
             </div>
           </div>
         </div>
@@ -3065,11 +3067,11 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
       {/* ═══ END COUNTDOWN ═══ */}
       {endCountdown !== null && (
-        <div className="fixed inset-0 bg-[#070708] z-[999] flex flex-col items-center justify-center text-center p-6">
-          <Brain className="h-14 w-14 text-purple-400 mx-auto animate-pulse mb-5" />
-          <h2 className="text-xl font-black text-white">Session Ended</h2>
-          <p className="text-xs text-purple-300/70 font-semibold italic mt-3">&ldquo;Great work today, everyone!&rdquo;</p>
-          <p className="text-[10px] text-white/20 mt-4">Returning to dashboard in {endCountdown}s</p>
+        <div className="fixed inset-0 bg-[#F6F7F9] z-[999] flex flex-col items-center justify-center text-center p-6">
+          <Brain className="h-14 w-14 text-blue-600 mx-auto animate-pulse mb-5" />
+          <h2 className="text-xl font-black text-slate-900">Session Ended</h2>
+          <p className="text-xs text-blue-600 font-semibold italic mt-3">&ldquo;Great work today, everyone!&rdquo;</p>
+          <p className="text-[10px] text-slate-450 mt-4">Returning to dashboard in {endCountdown}s</p>
         </div>
       )}
 
@@ -3111,11 +3113,11 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           className="drawer-handle shadow-lg border-none outline-none focus:outline-none"
         >
           <div className="flex flex-col items-center gap-2">
-            <span className="text-[10px] text-purple-400 font-bold animate-pulse">◀</span>
-            <Users className="h-3.5 w-3.5 text-white/70" />
+            <span className="text-[10px] text-blue-600 font-bold animate-pulse">◀</span>
+            <Users className="h-3.5 w-3.5 text-slate-700" />
             <span 
               style={{ writingMode: "vertical-rl" }} 
-              className="text-[9px] font-black uppercase tracking-[0.2em] text-white/50 select-none my-1"
+              className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 select-none my-1"
             >
               People
             </span>
@@ -3127,10 +3129,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       {!isParticipantsOpen && showHint && (
         <div className="hint-indicator">
           {/* page indicator dot */}
-          <div className="h-1.5 w-1.5 rounded-full bg-purple-500 shadow-lg shadow-purple-500/50 animate-pulse" />
-          <div className="h-1 w-1 rounded-full bg-white/20" />
+          <div className="h-1.5 w-1.5 rounded-full bg-blue-500 shadow-lg shadow-blue-500/50 animate-pulse" />
+          <div className="h-1 w-1 rounded-full bg-slate-300" />
           {/* animated arrow */}
-          <div className="hint-arrow mt-2 bg-purple-600/90 text-white rounded-full p-1 border border-purple-400/20 shadow-md">
+          <div className="hint-arrow mt-2 bg-blue-600 text-white rounded-full p-1 border border-blue-400/20 shadow-md">
             <span className="text-[9px] font-black leading-none block">←</span>
           </div>
         </div>
@@ -3157,11 +3159,11 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         }}
       >
         {/* Drawer Header */}
-        <div className="h-14 border-b border-white/[.06] px-5 flex items-center justify-between flex-shrink-0">
+        <div className="h-14 border-b border-slate-100 px-5 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-2.5">
-            <Users className="h-4 w-4 text-purple-400" />
-            <h3 className="font-bold text-sm text-white">Participants</h3>
-            <span className="px-2 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-[10px] font-bold text-purple-400">
+            <Users className="h-4 w-4 text-blue-600" />
+            <h3 className="font-bold text-sm text-[#111827]">Participants</h3>
+            <span className="px-2 py-0.5 rounded-full bg-blue-50 border border-blue-100 text-[10px] font-bold text-blue-600">
               {students.length}
             </span>
           </div>
@@ -3170,38 +3172,38 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
               setIsParticipantsOpen(false)
               localStorage.setItem("participantsOpen", "false")
             }}
-            className="h-8 w-8 rounded-lg bg-white/[.02] border border-white/5 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+            className="h-8 w-8 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-all cursor-pointer"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Drawer Controls (Search & Filters) */}
-        <div className="p-4 border-b border-white/[.06] space-y-3 flex-shrink-0">
+        <div className="p-4 border-b border-slate-100 space-y-3 flex-shrink-0">
           {/* Search bar */}
           <div className="relative">
-            <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-white/30" />
+            <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search people..."
-              className="w-full pl-9 pr-4 py-2 bg-[#16161A] border border-white/[.06] rounded-xl text-xs focus:outline-none focus:border-purple-500/40 text-white placeholder:text-white/35 transition-all"
+              className="w-full pl-9 pr-4 py-2 bg-[#F8FAFC] border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-blue-500/40 text-slate-800 placeholder:text-slate-400 transition-all"
             />
           </div>
 
           {/* Filters */}
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-white/40 font-bold uppercase tracking-wider">Filters</span>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Filters</span>
             <button
               onClick={() => setShowOnlyActive(prev => !prev)}
               className={`px-2.5 py-1 rounded-lg border text-[10px] font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 showOnlyActive
-                  ? "bg-purple-600/10 border-purple-500/30 text-purple-400"
-                  : "bg-white/[.02] border-white/10 text-white/60 hover:text-white hover:bg-white/5"
+                  ? "bg-blue-50 border-blue-200 text-blue-600"
+                  : "bg-slate-50 border-slate-200 text-slate-650 hover:bg-slate-100"
               }`}
             >
-              <span className={`h-1.5 w-1.5 rounded-full ${showOnlyActive ? "bg-purple-400 animate-pulse" : "bg-white/30"}`} />
+              <span className={`h-1.5 w-1.5 rounded-full ${showOnlyActive ? "bg-blue-500 animate-pulse" : "bg-slate-300"}`} />
               Active Speakers
             </button>
           </div>
@@ -3215,7 +3217,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
               const { isMuted, hasHandRaised, connectionQual } = getStudentProps(s);
               
               // connection icon
-              let connColor = "text-emerald-500";
+              let connColor = "text-emerald-600";
               if (connectionQual === "Good") connColor = "text-amber-500";
               if (connectionQual === "Fair") connColor = "text-rose-500";
 
@@ -3224,48 +3226,48 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                   key={s.id}
                   className={`flex items-center justify-between p-2.5 rounded-xl transition-all border border-transparent ${
                     isSpeaking 
-                      ? "bg-purple-950/15 border-purple-500/20" 
-                      : "hover:bg-white/[.02]"
+                      ? "bg-blue-50/50 border-blue-200" 
+                      : "hover:bg-slate-50"
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     {/* Avatar with speaking animation */}
                     <div className="relative">
                       {isSpeaking && (
-                        <div className="absolute -inset-1 rounded-full border border-purple-500/80 animate-ping opacity-70" />
+                        <div className="absolute -inset-1 rounded-full border border-blue-500/80 animate-ping opacity-70" />
                       )}
                       <div
-                        className={`h-9 w-9 rounded-full bg-gradient-to-br from-[#1e1e2e] to-[#2d2d44] border flex items-center justify-center text-xs font-bold shadow-md relative z-10 transition-all ${
-                          isSpeaking ? "border-purple-400 ring-2 ring-purple-600/30" : "border-white/10"
+                        className={`h-9 w-9 rounded-full bg-slate-50 border flex items-center justify-center text-xs font-bold shadow-sm relative z-10 transition-all ${
+                          isSpeaking ? "border-blue-500 ring-2 ring-blue-500/20 text-blue-600" : "border-slate-200 text-slate-700"
                         }`}
                       >
                         {s.name?.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase() || "?"}
                       </div>
                       {/* focus dot status */}
-                      <span className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border border-[#0E0E10] z-20 ${
-                        s.status === "active" ? "bg-emerald-500" : s.status === "idle" ? "bg-amber-500" : s.status === "distracted" ? "bg-rose-500" : "bg-gray-500"
+                      <span className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border border-white z-20 ${
+                        s.status === "active" ? "bg-emerald-500" : s.status === "idle" ? "bg-amber-500" : s.status === "distracted" ? "bg-rose-500" : "bg-gray-400"
                       }`} />
                     </div>
 
                     {/* Name & status */}
                     <div className="flex flex-col min-w-0">
-                      <span className="text-xs font-bold text-white truncate flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-slate-800 truncate flex items-center gap-1.5">
                         {s.name}
                         {s.id === studentId && (
-                          <span className="text-[8px] bg-purple-500/25 px-1 py-0.2 rounded font-black text-purple-300">YOU</span>
+                          <span className="text-[8px] bg-blue-50 px-1 py-0.2 rounded font-black text-blue-600 border border-blue-100">YOU</span>
                         )}
                       </span>
-                      <span className="text-[10px] text-white/30 truncate uppercase tracking-wider font-semibold">
+                      <span className="text-[10px] text-slate-400 truncate uppercase tracking-wider font-semibold">
                         {s.status} • {s.engagementScore}%
                       </span>
                     </div>
                   </div>
 
-                  {/* Actions & Status Indicators */}
+                  {/* Indicators */}
                   <div className="flex items-center gap-2">
                     {/* hand raise */}
                     {hasHandRaised && (
-                      <div className="bg-amber-500/15 border border-amber-500/30 rounded-lg p-1.5 text-amber-400 animate-bounce">
+                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-1.5 text-amber-600 animate-bounce">
                         <Hand className="h-3 w-3" />
                       </div>
                     )}
@@ -3273,14 +3275,14 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                     {/* mic status */}
                     <div className={`p-1.5 rounded-lg border ${
                       isMuted 
-                        ? "bg-red-500/10 border-red-500/20 text-red-400" 
-                        : "bg-white/[.02] border-white/5 text-white/40"
+                        ? "bg-red-50 border-red-100 text-red-500" 
+                        : "bg-slate-50 border-slate-200 text-slate-400"
                     }`}>
                       {isMuted ? <MicOff className="h-3 w-3" /> : <Mic className="h-3 w-3" />}
                     </div>
 
-                    {/* connection quality */}
-                    <div className={`p-1.5 rounded-lg bg-white/[.02] border border-white/5 ${connColor}`} title={`Connection: ${connectionQual}`}>
+                    {/* connection */}
+                    <div className={`p-1.5 rounded-lg bg-slate-50 border border-slate-200 ${connColor}`} title={`Connection: ${connectionQual}`}>
                       <svg className="h-3 w-3 fill-current" viewBox="0 0 24 24">
                         <rect x="3" y="16" width="3" height="5" rx="0.5" opacity={connectionQual === "Fair" ? 0.3 : 1} />
                         <rect x="9" y="11" width="3" height="10" rx="0.5" opacity={connectionQual === "Fair" || connectionQual === "Good" ? 0.3 : 1} />
@@ -3293,8 +3295,8 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             })
           ) : (
             <div className="text-center py-10 space-y-2">
-              <Users className="h-8 w-8 text-white/10 mx-auto" />
-              <p className="text-xs text-white/30">No participants found</p>
+              <Users className="h-8 w-8 text-slate-300 mx-auto" />
+              <p className="text-xs text-slate-400">No participants found</p>
             </div>
           )}
         </div>
@@ -3304,52 +3306,52 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           {/* Warning modal overlay */}
           {warningLevel > 0 &&
             createPortal(
-              <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/75 backdrop-blur-xl animate-in fade-in duration-300 p-4 font-sans">
-                <div className="max-w-md w-full rounded-3xl border border-white/10 bg-[#0E0E12]/95 backdrop-blur-2xl p-7 text-center animate-in zoom-in-95 duration-300 shadow-[0_0_60px_rgba(124,58,237,0.25)] relative overflow-hidden">
+              <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/40 backdrop-blur-xl animate-in fade-in duration-300 p-4 font-sans text-slate-800">
+                <div className="max-w-md w-full rounded-3xl border border-slate-200 bg-white p-7 text-center animate-in zoom-in-95 duration-300 shadow-[0_0_60px_rgba(15,23,42,0.15)] relative overflow-hidden">
                   {/* Subtle background glow */}
-                  <div className="absolute -top-20 -left-20 w-40 h-40 rounded-full bg-purple-600/20 blur-3xl pointer-events-none" />
-                  <div className="absolute -bottom-20 -right-20 w-40 h-40 rounded-full bg-indigo-600/20 blur-3xl pointer-events-none" />
+                  <div className="absolute -top-20 -left-20 w-40 h-40 rounded-full bg-blue-100/40 blur-3xl pointer-events-none" />
+                  <div className="absolute -bottom-20 -right-20 w-40 h-40 rounded-full bg-indigo-100/40 blur-3xl pointer-events-none" />
 
-                  {/* Big Prominent Strike Counter Badge */}
-                  <div className="relative z-10 h-20 w-28 rounded-2xl bg-gradient-to-br from-rose-500/20 via-purple-500/20 to-indigo-500/20 border-2 border-rose-500/50 flex flex-col items-center justify-center mx-auto mb-4 shadow-[0_0_35px_rgba(244,63,94,0.4)]">
-                    <span className="text-2xl font-black text-white font-mono tracking-wider drop-shadow-md">
+                  {/* Strike counter badge */}
+                  <div className="relative z-10 h-20 w-28 rounded-2xl bg-rose-50 border-2 border-rose-500/50 flex flex-col items-center justify-center mx-auto mb-4 shadow-[0_0_35px_rgba(244,63,94,0.15)]">
+                    <span className="text-2xl font-black text-rose-600 font-mono tracking-wider">
                       {warningLevel}/3
                     </span>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-rose-500">
                       STRIKE {warningLevel}
                     </span>
                   </div>
 
                   {/* Title & Subtitle */}
                   <div className="relative z-10 space-y-2 mb-5">
-                    <h3 className="text-xl font-black text-white tracking-tight">
+                    <h3 className="text-xl font-black text-slate-950 tracking-tight">
                       {warningLevel === 1 && "Warning: Strike 1 of 3"}
                       {warningLevel === 2 && "Warning: Strike 2 of 3"}
                       {warningLevel === 3 && "FINAL STRIKE 3/3 — Lesson Paused"}
                     </h3>
-                    <p className="text-xs text-white/60 leading-relaxed">
+                    <p className="text-xs text-slate-500 leading-relaxed">
                       {warningLevel === 1 && "Focus score dropped below 30%. Facing away again will trigger Strike 2."}
                       {warningLevel === 2 && "Sustained distraction detected! One more strike will result in automatic kick."}
                       {warningLevel === 3 && "You have reached 3 strikes! Click below to resume or you will be kicked from class."}
                     </p>
                     <div className="pt-1">
-                      <span className="text-xs font-black text-rose-400 bg-rose-500/15 border border-rose-500/30 rounded-xl px-3 py-1.5 inline-block shadow-sm">
+                      <span className="text-xs font-black text-rose-600 bg-rose-50 border border-rose-200 rounded-xl px-3 py-1.5 inline-block shadow-sm">
                         🚨 STRIKE {warningLevel}/3 — Reaching 3/3 results in auto-kick!
                       </span>
                     </div>
                   </div>
 
                   {/* Focus metrics pill */}
-                  <div className="relative z-10 inline-flex items-center gap-2 bg-white/[0.04] border border-white/10 rounded-full px-4 py-1.5 mb-5 shadow-inner">
-                    <span className={`h-2 w-2 rounded-full ${localMetrics.status === "focused" ? "bg-emerald-400" : localMetrics.status === "distracted" ? "bg-amber-400" : "bg-rose-400"} animate-ping`} />
-                    <span className="text-xs text-white/60 font-medium">Focus Score:</span>
-                    <span className="text-xs font-mono font-bold text-purple-300">{localMetrics.score}%</span>
-                    <span className="text-[10px] text-white/30 font-bold uppercase tracking-wider">({localMetrics.status})</span>
+                  <div className="relative z-10 inline-flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full px-4 py-1.5 mb-5 shadow-inner">
+                    <span className={`h-2 w-2 rounded-full ${localMetrics.status === "focused" ? "bg-emerald-500" : localMetrics.status === "distracted" ? "bg-amber-500" : "bg-rose-500"} animate-ping`} />
+                    <span className="text-xs text-slate-500 font-medium">Focus Score:</span>
+                    <span className="text-xs font-mono font-bold text-blue-605 text-blue-600">{localMetrics.score}%</span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">({localMetrics.status})</span>
                   </div>
 
                   {/* Gaze Telemetry Box */}
-                  <div className="relative z-10 text-xs text-white/60 bg-white/[0.02] p-3.5 rounded-2xl border border-white/[0.06] mb-6 flex items-center justify-center gap-2">
-                    <Eye className="h-4 w-4 text-purple-400/80 flex-shrink-0" />
+                  <div className="relative z-10 text-xs text-slate-600 bg-[#FCFCFD] p-3.5 rounded-2xl border border-slate-200 mb-6 flex items-center justify-center gap-2">
+                    <Eye className="h-4 w-4 text-blue-600 flex-shrink-0" />
                     <span>
                       {localMetrics.gazeDirection !== 'unknown' && localMetrics.gazeDirection !== 'center' 
                         ? `Detected Gaze: ${localMetrics.gazeDirection.toUpperCase()} (${Math.round(localMetrics.effectiveDeviation)}° angle)` 
@@ -3363,7 +3365,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                       setStrikeCount(prev => Math.min(3, prev + 1));
                       setWarningLevel(0);
                     }}
-                    className="relative z-10 w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 text-xs font-black uppercase tracking-widest text-white shadow-[0_0_30px_rgba(147,51,234,0.4)] hover:shadow-[0_0_40px_rgba(147,51,234,0.6)] active:scale-[0.98] cursor-pointer"
+                    className="relative z-10 w-full py-4 rounded-2xl bg-[#111827] hover:bg-[#1F2937] transition-all duration-300 text-xs font-black uppercase tracking-widest text-white shadow-lg active:scale-[0.98] cursor-pointer"
                   >
                     I&apos;m Focused — Resume Learning
                   </button>
@@ -3376,25 +3378,25 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           {/* Out of frame overlay */}
           {outOfFrameSecondsLeft !== null &&
             createPortal(
-              <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-xl animate-in fade-in duration-300 p-4 font-sans">
-                <div className="max-w-md w-full rounded-3xl border border-rose-500/30 bg-[#120A0C]/95 backdrop-blur-2xl p-7 text-center animate-in zoom-in-95 duration-300 shadow-[0_0_60px_rgba(244,63,94,0.25)] relative overflow-hidden">
-                  <div className="absolute -top-20 -left-20 w-40 h-40 rounded-full bg-rose-600/20 blur-3xl pointer-events-none" />
+              <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-slate-900/40 backdrop-blur-xl animate-in fade-in duration-300 p-4 font-sans text-slate-800">
+                <div className="max-w-md w-full rounded-3xl border border-rose-200 bg-white p-7 text-center animate-in zoom-in-95 duration-300 shadow-[0_0_60px_rgba(244,63,94,0.15)] relative overflow-hidden">
+                  <div className="absolute -top-20 -left-20 w-40 h-40 rounded-full bg-rose-100/40 blur-3xl pointer-events-none" />
 
                   {/* Icon */}
-                  <div className="relative z-10 h-16 w-16 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center mx-auto mb-5 shadow-[0_0_30px_rgba(244,63,94,0.3)]">
-                    <Lock className="h-8 w-8 text-rose-400 animate-bounce" />
+                  <div className="relative z-10 h-16 w-16 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto mb-5">
+                    <Lock className="h-8 w-8 text-rose-500 animate-bounce" />
                   </div>
 
-                  <h3 className="relative z-10 text-xl font-black text-white tracking-tight mb-2">Face Not Detected</h3>
-                  <p className="relative z-10 text-xs text-white/50 leading-relaxed mb-6">
+                  <h3 className="relative z-10 text-xl font-black text-slate-950 tracking-tight mb-2">Face Not Detected</h3>
+                  <p className="relative z-10 text-xs text-slate-500 leading-relaxed mb-6">
                     Please align your face within the camera frame to remain active in the session.
                   </p>
 
-                  <div className="relative z-10 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-rose-500/10 border border-rose-500/30 mb-6 shadow-[0_0_25px_rgba(244,63,94,0.2)]">
-                    <span className="text-3xl font-mono font-black text-rose-400">{outOfFrameSecondsLeft}s</span>
+                  <div className="relative z-10 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-rose-50 border border-rose-200 mb-6">
+                    <span className="text-3xl font-mono font-black text-rose-500">{outOfFrameSecondsLeft}s</span>
                   </div>
 
-                  <p className="relative z-10 text-[11px] text-rose-300/60 leading-relaxed">
+                  <p className="relative z-10 text-[11px] text-rose-600/70 leading-relaxed">
                     You will be automatically removed from the session in {outOfFrameSecondsLeft} seconds if undetected.
                   </p>
                 </div>
@@ -3406,30 +3408,30 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           {/* Phone / Tablet Warning overlay */}
           {showPhoneWarning && phoneWarningCount < 3 &&
             createPortal(
-              <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-black/80 backdrop-blur-xl animate-in fade-in duration-300 p-4 font-sans">
-                <div className="max-w-md w-full rounded-3xl border border-amber-500/30 bg-[#140E0A]/95 backdrop-blur-2xl p-7 text-center animate-in zoom-in-95 duration-300 shadow-[0_0_60px_rgba(245,158,11,0.25)] relative overflow-hidden">
-                  <div className="absolute -top-20 -left-20 w-40 h-40 rounded-full bg-amber-600/20 blur-3xl pointer-events-none" />
+              <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-slate-900/40 backdrop-blur-xl animate-in fade-in duration-300 p-4 font-sans text-slate-800">
+                <div className="max-w-md w-full rounded-3xl border border-amber-200 bg-white p-7 text-center animate-in zoom-in-95 duration-300 shadow-[0_0_60px_rgba(245,158,11,0.15)] relative overflow-hidden">
+                  <div className="absolute -top-20 -left-20 w-40 h-40 rounded-full bg-amber-100/40 blur-3xl pointer-events-none" />
 
-                  <div className="relative z-10 h-16 w-16 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center mx-auto mb-5 shadow-[0_0_30px_rgba(245,158,11,0.3)]">
-                    <AlertTriangle className="h-8 w-8 text-amber-400 animate-pulse" />
+                  <div className="relative z-10 h-16 w-16 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center mx-auto mb-5">
+                    <AlertTriangle className="h-8 w-8 text-amber-550 text-amber-500 animate-pulse" />
                   </div>
 
-                  <h3 className="relative z-10 text-xl font-black text-white tracking-tight mb-2">Device Usage Detected</h3>
-                  <p className="relative z-10 text-xs text-white/50 leading-relaxed mb-6">
+                  <h3 className="relative z-10 text-xl font-black text-slate-950 tracking-tight mb-2">Device Usage Detected</h3>
+                  <p className="relative z-10 text-xs text-slate-500 leading-relaxed mb-6">
                     Using phones, tablets, or secondary screens is strictly prohibited during live sessions.
                   </p>
 
                   {phoneSecondsLeft !== null ? (
-                    <div className="relative z-10 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-amber-500/10 border border-amber-500/30 mb-6 shadow-[0_0_25px_rgba(245,158,11,0.2)]">
-                      <span className="text-3xl font-mono font-black text-amber-400">{phoneSecondsLeft}s</span>
+                    <div className="relative z-10 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-amber-50 border border-amber-200 mb-6">
+                      <span className="text-3xl font-mono font-black text-amber-500">{phoneSecondsLeft}s</span>
                     </div>
                   ) : (
-                    <div className="relative z-10 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-amber-500/15 border border-amber-500/30 mb-6">
-                      <span className="text-xs font-mono font-bold text-amber-300">Warning {phoneWarningCount} of 3</span>
+                    <div className="relative z-10 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-amber-50 border border-amber-200 mb-6">
+                      <span className="text-xs font-mono font-bold text-amber-600">Warning {phoneWarningCount} of 3</span>
                     </div>
                   )}
 
-                  <p className="relative z-10 text-[11px] text-amber-300/60 leading-relaxed">
+                  <p className="relative z-10 text-[11px] text-amber-600/70 leading-relaxed">
                     {phoneSecondsLeft !== null
                       ? `Please put away the device. Warning strike in ${phoneSecondsLeft} seconds.`
                       : "Put the device completely away to resume learning."}
@@ -3441,41 +3443,41 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           }
           {/* Entry Overlay */}
           {!hasEntered && (
-            <div className="fixed inset-0 bg-[#08080A] z-[99] flex flex-col items-center justify-center text-center p-6 font-sans antialiased col-span-full">
+            <div className="fixed inset-0 bg-[#F6F7F9] z-[99] flex flex-col items-center justify-center text-center p-6 font-sans antialiased col-span-full">
               <style>{`
-                @keyframes ep{0%,100%{box-shadow:0 0 20px rgba(147,51,234,.15)}50%{box-shadow:0 0 40px rgba(147,51,234,.35)}}
+                @keyframes ep{0%,100%{box-shadow:0 0 20px rgba(37,99,235,.1)}50%{box-shadow:0 0 40px rgba(37,99,235,.2)}}
                 @keyframes fu{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
                 .ef{animation:fu .6s cubic-bezier(.16,1,.3,1) forwards}
                 .efd{animation:fu .6s cubic-bezier(.16,1,.3,1) .15s forwards;opacity:0}
                 .efd2{animation:fu .6s cubic-bezier(.16,1,.3,1) .3s forwards;opacity:0}
               `}</style>
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
+              <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.03)_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
               <div className="relative z-10 max-w-sm w-full space-y-8">
                 <div className="ef flex flex-col items-center gap-5">
-                  <div className="h-20 w-20 rounded-3xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center border border-purple-400/20" style={{ animation: "ep 3s ease-in-out infinite" }}>
-                    <Brain className="h-10 w-10 text-white" />
+                  <div className="h-20 w-20 rounded-3xl bg-blue-50 flex items-center justify-center border border-blue-100" style={{ animation: "ep 3s ease-in-out infinite" }}>
+                    <Brain className="h-10 w-10 text-blue-600" />
                   </div>
                   <div className="space-y-2">
-                    <h1 className="text-2xl font-black text-white tracking-tight">Ready to begin?</h1>
-                    <p className="text-xs text-white/35 leading-relaxed">{isParsingPdf ? "Loading PDF..." : "Your AI-powered classroom is prepared"}</p>
+                    <h1 className="text-2xl font-black text-slate-900 tracking-tight">Ready to begin?</h1>
+                    <p className="text-xs text-slate-400 leading-relaxed">{isParsingPdf ? "Loading PDF..." : "Your AI-powered classroom is prepared"}</p>
                   </div>
                 </div>
-                <div className="efd bg-[#111113] border border-white/[.06] rounded-2xl p-5 space-y-3">
+                <div className="efd bg-white border border-slate-200 rounded-2xl p-5 space-y-3 shadow-md">
                   <div className="flex items-center justify-between">
-                    <span className="text-[9px] font-black uppercase tracking-[.15em] text-purple-400">Session</span>
-                    <span className="text-[10px] font-mono font-bold text-white/30 bg-white/[.03] px-2 py-0.5 rounded">{sessionCode}</span>
+                    <span className="text-[9px] font-black uppercase tracking-[.15em] text-blue-600">Session</span>
+                    <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-50 px-2 py-0.5 rounded">{sessionCode}</span>
                   </div>
-                  <h3 className="text-sm font-bold text-white">{sessionTitle}</h3>
-                  <p className="text-[11px] text-white/40">{sessionSubject} • {isPdfMode ? `${pdfPages.length} Pages` : `${topics.length} topics`} • {teachingMode} Mode</p>
+                  <h3 className="text-sm font-bold text-slate-900">{sessionTitle}</h3>
+                  <p className="text-[11px] text-slate-500">{sessionSubject} • {isPdfMode ? `${pdfPages.length} Pages` : `${topics.length} topics`} • {teachingMode} Mode</p>
                   <div className="flex items-center gap-2 pt-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[10px] text-emerald-400/80 font-semibold">6 students connected</span>
+                    <span className="text-[10px] text-emerald-600 font-semibold">6 students connected</span>
                   </div>
                 </div>
-                <button id="enter-classroom-btn" disabled={isParsingPdf} onClick={handleEnterClassroom} className="efd2 w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-2xl text-sm font-black uppercase text-white tracking-widest transition-all shadow-lg shadow-purple-600/20 active:scale-[.98] cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                <button id="enter-classroom-btn" disabled={isParsingPdf} onClick={handleEnterClassroom} className="efd2 w-full py-4 bg-[#111827] hover:bg-[#1F2937] rounded-2xl text-sm font-black uppercase text-white tracking-widest transition-all shadow-lg shadow-slate-900/10 active:scale-[.98] cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                   <Play className="h-4 w-4 fill-current" /> {isParsingPdf ? "Loading..." : "Enter Classroom"}
                 </button>
-                <p className="text-[10px] text-white/20">Click to enable audio • M=mic V=video H=hand C=chat</p>
+                <p className="text-[10px] text-slate-455 text-slate-400">Click to enable audio • M=mic V=video H=hand C=chat</p>
               </div>
             </div>
           )}
