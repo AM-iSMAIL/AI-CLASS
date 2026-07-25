@@ -1869,11 +1869,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         });
         
         setStudents(activeStudents)
-        // Compute Student Focus Average strictly from students (excluding teacher)
-        const studentOnlyList = activeStudents.filter(s => !(s as any).isTeacher && (s as any).role !== "teacher");
-        if (studentOnlyList.length > 0) {
-          const total = studentOnlyList.reduce((a, s) => a + (s.engagementScore ?? 100), 0);
-          setClassFocus(Math.round(total / studentOnlyList.length));
+        // Compute Class Focus Average across all active participants (Teacher + Students)
+        if (activeStudents.length > 0) {
+          const total = activeStudents.reduce((a, s) => a + (s.engagementScore ?? 100), 0);
+          setClassFocus(Math.round(total / activeStudents.length));
         } else {
           setClassFocus(100);
         }

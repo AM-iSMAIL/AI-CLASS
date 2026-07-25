@@ -166,17 +166,16 @@ export default function SummaryPage() {
       teacherId: "teacher",
     };
 
-    const studentsOnly = studentsList.filter(s => s.id !== sessionData.teacherId);
-    const totalAttendees = studentsOnly.length + kickedList.length;
+    const totalAttendees = studentsList.length + kickedList.length;
 
-    // 1. Compute Student Average Focus Score
-    const studentScores = studentsOnly
+    // 1. Compute Class Average Focus Score (including Teacher + Students)
+    const allScores = studentsList
       .map(s => s.engagementScore ?? (s as any).score)
       .filter(sc => typeof sc === "number" && !isNaN(sc) && sc >= 0);
 
-    let avgFocusScore = 0;
-    if (studentScores.length > 0) {
-      avgFocusScore = Math.round(studentScores.reduce((acc, val) => acc + val, 0) / studentScores.length);
+    let avgFocusScore = 100;
+    if (allScores.length > 0) {
+      avgFocusScore = Math.round(allScores.reduce((acc, val) => acc + val, 0) / allScores.length);
     } else if (typeof window !== "undefined") {
       const cachedClassFocus = localStorage.getItem(`student_focus_${sessionCode}`) || localStorage.getItem("classFocus");
       if (cachedClassFocus && !isNaN(Number(cachedClassFocus))) {
@@ -275,7 +274,7 @@ export default function SummaryPage() {
                 <CheckCircle2 className="h-4 w-4 text-[#16A34A]" />
               </div>
               <h3 className="text-2xl font-black text-[#000000]">
-                {studentsOnly.filter(s => s.status !== "offline").length}
+                {studentsList.filter(s => s.status !== "offline").length}
               </h3>
               <span className="text-[10px] text-[#111827] font-bold">Active till the end</span>
             </div>
@@ -308,16 +307,21 @@ export default function SummaryPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#E5E7EB]">
-                  {/* Active & Offline Students */}
-                  {studentsOnly.map((student) => {
+                  {/* Active & Offline Attendees (Teacher + Students) */}
+                  {studentsList.map((student) => {
+                    const focusScore = student.engagementScore ?? (student as any).score ?? 100;
                     const focusBadge = 
-                      student.engagementScore >= 80 ? "bg-[#ECFDF5] text-[#16A34A] border-[#A7F3D0]" :
-                      student.engagementScore >= 65 ? "bg-[#FEF3C7] text-[#D97706] border-[#FDE68A]" :
+                      focusScore >= 80 ? "bg-[#ECFDF5] text-[#16A34A] border-[#A7F3D0]" :
+                      focusScore >= 65 ? "bg-[#FEF3C7] text-[#D97706] border-[#FDE68A]" :
                       "bg-[#FEF2F2] text-[#DC2626] border-[#FECACA]";
+                    
+                    const isHost = student.id === sessionData.teacherId || (student as any).isTeacher || (student as any).role === "teacher";
                     
                     return (
                       <tr key={student.id} className="border-b border-[#E5E7EB] hover:bg-[#F8FAFC] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] text-xs">
-                        <td className="px-6 py-4 font-bold text-[#000000]">{student.name}</td>
+                        <td className="px-6 py-4 font-bold text-[#000000]">
+                          {student.name} {isHost && <span className="ml-1.5 px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] text-[9px] font-mono font-bold uppercase">Host / Teacher</span>}
+                        </td>
                         <td className="px-4 py-4">
                           {student.status === "offline" ? (
                             <span className="inline-flex items-center rounded-full bg-[#F3F4F6] border border-[#111827] px-2.5 py-0.5 text-[9px] font-extrabold text-[#111827] uppercase font-mono">
@@ -332,7 +336,7 @@ export default function SummaryPage() {
                         <td className="px-4 py-4 text-[#111827] font-bold">{formatTimestamp(student.joinedAt)}</td>
                         <td className="px-6 py-4 text-right">
                           <span className={`inline-flex px-2 py-0.5 rounded-md border text-[10px] font-bold ${focusBadge}`}>
-                            {student.engagementScore}%
+                            {focusScore}%
                           </span>
                         </td>
                       </tr>
@@ -357,7 +361,7 @@ export default function SummaryPage() {
                     </tr>
                   ))}
 
-                  {studentsOnly.length === 0 && kickedList.length === 0 && (
+                  {studentsList.length === 0 && kickedList.length === 0 && (
                     <tr>
                       <td colSpan={4} className="px-6 py-12 text-center text-xs font-medium">
                         <Users className="h-10 w-10 text-[#CBD5E1] mb-2.5 mx-auto" />
