@@ -284,61 +284,45 @@ export default function LiveClassroomPage() {
       }
     };
 
-    // Trigger strike escalation when face is in frame and student focus score is 30 or less, or if phone is detected
     const isUnfocused =
       localMetrics.faceDetected && (
         localMetrics.score <= 30 ||
         localMetrics.phoneDetected
       );
 
-    const STRIKE_STEP_DELAY = 2500; // 2.5s between strikes
-    const AUTO_KICK_DELAY = 4000;    // 4s after Strike 3 to kick
+    const STRIKE_STEP_DELAY = 2000; // 2s between strikes
 
     if (isUnfocused) {
-      if (timerRef.current) return; // Keep existing timeout running without resetting it
+      if (timerRef.current) return;
 
-      // Calculate what the NEXT strike should be based on current persistent strike count
       const nextStrike = Math.min(3, strikeCount + 1);
+      setWarningLevel(nextStrike);
 
-      // Display warning modal overlay if not currently shown
-      if (warningLevel === 0) {
-        setTimeout(() => {
-          setWarningLevel(nextStrike);
-        }, 0);
+      if (nextStrike >= 3) {
+        setStrikeCount(3);
+        const executeKick = async () => {
+          const storedName = studentName || "Unknown";
+          if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
+          window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=three_strikes`;
+        };
+        executeKick();
+        return;
       }
 
-      // Automatically advance to the next strike if they remain distracted
-      timerRef.current = setTimeout(async () => {
+      timerRef.current = setTimeout(() => {
         timerRef.current = null;
-        if (nextStrike === 1) {
-          setStrikeCount(1);
-          setWarningLevel(2); // Escalate to show Strike 2 next
-        } else if (nextStrike === 2) {
-          setStrikeCount(2);
-          setWarningLevel(3); // Escalate to show Strike 3 next
-        } else if (nextStrike === 3) {
-          setStrikeCount(3);
-          // Fired 3 strikes, kick student after AUTO_KICK_DELAY
-          setTimeout(async () => {
-            const storedName = studentName || "Unknown";
-            if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
-            window.location.href = `/session/${sessionCode}/summary?kicked=true`;
-          }, AUTO_KICK_DELAY);
-        }
+        setStrikeCount(nextStrike);
       }, STRIKE_STEP_DELAY);
     } else {
-      // If user refocuses, clear running warning timers. Keep warningLevel = 0 so modal closes.
-      clearPending();
-      if (warningLevel > 0) {
-        setTimeout(() => {
-          setWarningLevel(0);
-        }, 0);
+      if (strikeCount < 3) {
+        clearPending();
+        if (warningLevel > 0) {
+          setTimeout(() => {
+            setWarningLevel(0);
+          }, 0);
+        }
       }
     }
-
-    return () => {
-      // Clean up on unmount or dependency updates (without clearing progress on stable unfocused status)
-    };
   }, [localMetrics.status, localMetrics.score, localMetrics.faceDetected, localMetrics.phoneDetected, localMetrics.effectiveDeviation, localMetrics.gazeDirection, warningLevel, strikeCount, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
 
   // Startup grace period timer to delay detection at the start of class (4s gap)
@@ -364,9 +348,7 @@ export default function LiveClassroomPage() {
         clearInterval(outOfFrameIntervalRef.current);
         outOfFrameIntervalRef.current = null;
       }
-      setTimeout(() => {
-        setOutOfFrameSecondsLeft(null);
-      }, 0);
+      setOutOfFrameSecondsLeft(null);
     };
 
     if (localMetrics.faceDetected) {
@@ -374,26 +356,22 @@ export default function LiveClassroomPage() {
       return;
     }
 
-    setTimeout(() => {
+    if (!outOfFrameTimerRef.current) {
       setOutOfFrameSecondsLeft(5);
-    }, 0);
 
-    outOfFrameIntervalRef.current = setInterval(() => {
-      setOutOfFrameSecondsLeft((prev) => {
-        if (prev === null) return null;
-        return prev > 1 ? prev - 1 : 0;
-      });
-    }, 1000);
+      outOfFrameIntervalRef.current = setInterval(() => {
+        setOutOfFrameSecondsLeft((prev) => {
+          if (prev === null) return null;
+          return prev > 1 ? prev - 1 : 0;
+        });
+      }, 1000);
 
-    outOfFrameTimerRef.current = setTimeout(async () => {
-      const storedName = studentName || "Unknown";
-      if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
-      window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
-    }, 5000);
-
-    return () => {
-      clearOutOfFrameTimers();
-    };
+      outOfFrameTimerRef.current = setTimeout(async () => {
+        const storedName = studentName || "Unknown";
+        if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
+        window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
+      }, 5000);
+    }
   }, [localMetrics.faceDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus, startupGraceActive]);
 
   // ── Phone usage warning engine ──
