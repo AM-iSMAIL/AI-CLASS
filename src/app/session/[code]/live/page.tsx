@@ -215,6 +215,7 @@ export default function LiveClassroomPage() {
   const lectureAbortRef = useRef<AbortController | null>(null)
   const savedLectureStateRef = useRef<{ topicIdx: number; fullTranscript: string; sentenceBuffer: string; } | null>(null)
   const resumePendingRef = useRef<boolean>(false)
+  const isEndingSessionRef = useRef<boolean>(false)
 
   const prefetchedLectures = useRef<Record<string, { promise: Promise<Response | void>, time: number, consumed: boolean, fullText?: string, firstImageUrl?: string | null, firstAudioBase64?: string }>>({})
 
@@ -300,6 +301,7 @@ export default function LiveClassroomPage() {
       if (nextStrike >= 3) {
         setStrikeCount(3);
         const executeKick = async () => {
+          isEndingSessionRef.current = true;
           const storedName = studentName || "Unknown";
           if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
           window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=three_strikes`;
@@ -366,6 +368,7 @@ export default function LiveClassroomPage() {
       }, 1000);
 
       outOfFrameTimerRef.current = setTimeout(async () => {
+        isEndingSessionRef.current = true;
         const storedName = studentName || "Unknown";
         if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
         window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
@@ -1807,6 +1810,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
     if (!hasEntered) return;
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isEndingSessionRef.current) return;
       if (!isTeacher && studentId && sessionCode) {
         setStudentOffline(sessionCode, studentId).catch(() => { });
       }
@@ -2203,6 +2207,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
 
   const handleConfirmEnd = async () => {
+    isEndingSessionRef.current = true;
     setShowEndModal(false)
     setEndCountdown(5)
     stopSpeaking()
