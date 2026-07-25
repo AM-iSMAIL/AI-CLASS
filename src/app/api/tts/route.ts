@@ -52,8 +52,12 @@ export async function POST(req: NextRequest) {
 
     // Convert raw binary audio stream to base64
     const audioBuffer = await response.arrayBuffer();
-    const base64Audio = Buffer.from(audioBuffer).toString("base64");
+    if (!audioBuffer || audioBuffer.byteLength === 0) {
+      console.warn("[Camb AI API]: Received empty audio buffer (0 bytes)");
+      return NextResponse.json({ error: "Empty audio stream returned from Camb AI" }, { status: 422 });
+    }
 
+    const base64Audio = Buffer.from(audioBuffer).toString("base64");
     return NextResponse.json({ audioContent: base64Audio });
   } catch (err: any) {
     console.error("[TTS API Router Catch]:", err);
