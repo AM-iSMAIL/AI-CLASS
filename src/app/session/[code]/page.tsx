@@ -841,15 +841,15 @@ export default function SessionPage() {
   // Render Error
   if (error || !session) {
     return (
-      <div className="min-h-screen bg-[#0A0A0A] flex flex-col items-center justify-center text-white font-sans p-6 text-center">
+      <div className="min-h-screen bg-[#F6F7F9] flex flex-col items-center justify-center text-slate-800 font-sans p-6 text-center">
         <AlertCircle className="h-10 w-10 text-red-500 mb-4" />
-        <h2 className="text-lg font-bold mb-2">Session Error</h2>
-        <p className="text-sm text-white/50 mb-6 max-w-sm">
+        <h2 className="text-lg font-bold mb-2 text-[#111827]">Session Error</h2>
+        <p className="text-sm text-slate-500 mb-6 max-w-sm">
           {error || "Failed to load session. Return to dashboard?"}
         </p>
         <Link
           href="/dashboard"
-          className="px-5 py-2.5 bg-[#1a1a1a] rounded-xl text-xs font-semibold hover:bg-[#242424] border border-white/5 transition-all"
+          className="px-5 py-2.5 bg-[#111827] text-white rounded-xl text-xs font-semibold hover:bg-[#1F2937] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] shadow-sm hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-900/10"
         >
           Return to Dashboard
         </Link>
@@ -862,7 +862,7 @@ export default function SessionPage() {
   // ──────────────────────────────────────────
   if (isTransitioning) {
     return (
-      <div className="min-h-screen bg-[#0A0A0A] flex flex-col items-center justify-center text-white font-sans overflow-hidden relative">
+      <div className="min-h-screen bg-[#F6F7F9] flex flex-col items-center justify-center text-slate-800 font-sans overflow-hidden relative">
         <style>{`
           @keyframes ripple {
             0% { transform: scale(0.8); opacity: 0.5; }
@@ -873,7 +873,7 @@ export default function SessionPage() {
             width: 300px;
             height: 300px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(147,51,234,0.3) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%);
             animation: ripple 2s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
           }
           .ripple-bg-2 { animation-delay: 0.7s; }
@@ -882,11 +882,11 @@ export default function SessionPage() {
         <div className="ripple-bg ripple-bg-2" />
         
         <div className="relative z-10 flex flex-col items-center gap-4 text-center">
-          <div className="h-14 w-14 rounded-2xl bg-purple-600/10 border border-purple-500/20 flex items-center justify-center text-purple-400 animate-bounce">
+          <div className="h-14 w-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 animate-bounce shadow-sm">
             <Brain className="h-7 w-7" />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight">Class is starting...</h2>
-          <p className="text-xs text-white/40">Entering live classroom environment</p>
+          <h2 className="text-2xl font-bold tracking-tight text-[#111827]">Class is starting...</h2>
+          <p className="text-xs text-slate-500">Entering live classroom environment</p>
         </div>
       </div>
     )
@@ -898,9 +898,9 @@ export default function SessionPage() {
   if (isClassroomActive) {
     router.push(`/session/${sessionCode}/live`)
     return (
-      <div className="min-h-screen bg-[#0A0A0A] flex flex-col items-center justify-center text-white font-sans">
-        <div className="h-8 w-8 rounded-full border-2 border-purple-500 border-t-transparent animate-spin mb-4" />
-        <p className="text-sm text-white/60">Entering classroom...</p>
+      <div className="min-h-screen bg-[#F6F7F9] flex flex-col items-center justify-center text-slate-800 font-sans">
+        <div className="h-8 w-8 rounded-full border-2 border-blue-500 border-t-transparent animate-spin mb-4" />
+        <p className="text-sm text-slate-500">Entering classroom...</p>
       </div>
     )
   }
@@ -910,7 +910,7 @@ export default function SessionPage() {
   // ──────────────────────────────────────────
   const activeStudentCount = studentsList.length
   return (
-    <div className="min-h-screen bg-[#111111] text-white flex font-sans antialiased">
+    <div className="min-h-screen bg-[#F6F7F9] text-slate-800 flex font-sans antialiased">
       {isTeacher ? (
         /* TEACHER WAITING ROOM */
         <div className="flex-1 flex">
@@ -921,17 +921,17 @@ export default function SessionPage() {
           />
 
           <div className="flex-1 lg:ml-64 flex flex-col">
-            <header className="h-16 border-b border-[#1a1a1a] bg-[#111111]/80 backdrop-blur-xl px-6 md:px-8 flex items-center justify-between sticky top-0 z-20">
+            <header className="h-16 border-b border-slate-200/80 bg-white/80 backdrop-blur-xl px-6 md:px-8 flex items-center justify-between sticky top-0 z-20 transition-all duration-300">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setIsMobileSidebarOpen(true)}
-                  className="p-1.5 rounded-lg border border-white/10 hover:bg-white/5 lg:hidden text-white/80"
+                  className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 lg:hidden text-slate-600"
                 >
                   <Menu className="h-5 w-5" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-white/40 uppercase">Session Starting in</span>
-                  <span className="text-lg font-bold text-purple-400 font-mono tracking-widest px-2.5 py-0.5 rounded bg-purple-500/10 border border-purple-500/20">
+                  <span className="text-xs font-semibold text-slate-500 uppercase">Session Starting in</span>
+                  <span className="text-lg font-bold text-blue-600 font-mono tracking-widest px-2.5 py-0.5 rounded bg-blue-50 border border-blue-100/55 transition-all">
                     {timeRemaining !== null ? formatTimeStr(timeRemaining) : "02:00"}
                   </span>
                 </div>
@@ -946,7 +946,7 @@ export default function SessionPage() {
                     console.warn("startClassEarly Firebase error (continuing with local transition):", e)
                   }
                 }}
-                className="flex items-center gap-1 px-4.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-4.5 py-2 rounded-xl bg-[#111827] hover:bg-[#1F2937] text-white text-xs font-bold transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-900/10 cursor-pointer active:translate-y-0"
               >
                 <Play className="h-3 w-3 fill-current" />
                 Start Early
@@ -956,19 +956,19 @@ export default function SessionPage() {
             <main className="flex-1 p-6 md:p-8 max-w-5xl w-full mx-auto grid gap-8 lg:grid-cols-10">
               <section className="lg:col-span-6 space-y-6">
                 <div>
-                  <h2 className="text-2xl font-bold tracking-tight text-white">Your session is ready</h2>
-                  <p className="text-xs text-white/40 mt-1">Invite students and start the session below</p>
+                  <h2 className="text-2xl font-bold tracking-tight text-[#111827]">Your session is ready</h2>
+                  <p className="text-xs text-[#6B7280] mt-1">Invite students and start the session below</p>
                 </div>
 
-                <div className="bg-[#1a1a1a] rounded-2xl border border-white/5 p-6 space-y-4">
+                <div className="bg-white border border-slate-900/8 rounded-[24px] shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)] hover:-translate-y-[2px] hover:shadow-[0_1px_2px_rgba(15,23,42,0.03),0_16px_40px_rgba(15,23,42,0.08)] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] p-6 space-y-4">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h3 className="text-base font-bold text-white">{session.title}</h3>
+                      <h3 className="text-base font-bold text-[#111827]">{session.title}</h3>
                       <div className="flex flex-wrap gap-2 mt-2">
-                        <span className="text-[10px] bg-purple-500/10 border border-purple-500/20 text-purple-400 font-bold px-2 py-0.5 rounded-full uppercase">
+                        <span className="text-[10px] bg-[#EFF6FF] text-[#2563EB] font-bold px-3 py-1 rounded-[999px] uppercase tracking-wider">
                           {session.subject}
                         </span>
-                        <span className="text-[10px] bg-white/5 border border-white/10 text-white/60 font-bold px-2 py-0.5 rounded-full uppercase">
+                        <span className="text-[10px] bg-[#F3F4F6] text-[#374151] font-bold px-3 py-1 rounded-[999px] uppercase tracking-wider">
                           {session.gradeLevel}
                         </span>
                       </div>
@@ -976,12 +976,12 @@ export default function SessionPage() {
                   </div>
                 </div>
 
-                <div className="bg-[#1a1a1a] rounded-2xl border border-white/5 p-6 text-center space-y-4">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">
+                <div className="bg-white border border-slate-900/8 rounded-[24px] shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)] hover:-translate-y-[2px] hover:shadow-[0_1px_2px_rgba(15,23,42,0.03),0_16px_40px_rgba(15,23,42,0.08)] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] p-6 text-center space-y-4">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] block mb-1">
                     Invite Students with Code
                   </span>
-                  <div className="relative max-w-sm mx-auto flex items-center justify-between bg-purple-500/10 border border-purple-500/20 p-4.5 rounded-2xl">
-                    <span className="text-2xl font-mono font-bold tracking-widest text-purple-400">
+                  <div className={`relative max-w-sm mx-auto flex items-center justify-between bg-[#FCFCFD] border border-[#E5E7EB] h-[84px] px-6 rounded-[20px] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${isCopied ? 'bg-blue-50/50 border-blue-300 ring-2 ring-blue-100/50' : ''}`}>
+                    <span className="text-[42px] font-mono font-bold tracking-[4px] text-[#111827]">
                       {session.code}
                     </span>
                     <button
@@ -990,19 +990,19 @@ export default function SessionPage() {
                         setIsCopied(true)
                         setTimeout(() => setIsCopied(false), 2000)
                       }}
-                      className="p-2.5 rounded-xl bg-purple-500/15 text-purple-400 hover:bg-purple-500/25 transition-all cursor-pointer"
+                      className="w-12 h-12 flex items-center justify-center rounded-xl bg-[#F3F4F6] text-slate-600 hover:bg-[#E5E7EB] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.05] cursor-pointer"
                     >
-                      {isCopied ? <CheckCircle className="h-4.5 w-4.5" /> : <Copy className="h-4.5 w-4.5" />}
+                      {isCopied ? <CheckCircle className="h-5 w-5 text-blue-600 animate-bounce" /> : <Copy className="h-5 w-5" />}
                     </button>
                   </div>
                 </div>
               </section>
 
               <section className="lg:col-span-4 space-y-6">
-                <div className="bg-[#1a1a1a] rounded-2xl border border-white/5 p-5 flex flex-col h-[300px]">
-                  <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-white">Students Joined</h3>
-                    <span className="px-2 py-0.5 rounded bg-purple-500/10 text-[10px] text-purple-400 font-bold">
+                <div className="bg-white border border-slate-900/8 rounded-[24px] shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)] hover:-translate-y-[2px] hover:shadow-[0_1px_2px_rgba(15,23,42,0.03),0_16px_40px_rgba(15,23,42,0.08)] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] p-5 flex flex-col h-[300px]">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#111827]">Students Joined</h3>
+                    <span className="px-2.5 py-0.5 rounded bg-[#EFF6FF] text-[10px] text-[#2563EB] font-bold">
                       {activeStudentCount} ready
                     </span>
                   </div>
@@ -1010,14 +1010,14 @@ export default function SessionPage() {
                   <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2">
                     {studentsList.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center text-center p-4">
-                        <Users className="h-8 w-8 text-white/10 mb-2" />
-                        <p className="text-xs font-bold text-white/40">Waiting for students...</p>
+                        <Users className="h-12 w-12 text-[#CBD5E1] mb-2" />
+                        <p className="text-xs font-semibold text-[#6B7280]">Waiting for students...</p>
                       </div>
                     ) : (
                       studentsList.map((st) => (
-                        <div key={st.id} className="flex items-center justify-between p-2.5 bg-white/[0.01] border border-white/5 rounded-xl">
-                          <span className="text-xs font-semibold text-white/95">{st.name}</span>
-                          <span className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-[8px] font-bold text-emerald-400 uppercase">Joined</span>
+                        <div key={st.id} className="flex items-center justify-between p-3 bg-[#FCFCFD] border border-slate-100 rounded-xl hover:border-slate-200 transition-colors">
+                          <span className="text-xs font-semibold text-slate-800">{st.name}</span>
+                          <span className="px-2 py-0.5 rounded bg-emerald-50 border border-emerald-100 text-[8px] font-bold text-emerald-600 uppercase tracking-wide">Joined</span>
                         </div>
                       ))
                     )}
@@ -1033,7 +1033,7 @@ export default function SessionPage() {
                       console.warn("startClassEarly Firebase error (continuing with local transition):", e)
                     }
                   }}
-                  className="w-full py-3.5 bg-purple-600 hover:bg-purple-500 rounded-xl font-bold text-sm text-white transition-all cursor-pointer"
+                  className="w-full h-[52px] bg-[#111827] text-white hover:bg-[#1F2937] rounded-2xl font-bold text-sm transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(17,24,39,0.12)] cursor-pointer flex items-center justify-center gap-1 active:translate-y-0"
                 >
                   Start Session
                 </button>
@@ -1043,28 +1043,28 @@ export default function SessionPage() {
         </div>
       ) : (
         /* STUDENT WAITING LOBBY */
-        <div className="min-h-screen bg-[#0A0A0A] w-full flex flex-col items-center justify-center p-6 text-center">
+        <div className="min-h-screen bg-[#F6F7F9] w-full flex flex-col items-center justify-center p-6 text-center text-slate-800">
           <div className="max-w-md w-full space-y-8 animate-scaleUp">
             <div className="space-y-4">
-              <div className="h-16 w-16 rounded-2xl bg-purple-600/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mx-auto">
+              <div className="h-16 w-16 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mx-auto shadow-sm">
                 <Brain className="h-8 w-8 animate-pulse" />
               </div>
-              <h2 className="text-2xl font-black text-white">Waiting Lobby</h2>
-              <p className="text-xs text-white/40">
+              <h2 className="text-2xl font-black text-[#111827]">Waiting Lobby</h2>
+              <p className="text-xs text-[#6B7280]">
                 {ROTATING_SUBTITLES[subtitleIndex]}
               </p>
             </div>
             
-            <div className="bg-[#111112] border border-white/5 p-6 rounded-2xl space-y-4">
+            <div className="bg-white border border-slate-900/8 rounded-[24px] shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)] p-6 space-y-4 hover:-translate-y-[2px] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)]">
               <div className="text-left space-y-1">
-                <span className="text-[10px] text-purple-400 uppercase font-black">Joining Session</span>
-                <h3 className="text-base font-bold text-white">{session.title}</h3>
-                <p className="text-[11px] text-white/40">{session.subject} • {session.gradeLevel}</p>
+                <span className="text-[10px] text-[#2563EB] uppercase font-black tracking-wider">Joining Session</span>
+                <h3 className="text-base font-bold text-[#111827]">{session.title}</h3>
+                <p className="text-[11px] text-[#6B7280]">{session.subject} • {session.gradeLevel}</p>
               </div>
 
-              <div className="border-t border-white/5 pt-4 text-xs flex items-center justify-between text-white/50">
+              <div className="border-t border-slate-100 pt-4 text-xs flex items-center justify-between text-slate-500">
                 <span>Classroom status:</span>
-                <span className="text-purple-400 font-bold uppercase animate-pulse">Waiting for host...</span>
+                <span className="text-[#2563EB] font-bold uppercase animate-pulse">Waiting for host...</span>
               </div>
             </div>
           </div>
