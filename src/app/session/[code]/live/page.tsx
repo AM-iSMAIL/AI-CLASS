@@ -2731,22 +2731,22 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                 </span>
               </div>
 
-              {/* Transcript — styled with 1.8 line height */}
+              {/* Transcript — styled with 1.8 line height and rich dark black text */}
               <div className="flex-1 relative min-h-[3.5rem] max-h-28 overflow-hidden">
                 <div className="absolute inset-0 overflow-y-auto cscroll pr-2">
                   {pastTranscripts.map((pt, i) => (
-                    <p key={i} className="text-[13px] text-[#6B7280] mb-1.5 leading-[1.8] font-medium">{pt}</p>
+                    <p key={i} className="text-[14px] text-[#111827] mb-1.5 leading-[1.8] font-semibold">{pt}</p>
                   ))}
                   {transcript && (
-                    <p className="text-[15px] text-[#374151] font-medium leading-[1.8]">
+                    <p className="text-[16px] text-[#000000] font-bold leading-[1.8]">
                       {transcript}
                     </p>
                   )}
                   {lecturePlayState === "PAUSED_FOR_DOUBT" && (
-                    <p className="text-xs text-[#D97706] italic mt-1 font-medium leading-[1.8]">Lecture paused — will resume automatically.</p>
+                    <p className="text-xs text-[#D97706] italic mt-1 font-bold leading-[1.8]">Lecture paused — will resume automatically.</p>
                   )}
                   {!transcript && !pastTranscripts.length && (
-                    <p className="text-xs text-[#9CA3AF] italic leading-[1.8]">Transcript appears when lecture starts...</p>
+                    <p className="text-xs text-[#4B5563] italic leading-[1.8] font-medium">Transcript appears when lecture starts...</p>
                   )}
                   <div ref={transcriptEndRef} />
                 </div>
