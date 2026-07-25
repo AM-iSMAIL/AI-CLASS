@@ -41,10 +41,9 @@ export default function StudentCamera({
       if (m.score === 0) return;
       if (onLocalFocusUpdate) onLocalFocusUpdate(m);
       try {
+        await updateStudentEngagement(sessionCode, studentId, studentName || studentId, m.score, m.status);
         if (isTeacher) {
           await updateTeacherEngagement(sessionCode, m.score, m.status);
-        } else {
-          await updateStudentEngagement(sessionCode, studentId, studentName || studentId, m.score, m.status);
         }
       } catch {
         // Silently ignore transient network failures

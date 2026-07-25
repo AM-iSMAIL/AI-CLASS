@@ -168,35 +168,37 @@ export default function SummaryPage() {
 
     const totalAttendees = studentsList.length + kickedList.length;
 
-    // 1. Compute Class Average Focus Score (including Teacher + Students)
-    const allScores = studentsList
-      .map(s => s.engagementScore ?? (s as any).score)
-      .filter(sc => typeof sc === "number" && !isNaN(sc) && sc >= 0);
-
-    let avgFocusScore = 100;
-    if (allScores.length > 0) {
-      avgFocusScore = Math.round(allScores.reduce((acc, val) => acc + val, 0) / allScores.length);
-    } else if (typeof window !== "undefined") {
-      const cachedClassFocus = localStorage.getItem(`student_focus_${sessionCode}`) || localStorage.getItem("classFocus");
-      if (cachedClassFocus && !isNaN(Number(cachedClassFocus))) {
-        avgFocusScore = Math.round(Number(cachedClassFocus));
-      }
-    }
-
-    // 2. Compute Teacher Focus Score
+    // 1. Compute Teacher Focus Score
     let teacherFocusScore: number | null = null;
     const rawTeacherScore = (sessionData as any).teacherEngagementScore;
-    if (typeof rawTeacherScore === "number" && !isNaN(rawTeacherScore)) {
+    if (typeof rawTeacherScore === "number" && !isNaN(rawTeacherScore) && rawTeacherScore > 0) {
       teacherFocusScore = Math.round(rawTeacherScore);
     } else if (typeof window !== "undefined") {
       const cachedTeacherFocus = localStorage.getItem(`teacher_focus_${sessionCode}`) || localStorage.getItem("teacherFocus");
-      if (cachedTeacherFocus && !isNaN(Number(cachedTeacherFocus))) {
+      if (cachedTeacherFocus && !isNaN(Number(cachedTeacherFocus)) && Number(cachedTeacherFocus) > 0) {
         teacherFocusScore = Math.round(Number(cachedTeacherFocus));
       }
     }
 
-    if (teacherFocusScore === null) {
-      teacherFocusScore = avgFocusScore;
+    // 2. Compute Class Average Focus Score (including Teacher + Students)
+    const allScores = studentsList
+      .map(s => {
+        const isHost = s.id === sessionData.teacherId || (s as any).isTeacher || (s as any).role === "teacher";
+        if (isHost && teacherFocusScore !== null) {
+          return teacherFocusScore;
+        }
+        return s.engagementScore ?? (s as any).score;
+      })
+      .filter(sc => typeof sc === "number" && !isNaN(sc) && sc > 0);
+
+    let avgFocusScore = teacherFocusScore ?? 100;
+    if (allScores.length > 0) {
+      avgFocusScore = Math.round(allScores.reduce((acc, val) => acc + val, 0) / allScores.length);
+    } else if (typeof window !== "undefined") {
+      const cachedClassFocus = localStorage.getItem(`student_focus_${sessionCode}`) || localStorage.getItem("classFocus");
+      if (cachedClassFocus && !isNaN(Number(cachedClassFocus)) && Number(cachedClassFocus) > 0) {
+        avgFocusScore = Math.round(Number(cachedClassFocus));
+      }
     }
 
     return (
@@ -309,13 +311,26 @@ export default function SummaryPage() {
                 <tbody className="divide-y divide-[#E5E7EB]">
                   {/* Active & Offline Attendees (Teacher + Students) */}
                   {studentsList.map((student) => {
-                    const focusScore = student.engagementScore ?? (student as any).score ?? 100;
+                    const isHost = student.id === sessionData.teacherId || (student as any).isTeacher || (student as any).role === "teacher";
+                    let focusScore = student.engagementScore ?? (student as any).score;
+
+                    if (isHost && teacherFocusScore !== null) {
+                      focusScore = teacherFocusScore;
+                    } else if ((!focusScore || focusScore === 100) && typeof window !== "undefined") {
+                      const cachedStudentFocus = localStorage.getItem(`student_focus_${sessionCode}_${student.id}`) || localStorage.getItem(`student_focus_${sessionCode}`);
+                      if (cachedStudentFocus && !isNaN(Number(cachedStudentFocus))) {
+                        focusScore = Number(cachedStudentFocus);
+                      }
+                    }
+                    if (typeof focusScore !== "number" || isNaN(focusScore) || focusScore <= 0) {
+                      focusScore = avgFocusScore;
+                    }
+                    focusScore = Math.round(focusScore);
+
                     const focusBadge = 
                       focusScore >= 80 ? "bg-[#ECFDF5] text-[#16A34A] border-[#A7F3D0]" :
                       focusScore >= 65 ? "bg-[#FEF3C7] text-[#D97706] border-[#FDE68A]" :
                       "bg-[#FEF2F2] text-[#DC2626] border-[#FECACA]";
-                    
-                    const isHost = student.id === sessionData.teacherId || (student as any).isTeacher || (student as any).role === "teacher";
                     
                     return (
                       <tr key={student.id} className="border-b border-[#E5E7EB] hover:bg-[#F8FAFC] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] text-xs">

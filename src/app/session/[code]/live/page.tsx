@@ -37,7 +37,7 @@ import { getFile } from "@/lib/fileStorage"
 import { extractPDFPages } from "@/lib/pdfParser"
 import StudentCamera from "@/components/StudentCamera"
 import type { FocusMetrics } from "@/lib/cv/use-cv-pipeline"
-import { subscribeToStudents, subscribeToSession, syncClassroomProgress, setStudentOffline, checkIsIdKicked, checkIsKicked, isStudentRegistered, endSession, kickStudent, removeStudent } from "@/lib/session-service"
+import { subscribeToStudents, subscribeToSession, syncClassroomProgress, setStudentOffline, checkIsIdKicked, checkIsKicked, isStudentRegistered, endSession, kickStudent, removeStudent, updateStudentEngagement, updateTeacherEngagement } from "@/lib/session-service"
 import { classroomContext } from "@/lib/classroom-context"
 
 /* ─── MOCK DATA ─── */
@@ -2178,6 +2178,21 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
     setOutOfFrameSecondsLeft(null)
     setPhoneSecondsLeft(null)
     setShowPhoneWarning(false)
+
+    // Save actual local calculated focus score before terminating session
+    if (localMetrics.score > 0) {
+      try {
+        localStorage.setItem(`student_focus_${sessionCode}`, String(localMetrics.score));
+        localStorage.setItem(`teacher_focus_${sessionCode}`, String(localMetrics.score));
+        localStorage.setItem("classFocus", String(localMetrics.score));
+        if (studentId) {
+          updateStudentEngagement(sessionCode, studentId, studentName || studentId, localMetrics.score, localMetrics.status).catch(() => {});
+        }
+        if (isTeacher) {
+          updateTeacherEngagement(sessionCode, localMetrics.score, localMetrics.status).catch(() => {});
+        }
+      } catch (e) {}
+    }
 
     try {
       await endSession(sessionCode)
