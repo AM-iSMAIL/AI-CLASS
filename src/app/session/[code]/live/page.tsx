@@ -338,10 +338,10 @@ export default function LiveClassroomPage() {
 
   useEffect(() => {
     if (hasEntered) {
-      // 15s fallback grace period to allow camera permissions, stream startup & MediaPipe load
+      // 4s startup grace period for camera initialization
       const timer = setTimeout(() => {
         setStartupGraceActive(false);
-      }, 15000);
+      }, 4000);
       return () => clearTimeout(timer);
     } else {
       setStartupGraceActive(true);
