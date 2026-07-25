@@ -1805,13 +1805,13 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
     }
   }, [hasEntered, loading, isParsingPdf, teachingMode, isPdfMode, pdfPages, topics, runTopicSpeech]);
 
-  /* ─── TAB SWITCH & LEAVING RESTRICTION GUARD (KICK ON TAB SWITCH) ─── */
+  /* ─── TAB SWITCH & LEAVING RESTRICTION GUARD (STRICT KICK FOR EVERYONE) ─── */
   useEffect(() => {
     if (!hasEntered) return;
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (isEndingSessionRef.current) return;
-      if (!isTeacher && studentId && sessionCode) {
+      if (studentId && sessionCode) {
         setStudentOffline(sessionCode, studentId).catch(() => { });
       }
       e.preventDefault();
@@ -1820,31 +1820,33 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
     };
 
     const triggerKick = (reason: string) => {
+      if (isEndingSessionRef.current) return;
       stopSpeaking();
       lectureAbortRef.current?.abort();
-      if (!isTeacher && studentId && sessionCode) {
+      if (studentId && sessionCode) {
         setStudentOffline(sessionCode, studentId).catch(() => { });
       }
       setTabSwitchCount((prev) => prev + 1);
       setKickReason(reason);
       setIsKicked(true);
+      const storedName = studentName || "Unknown";
+      kickStudent(sessionCode, studentId, storedName).catch(() => {});
     };
 
     const handleVisibilityChange = () => {
-      if (document.hidden && !isTeacher) {
+      if (document.hidden) {
         triggerKick("Tab Switch / Window Minimized");
       }
     };
 
     const handleBlur = () => {
-      if (!isTeacher) {
-        triggerKick("Window Lost Focus / Navigated Away");
-      }
+      triggerKick("Window Lost Focus / Navigated Away");
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
     document.addEventListener("visibilitychange", handleVisibilityChange);
     window.addEventListener("blur", handleBlur);
+    window.addEventListener("pagehide", handleVisibilityChange);
 
     return () => {
       stopSpeaking();
@@ -1852,12 +1854,13 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       window.removeEventListener("beforeunload", handleBeforeUnload);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("blur", handleBlur);
+      window.removeEventListener("pagehide", handleVisibilityChange);
 
-      if (!isTeacher && studentId && sessionCode) {
+      if (studentId && sessionCode) {
         setStudentOffline(sessionCode, studentId).catch(() => { });
       }
     };
-  }, [hasEntered, isTeacher, studentId, sessionCode]);
+  }, [hasEntered, studentId, sessionCode, studentName]);
 
   /* ─── TIMER ─── */
   useEffect(() => {
