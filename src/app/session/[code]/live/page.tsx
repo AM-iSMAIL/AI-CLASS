@@ -216,6 +216,17 @@ export default function LiveClassroomPage() {
   const savedLectureStateRef = useRef<{ topicIdx: number; fullTranscript: string; sentenceBuffer: string; } | null>(null)
   const resumePendingRef = useRef<boolean>(false)
   const isEndingSessionRef = useRef<boolean>(false)
+  const handleBeforeUnloadRef = useRef<((e: BeforeUnloadEvent) => any) | null>(null)
+
+  const bypassBeforeUnload = useCallback(() => {
+    isEndingSessionRef.current = true;
+    if (typeof window !== "undefined") {
+      if (handleBeforeUnloadRef.current) {
+        window.removeEventListener("beforeunload", handleBeforeUnloadRef.current);
+      }
+      window.onbeforeunload = null;
+    }
+  }, []);
 
   const prefetchedLectures = useRef<Record<string, { promise: Promise<Response | void>, time: number, consumed: boolean, fullText?: string, firstImageUrl?: string | null, firstAudioBase64?: string }>>({})
 
@@ -1777,9 +1788,11 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       e.returnValue = "A live lecture is currently in progress. Leaving this page will interrupt your session!";
       return e.returnValue;
     };
+    handleBeforeUnloadRef.current = handleBeforeUnload;
 
     const triggerKick = (reason: string) => {
       if (isEndingSessionRef.current) return;
+      bypassBeforeUnload();
       stopSpeaking();
       lectureAbortRef.current?.abort();
       if (studentId && sessionCode) {
@@ -2201,7 +2214,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
 
   const handleStudentLeave = async () => {
-    isEndingSessionRef.current = true;
+    bypassBeforeUnload();
     stopSpeaking();
     lectureAbortRef.current?.abort();
     if (studentId && sessionCode) {
@@ -2211,7 +2224,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
   };
 
   const handleConfirmEnd = async () => {
-    isEndingSessionRef.current = true;
+    bypassBeforeUnload();
     setShowEndModal(false)
     setEndCountdown(5)
     stopSpeaking()
@@ -2247,6 +2260,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
   useEffect(() => {
     if (endCountdown === null) return
     if (endCountdown === 0) {
+      bypassBeforeUnload();
       // Explicitly disconnect from LiveKit and stop all tracks to ensure camera light turns off
       if (roomRef.current) {
         roomRef.current.disconnect();
