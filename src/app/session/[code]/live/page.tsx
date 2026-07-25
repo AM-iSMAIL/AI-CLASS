@@ -1869,8 +1869,13 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         });
         
         setStudents(activeStudents)
-        if (activeStudents.length > 0) {
-          setClassFocus(Math.floor(updated.reduce((a, s) => a + (s.engagementScore || 0), 0) / updated.length))
+        // Compute Student Focus Average strictly from students (excluding teacher)
+        const studentOnlyList = activeStudents.filter(s => !(s as any).isTeacher && (s as any).role !== "teacher");
+        if (studentOnlyList.length > 0) {
+          const total = studentOnlyList.reduce((a, s) => a + (s.engagementScore ?? 100), 0);
+          setClassFocus(Math.round(total / studentOnlyList.length));
+        } else {
+          setClassFocus(100);
         }
       },
       (err) => {
@@ -2572,13 +2577,6 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             <span className={`h-2 w-2 rounded-full ${focusDot} animate-pulse`} />
             <span className="text-[#6B7280] font-medium">Student Avg:</span>
             <span className={`${focusText} font-bold`}>{classFocus}%</span>
-          </div>
-
-          {/* Teacher Focus Badge */}
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E5E7EB] shadow-xs hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer">
-            <span className={`h-2 w-2 rounded-full ${localMetrics.status === "focused" ? "bg-[#16A34A]" : "bg-[#DC2626]"} animate-pulse`} />
-            <span className="text-[#6B7280] font-medium">Your Focus:</span>
-            <span className="font-bold text-[#111827]">{localMetrics.score}%</span>
           </div>
 
           <div className="flex items-center gap-2.5 bg-white border border-[#E5E7EB] px-3.5 py-1.5 rounded-full font-mono text-[#111827] font-bold shadow-xs hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer">

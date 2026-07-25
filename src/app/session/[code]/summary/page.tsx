@@ -247,7 +247,7 @@ export default function SummaryPage() {
           </div>
 
           {/* Stats Row */}
-          <section className={`grid gap-4 grid-cols-2 ${teacherFocusScore !== null ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
+          <section className="grid gap-4 grid-cols-2 lg:grid-cols-4">
             {/* Total Attendees */}
             <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
               <div className="flex items-center justify-between text-[#6B7280] mb-3">
@@ -258,24 +258,14 @@ export default function SummaryPage() {
               <span className="text-[10px] text-[#9CA3AF] font-medium">Students joined waitlist</span>
             </div>
 
-            {/* Average Focus Score */}
+            {/* Student Average Focus Score */}
             <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
               <div className="flex items-center justify-between text-[#6B7280] mb-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider font-mono">Avg Focus Score</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider font-mono">Student Avg Focus</span>
                 <Brain className="h-4 w-4 text-[#16A34A]" />
               </div>
               <h3 className="text-2xl font-bold text-[#111827]">{avgFocusScore}%</h3>
-              <span className="text-[10px] text-[#16A34A] font-medium">Class focus average</span>
-            </div>
-
-            {/* Teacher Focus */}
-            <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
-              <div className="flex items-center justify-between text-[#6B7280] mb-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider font-mono">Teacher Focus</span>
-                <Brain className="h-4 w-4 text-[#F59E0B]" />
-              </div>
-              <h3 className="text-2xl font-bold text-[#111827]">{teacherFocusScore !== null ? `${teacherFocusScore}%` : `${avgFocusScore}%`}</h3>
-              <span className="text-[10px] text-[#9CA3AF] font-medium">Your focus average</span>
+              <span className="text-[10px] text-[#16A34A] font-medium">Student class focus average</span>
             </div>
 
             {/* Present at Close */}
