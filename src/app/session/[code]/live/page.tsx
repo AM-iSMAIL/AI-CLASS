@@ -2602,8 +2602,8 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         {/* ─── LEFT COLUMN — Main Stage ─── */}
         <div className="flex-1 flex flex-col p-4 gap-4 min-h-[50vh] lg:min-h-0 pb-4 lg:pb-[84px] overflow-hidden">
 
-          {/* ── CONTENT / IMAGE AREA (HERO — presentation panel widescreen fill) ── */}
-          <div className="flex-1 bg-white border border-[rgba(15,23,42,.08)] rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] overflow-hidden flex flex-col relative min-h-0">
+          {/* ── CONTENT / IMAGE AREA (HERO — presentation panel widescreen fill with black border frame) ── */}
+          <div className="flex-1 bg-white border-2 border-[#111827] rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,.08)] hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(15,23,42,.12)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] overflow-hidden flex flex-col relative min-h-0">
             {/* Image / Fallback — fills entire area */}
             <div className="flex-1 relative overflow-hidden min-h-0 bg-white">
               {topicImageUrl && imageLoaded ? (
@@ -2667,7 +2667,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
               )}
             </div>
             {/* Caption bar */}
-            <div className="h-10 border-t border-[#E5E7EB] bg-white flex items-center justify-between px-4 flex-shrink-0 relative z-10">
+            <div className="h-10 border-t-2 border-[#111827] bg-white flex items-center justify-between px-4 flex-shrink-0 relative z-10">
               <span className="text-xs font-bold text-[#111827] truncate max-w-[80%]">{activeLabel}</span>
               <span className="px-2.5 py-0.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[9px] font-bold text-[#2563EB] uppercase tracking-wider font-mono">IMAGE</span>
             </div>
