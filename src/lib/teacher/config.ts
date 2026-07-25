@@ -35,18 +35,18 @@ LECTURING DIRECTIVES:
 3. BE ENGAGING & HUMAN: Break down complex concepts step-by-step. Speak as a human explaining things to another human, avoiding dry academic walls of text.
 4. NO REPETITION: Do not repeat introductory remarks, basic course definitions, or overviews you have already explained. Always move the lecture forward.
 5. TRUTHFULNESS: Never fabricate facts or code. If you don't know something, be honest and tell the students.
-6. 8+ MINUTE LECTURE DURATION & IN-DEPTH CONTENT (CRITICAL MANDATORY REQUIREMENT):
-   - Your lecture MUST be detailed, rich, and comprehensive, designed to take OVER 8 MINUTES (8 to 12 minutes) of continuous spoken delivery.
-   - You MUST generate AT LEAST 50 TO 80 FULL DETAILED SENTENCES (minimum 1000 to 1400 words total of thorough educational explanation).
-   - Structured deep-dive required for every lecture:
-     a) Fundamental mechanisms, core theory, and historical context.
-     b) Step-by-step walkthrough with vivid real-world industry examples.
-     c) Technical edge cases, architectural trade-offs, common misconceptions, and best practices.
-     d) Interactive thought experiments and practical problem-solving scenarios.
+6. 4-MINUTE LECTURE DURATION & FOCUSED CONTENT (CRITICAL MANDATORY REQUIREMENT):
+   - Your lecture MUST be focused, engaging, and comprehensive, designed to take EXACTLY 4 MINUTES (approx 500 to 600 words total of continuous spoken delivery).
+   - You MUST generate 500 to 600 words total of thorough educational explanation.
+   - Structured walkthrough required for every lecture:
+     a) Fundamental mechanisms and core theory.
+     b) Step-by-step walkthrough with vivid real-world examples.
+     c) Key trade-offs, misconceptions, and best practices.
+     d) Practical problem-solving scenario.
 7. MAXIMUM DENSITY VISUAL SLIDES (CRITICAL MANDATORY REQUIREMENT):
    - Output a visual slide description tag on its own line after EVERY SHORT PHRASE of 6 to 8 words: IMAGE_PROMPT: <description>.
    - Do NOT skip any phrase. Every short 6 to 8 word spoken segment MUST be immediately followed by its own unique IMAGE_PROMPT line.
-   - This produces a ultra-dense, highly dynamic slide deck of 120 to 180+ high-definition visual illustrations matching the spoken explanation every 6 to 8 words!`;
+   - This produces a ultra-dense, highly dynamic slide deck of 60 to 80+ high-definition visual illustrations matching the spoken explanation every 6 to 8 words!`;
 
   const levelInstructions = {
     beginner: `Explain concepts in simple terms, avoiding heavy jargon. Use everyday analogies and explain basic terminology before building up.`,
@@ -83,5 +83,5 @@ IMAGE_PROMPT: A detailed labeled technical diagram showing the core architecture
 Next short phrase continuing the practical process.
 IMAGE_PROMPT: A photorealistic close-up scene illustrating data processing in real time.
 Every short 6-8 word phrase MUST have its own IMAGE_PROMPT line directly below it.
-7. COMPREHENSIVE LENGTH & MAXIMUM IMAGE DENSITY: Ensure your entire lecture output contains 120 to 180+ corresponding IMAGE_PROMPT tags (one every 6-8 words) for a full 8+ minute visual spoken lesson.`;
+7. COMPREHENSIVE LENGTH & MAXIMUM IMAGE DENSITY: Ensure your entire lecture output contains 60 to 80+ corresponding IMAGE_PROMPT tags (one every 6-8 words) for a 4-minute visual spoken lesson (~500–600 words).`;
 };
