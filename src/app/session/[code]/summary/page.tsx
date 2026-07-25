@@ -249,58 +249,58 @@ export default function SummaryPage() {
           {/* Stats Row */}
           <section className="grid gap-4 grid-cols-2 lg:grid-cols-4">
             {/* Total Attendees */}
-            <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
-              <div className="flex items-center justify-between text-[#6B7280] mb-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider font-mono">Total Attendees</span>
+            <div className="bg-white rounded-[20px] border-2 border-[#111827] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
+              <div className="flex items-center justify-between text-[#111827] mb-3">
+                <span className="text-[10px] font-black uppercase tracking-wider font-mono">Total Attendees</span>
                 <Users className="h-4 w-4 text-[#2563EB]" />
               </div>
-              <h3 className="text-2xl font-bold text-[#111827]">{totalAttendees}</h3>
-              <span className="text-[10px] text-[#9CA3AF] font-medium">Students joined waitlist</span>
+              <h3 className="text-2xl font-black text-[#000000]">{totalAttendees}</h3>
+              <span className="text-[10px] text-[#111827] font-bold">Students joined waitlist</span>
             </div>
 
             {/* Student Average Focus Score */}
-            <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
-              <div className="flex items-center justify-between text-[#6B7280] mb-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider font-mono">Student Avg Focus</span>
+            <div className="bg-white rounded-[20px] border-2 border-[#111827] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
+              <div className="flex items-center justify-between text-[#111827] mb-3">
+                <span className="text-[10px] font-black uppercase tracking-wider font-mono">Student Avg Focus</span>
                 <Brain className="h-4 w-4 text-[#16A34A]" />
               </div>
-              <h3 className="text-2xl font-bold text-[#111827]">{avgFocusScore}%</h3>
-              <span className="text-[10px] text-[#16A34A] font-medium">Student class focus average</span>
+              <h3 className="text-2xl font-black text-[#000000]">{avgFocusScore}%</h3>
+              <span className="text-[10px] text-[#16A34A] font-bold">Student class focus average</span>
             </div>
 
             {/* Present at Close */}
-            <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
-              <div className="flex items-center justify-between text-[#6B7280] mb-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider font-mono">Present at Close</span>
+            <div className="bg-white rounded-[20px] border-2 border-[#111827] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
+              <div className="flex items-center justify-between text-[#111827] mb-3">
+                <span className="text-[10px] font-black uppercase tracking-wider font-mono">Present at Close</span>
                 <CheckCircle2 className="h-4 w-4 text-[#16A34A]" />
               </div>
-              <h3 className="text-2xl font-bold text-[#111827]">
+              <h3 className="text-2xl font-black text-[#000000]">
                 {studentsOnly.filter(s => s.status !== "offline").length}
               </h3>
-              <span className="text-[10px] text-[#9CA3AF] font-medium">Active till the end</span>
+              <span className="text-[10px] text-[#111827] font-bold">Active till the end</span>
             </div>
 
             {/* Kicked / Dismissed */}
-            <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
-              <div className="flex items-center justify-between text-[#6B7280] mb-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider font-mono">Kicked/Dismissed</span>
+            <div className="bg-white rounded-[20px] border-2 border-[#111827] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
+              <div className="flex items-center justify-between text-[#111827] mb-3">
+                <span className="text-[10px] font-black uppercase tracking-wider font-mono">Kicked/Dismissed</span>
                 <ShieldAlert className="h-4 w-4 text-[#DC2626]" />
               </div>
-              <h3 className="text-2xl font-bold text-[#DC2626]">{kickedList.length}</h3>
-              <span className="text-[10px] text-[#9CA3AF] font-medium">Removed for distraction</span>
+              <h3 className="text-2xl font-black text-[#DC2626]">{kickedList.length}</h3>
+              <span className="text-[10px] text-[#111827] font-bold">Removed for distraction</span>
             </div>
           </section>
 
           {/* Roster Table */}
-          <div className="bg-white rounded-[24px] border border-[rgba(15,23,42,.08)] overflow-hidden shadow-[0_1px_2px_rgba(15,23,42,.03),0_12px_32px_rgba(15,23,42,.05)]">
-            <div className="px-6 py-5 border-b border-[#E5E7EB] flex items-center justify-between">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#111827] font-mono">Attendance Roster</h3>
+          <div className="bg-white rounded-[24px] border-2 border-[#111827] overflow-hidden shadow-[0_1px_2px_rgba(15,23,42,.03),0_12px_32px_rgba(15,23,42,.05)]">
+            <div className="px-6 py-5 border-b-2 border-[#111827] flex items-center justify-between">
+              <h3 className="text-xs font-black uppercase tracking-wider text-[#000000] font-mono">Attendance Roster</h3>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-[#E5E7EB] text-[10px] font-bold uppercase tracking-wider text-[#374151] bg-[#F9FAFB] font-mono">
+                  <tr className="border-b-2 border-[#111827] text-[10px] font-black uppercase tracking-wider text-[#000000] bg-[#F9FAFB] font-mono">
                     <th className="px-6 py-3.5">Student Name</th>
                     <th className="px-4 py-3.5">Final Status</th>
                     <th className="px-4 py-3.5">Join Time</th>
@@ -317,19 +317,19 @@ export default function SummaryPage() {
                     
                     return (
                       <tr key={student.id} className="border-b border-[#E5E7EB] hover:bg-[#F8FAFC] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] text-xs">
-                        <td className="px-6 py-4 font-semibold text-[#111827]">{student.name}</td>
+                        <td className="px-6 py-4 font-bold text-[#000000]">{student.name}</td>
                         <td className="px-4 py-4">
                           {student.status === "offline" ? (
-                            <span className="inline-flex items-center rounded-full bg-[#F3F4F6] border border-[#E5E7EB] px-2.5 py-0.5 text-[9px] font-bold text-[#374151] uppercase font-mono">
+                            <span className="inline-flex items-center rounded-full bg-[#F3F4F6] border border-[#111827] px-2.5 py-0.5 text-[9px] font-extrabold text-[#111827] uppercase font-mono">
                               Left Class
                             </span>
                           ) : (
-                            <span className="inline-flex items-center rounded-full bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-0.5 text-[9px] font-bold text-[#16A34A] uppercase font-mono">
+                            <span className="inline-flex items-center rounded-full bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-0.5 text-[9px] font-extrabold text-[#16A34A] uppercase font-mono">
                               Present
                             </span>
                           )}
                         </td>
-                        <td className="px-4 py-4 text-[#6B7280] font-medium">{formatTimestamp(student.joinedAt)}</td>
+                        <td className="px-4 py-4 text-[#111827] font-bold">{formatTimestamp(student.joinedAt)}</td>
                         <td className="px-6 py-4 text-right">
                           <span className={`inline-flex px-2 py-0.5 rounded-md border text-[10px] font-bold ${focusBadge}`}>
                             {student.engagementScore}%
