@@ -723,6 +723,7 @@ export default function LiveClassroomPage() {
 
   // Immediate Session Termination Handler (Zero delay)
   const handleEndSession = useCallback(async () => {
+    bypassBeforeUnload();
     stopSpeaking()
     if (localStream) {
       localStream.getTracks().forEach((track) => track.stop())
@@ -733,10 +734,11 @@ export default function LiveClassroomPage() {
       console.error("Error ending session:", err)
     }
     window.location.href = `/session/${sessionCode}/summary`
-  }, [sessionCode, localStream, stopSpeaking])
+  }, [sessionCode, localStream, stopSpeaking, bypassBeforeUnload])
 
   // Immediate Leave Session Handler (Zero delay)
   const handleLeaveSession = useCallback(async () => {
+    bypassBeforeUnload();
     stopSpeaking()
     if (localStream) {
       localStream.getTracks().forEach((track) => track.stop())
@@ -2220,7 +2222,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
     if (studentId && sessionCode) {
       await setStudentOffline(sessionCode, studentId).catch(() => {});
     }
-    router.push("/student-dashboard");
+    window.location.href = "/student-dashboard";
   };
 
   const handleConfirmEnd = async () => {
@@ -2269,9 +2271,9 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         localStreamRef.current.getTracks().forEach(t => t.stop());
       }
       if (isTeacher) {
-        router.push(`/session/${sessionCode}/summary`)
+        window.location.href = `/session/${sessionCode}/summary`;
       } else {
-        router.push("/dashboard")
+        window.location.href = "/dashboard";
       }
       return
     }
