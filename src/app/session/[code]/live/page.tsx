@@ -2566,12 +2566,21 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             <div className="h-full bg-[#2563EB] rounded-full transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]" style={{ width: `${progressPct}%` }} />
           </div>
         </div>
-        <div className="flex items-center gap-3 text-xs font-semibold">
+        <div className="flex items-center gap-2.5 text-xs font-semibold">
+          {/* Student Focus Avg Badge */}
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E5E7EB] shadow-xs hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer">
             <span className={`h-2 w-2 rounded-full ${focusDot} animate-pulse`} />
-            <span className="text-[#6B7280] font-medium">Focus:</span>
+            <span className="text-[#6B7280] font-medium">Student Avg:</span>
             <span className={`${focusText} font-bold`}>{classFocus}%</span>
           </div>
+
+          {/* Teacher Focus Badge */}
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E5E7EB] shadow-xs hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer">
+            <span className={`h-2 w-2 rounded-full ${localMetrics.status === "focused" ? "bg-[#16A34A]" : "bg-[#DC2626]"} animate-pulse`} />
+            <span className="text-[#6B7280] font-medium">Your Focus:</span>
+            <span className="font-bold text-[#111827]">{localMetrics.score}%</span>
+          </div>
+
           <div className="flex items-center gap-2.5 bg-white border border-[#E5E7EB] px-3.5 py-1.5 rounded-full font-mono text-[#111827] font-bold shadow-xs hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer">
             <Clock className="h-3.5 w-3.5 text-[#9CA3AF]" />
             <span>{fmt(elapsedSeconds)}</span>
