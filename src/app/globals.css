@@ -578,7 +578,7 @@ tbody.divide-y > :not([hidden]) ~ :not([hidden]) {
 
 /* Smooth Progress Line Growth */
 .progress-line {
-  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1) !important;
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
 /* Step Circles Hover and Glow */
@@ -589,5 +589,7 @@ tbody.divide-y > :not([hidden]) ~ :not([hidden]) {
   transform: scale(1.05) !important;
 }
 .step-circle.active {
-  box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.10) !important;
+  box-shadow: 
+    0 4px 12px rgba(15, 23, 42, 0.06), 
+    0 0 0 6px rgba(37, 99, 235, 0.10) !important;
 }

@@ -381,60 +381,63 @@ export default function CreateSessionPage() {
             </div>
 
             {/* Step Indicator (Info -> Content -> Launch) */}
-            <div className="relative flex items-center justify-between max-w-md mx-auto py-2">
+            <div className="relative max-w-md mx-auto">
               {/* Connector Lines */}
-              <div className="absolute left-0 right-0 top-1/2 h-[3px] bg-[#E5E7EB] rounded-full -translate-y-1/2 z-0" />
+              <div className="absolute left-[21px] right-[21px] top-[21px] h-[4px] bg-[#E5E7EB] rounded-full -translate-y-1/2 z-0" />
               <div
-                className="absolute left-0 top-1/2 h-[3px] bg-[#2563EB] rounded-full -translate-y-1/2 progress-line z-0"
+                className="absolute left-[21px] top-[21px] h-[4px] bg-[#2563EB] rounded-full -translate-y-1/2 progress-line z-0"
                 style={{ width: step === 2 ? "0%" : step === 3 ? "50%" : "100%" }}
               />
 
-              {/* Step 1: Info */}
-              <div className="relative z-10 flex flex-col items-center gap-1.5">
-                <div
-                  className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold border transition-all step-circle ${step === 2 ? "active" : ""} ${
-                    step >= 2
-                      ? "bg-[#2563EB] border-[#2563EB] text-white shadow-sm shadow-[#2563EB]/10"
-                      : "bg-[#E5E7EB] border-transparent text-[#6B7280]"
-                  }`}
-                >
-                  1
+              {/* Steps Wrapper */}
+              <div className="relative z-10 flex justify-between items-start">
+                {/* Step 1: Info */}
+                <div className="flex flex-col items-center gap-[18px]">
+                  <div
+                    className={`h-[42px] w-[42px] rounded-full flex items-center justify-center text-sm font-bold border transition-all step-circle ${step === 2 ? "active" : ""} ${
+                      step >= 2
+                        ? "bg-[#2563EB] border-[#2563EB] text-white"
+                        : "bg-[#F9FAFB] border-[#E5E7EB] text-[#9CA3AF]"
+                    }`}
+                  >
+                    1
+                  </div>
+                  <span className={`text-xs font-semibold ${step >= 2 ? "text-[#2563EB]" : "text-[#6B7280]"}`}>
+                    Session Info
+                  </span>
                 </div>
-                <span className={`text-[10px] md:text-xs font-semibold ${step >= 2 ? "text-[#2563EB]" : "text-[#6B7280]"}`}>
-                  Session Info
-                </span>
-              </div>
 
-              {/* Step 2: Content */}
-              <div className="relative z-10 flex flex-col items-center gap-1.5">
-                <div
-                  className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold border transition-all step-circle ${step === 3 ? "active" : ""} ${
-                    step >= 3
-                      ? "bg-[#2563EB] border-[#2563EB] text-white shadow-sm shadow-[#2563EB]/10"
-                      : "bg-[#E5E7EB] border-transparent text-[#6B7280]"
-                  }`}
-                >
-                  2
+                {/* Step 2: Content */}
+                <div className="flex flex-col items-center gap-[18px]">
+                  <div
+                    className={`h-[42px] w-[42px] rounded-full flex items-center justify-center text-sm font-bold border transition-all step-circle ${step === 3 ? "active" : ""} ${
+                      step >= 3
+                        ? "bg-[#2563EB] border-[#2563EB] text-white"
+                        : "bg-[#F9FAFB] border-[#E5E7EB] text-[#9CA3AF]"
+                    }`}
+                  >
+                    2
+                  </div>
+                  <span className={`text-xs font-semibold ${step >= 3 ? "text-[#2563EB]" : "text-[#6B7280]"}`}>
+                    Content
+                  </span>
                 </div>
-                <span className={`text-[10px] md:text-xs font-semibold ${step >= 3 ? "text-[#2563EB]" : "text-[#6B7280]"}`}>
-                  Content
-                </span>
-              </div>
 
-              {/* Step 3: Launch */}
-              <div className="relative z-10 flex flex-col items-center gap-1.5">
-                <div
-                  className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold border transition-all step-circle ${step === 4 ? "active" : ""} ${
-                    step >= 4
-                      ? "bg-[#2563EB] border-[#2563EB] text-white shadow-sm shadow-[#2563EB]/10"
-                      : "bg-[#E5E7EB] border-transparent text-[#6B7280]"
-                  }`}
-                >
-                  3
+                {/* Step 3: Launch */}
+                <div className="flex flex-col items-center gap-[18px]">
+                  <div
+                    className={`h-[42px] w-[42px] rounded-full flex items-center justify-center text-sm font-bold border transition-all step-circle ${step === 4 ? "active" : ""} ${
+                      step >= 4
+                        ? "bg-[#2563EB] border-[#2563EB] text-white"
+                        : "bg-[#F9FAFB] border-[#E5E7EB] text-[#9CA3AF]"
+                    }`}
+                  >
+                    3
+                  </div>
+                  <span className={`text-xs font-semibold ${step >= 4 ? "text-[#2563EB]" : "text-[#6B7280]"}`}>
+                    Launch
+                  </span>
                 </div>
-                <span className={`text-[10px] md:text-xs font-semibold ${step >= 4 ? "text-[#2563EB]" : "text-[#6B7280]"}`}>
-                  Launch
-                </span>
               </div>
             </div>
 
