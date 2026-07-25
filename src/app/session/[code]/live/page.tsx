@@ -51,7 +51,7 @@ const DOUBT_RESPONSES = [
 
 const parseExplanationToSlides = (text: string) => {
   const lines = text.split("\n");
-  const slides: Array<{ text: string; imagePrompt: string }> = [];
+  const slides: Array<{ text: string; imagePrompt?: string }> = [];
   
   let currentText = "";
   for (const line of lines) {
@@ -76,25 +76,7 @@ const parseExplanationToSlides = (text: string) => {
     slides.push({ text: textStr, imagePrompt: textStr });
   }
 
-  const finalSlides: Array<{ text: string; imagePrompt: string }> = [];
-  for (const slide of slides) {
-    const sentences = slide.text.split(/(?<=[.!?])\s+/).filter(Boolean);
-    if (sentences.length > 1) {
-      sentences.forEach((sentence, idx) => {
-        finalSlides.push({
-          text: sentence,
-          imagePrompt: idx === 0 ? slide.imagePrompt : sentence
-        });
-      });
-    } else {
-      finalSlides.push({
-        text: slide.text,
-        imagePrompt: slide.imagePrompt || slide.text
-      });
-    }
-  }
-
-  return finalSlides;
+  return slides;
 };
 
 
