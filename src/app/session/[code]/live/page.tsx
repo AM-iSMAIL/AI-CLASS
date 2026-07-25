@@ -1922,15 +1922,22 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       room.on(RoomEvent.TrackSubscribed, (track: any, publication: any, participant: any) => {
         if (track.kind === 'video') {
           const stream = new MediaStream([track.mediaStreamTrack]);
-          setRemoteStreams(prev => ({ ...prev, [participant.identity]: stream }));
+          const cleanId = participant.identity.replace('_teacher', '');
+          setRemoteStreams(prev => ({
+            ...prev,
+            [participant.identity]: stream,
+            [cleanId]: stream,
+          }));
         }
       });
 
       room.on(RoomEvent.TrackUnsubscribed, (track: any, publication: any, participant: any) => {
         if (track.kind === 'video') {
+          const cleanId = participant.identity.replace('_teacher', '');
           setRemoteStreams(prev => {
             const copy = { ...prev };
             delete copy[participant.identity];
+            delete copy[cleanId];
             return copy;
           });
         }
@@ -2828,17 +2835,18 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                 const status = student.status ?? student.state ?? "offline";
                 const isFocused = status === "focused";
 
+                const remoteStream = remoteStreams[student.id] || remoteStreams[`${student.id}_teacher`];
                 return (
                   <div key={student.id} className="relative aspect-video rounded-[22px] border-2 border-[#2563EB] bg-white flex items-center justify-center hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] overflow-hidden shadow-xs p-4">
-                    {remoteStreams[student.id] ? (
+                    {remoteStream ? (
                       <video
                         autoPlay
                         playsInline
                         muted
                         className="absolute inset-0 w-full h-full object-cover z-0"
                         ref={node => {
-                          if (node && node.srcObject !== remoteStreams[student.id]) {
-                            node.srcObject = remoteStreams[student.id];
+                          if (node && node.srcObject !== remoteStream) {
+                            node.srcObject = remoteStream;
                           }
                         }}
                       />
