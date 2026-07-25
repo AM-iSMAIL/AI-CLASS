@@ -22,10 +22,12 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const prompt = body.prompt;
-    let width = body.width ?? 1024;
-    let height = body.height ?? 1024;
+    let width = body.width ?? 512;
+    let height = body.height ?? 512;
     
-    // NVIDIA FLUX.2-klein-4b requires dimensions >= 512 and <= 1568
+    // NVIDIA FLUX.2-klein-4b dimensions: optimal fast resolution 512x512
+    if (width > 512) width = 512;
+    if (height > 512) height = 512;
     if (width < 512) width = 512;
     if (height < 512) height = 512;
 
@@ -36,7 +38,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Detect if the prompt explicitly requests diagrammatic, graphic, or textual content using word boundaries
+    // Detect if prompt explicitly requests diagrammatic content
     const promptLower = prompt.toLowerCase();
     const hasWord = (word: string) => new RegExp(`\\b${word}\\b`, "i").test(promptLower);
     
@@ -49,17 +51,14 @@ export async function POST(req: NextRequest) {
       hasWord("graph") || 
       hasWord("label") || 
       hasWord("text") || 
-      hasWord("words") || 
-      hasWord("writing") || 
-      hasWord("letters") || 
       promptLower.includes("the end");
 
-    let prefix = "Highly detailed, photorealistic, 4K quality, vibrant colors, professional educational visualization: ";
-    let suffix = ". Sharp focus, beautiful lighting, high resolution, absolutely no text, no labels, no words, no letters, no captions, no writing.";
+    let prefix = "Photorealistic educational visualization: ";
+    let suffix = ". High resolution, sharp focus, no text.";
 
     if (isDiagramOrText) {
-      prefix = "Highly detailed, clear, clean educational diagram and visualization: ";
-      suffix = ". Sharp focus, clean layout, high resolution, clear readable text labels and annotations.";
+      prefix = "Clear clean educational diagram: ";
+      suffix = ". High resolution, clear readable labels.";
     }
 
     const fullPrompt = `${prefix}${prompt}${suffix}`;
