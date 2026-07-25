@@ -320,12 +320,12 @@ export default function LiveClassroomPage() {
     };
   }, [localMetrics.status, localMetrics.score, localMetrics.faceDetected, localMetrics.phoneDetected, localMetrics.effectiveDeviation, localMetrics.gazeDirection, warningLevel, strikeCount, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus]);
 
-  // Startup grace period timer to delay detection at the start of class
+  // Startup grace period timer to delay detection at the start of class (4s gap)
   useEffect(() => {
     if (hasEntered) {
       const timer = setTimeout(() => {
         setStartupGraceActive(false);
-      }, 15000); // 15s startup grace period for mobile camera warm-up
+      }, 4000); // 4s startup grace period for camera initialization
       return () => clearTimeout(timer);
     }
   }, [hasEntered]);
@@ -354,7 +354,7 @@ export default function LiveClassroomPage() {
     }
 
     setTimeout(() => {
-      setOutOfFrameSecondsLeft(15);
+      setOutOfFrameSecondsLeft(5);
     }, 0);
 
     outOfFrameIntervalRef.current = setInterval(() => {
@@ -368,7 +368,7 @@ export default function LiveClassroomPage() {
       const storedName = studentName || "Unknown";
       if (!isTeacher) await kickStudent(sessionCode, studentId, storedName);
       window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
-    }, 15000);
+    }, 5000);
 
     return () => {
       clearOutOfFrameTimers();
