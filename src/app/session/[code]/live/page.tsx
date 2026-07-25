@@ -2914,20 +2914,6 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             <span className="text-[11px] font-medium">Camera</span>
           </button>
 
-          {/* Screen Share */}
-          <button id="screenshare-toggle" onClick={() => { setScreenSharing(v => !v); addToast(screenSharing ? "Screen share stopped" : "Screen sharing started") }}
-            className={`group flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer hover:-translate-y-0.5 ${screenSharing ? "text-[#2563EB] bg-[#EFF6FF]" : "text-[#374151] hover:bg-[#F3F4F6]"}`}>
-            <ScreenShare className="h-[18px] w-[18px] group-hover:scale-[1.08] transition-transform duration-300" />
-            <span className="text-[11px] font-medium">Share</span>
-          </button>
-
-          {/* Hand */}
-          <button id="hand-raise-toggle" onClick={() => { setHandRaised(v => !v); addToast(handRaised ? "Hand lowered" : "Hand raised") }}
-            className={`group flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer hover:-translate-y-0.5 ${handRaised ? "text-[#D97706] bg-[#FEF3C7]" : "text-[#374151] hover:bg-[#F3F4F6]"}`}>
-            <Hand className="h-[18px] w-[18px] group-hover:scale-[1.08] transition-transform duration-300" />
-            <span className="text-[11px] font-medium">Hand</span>
-          </button>
-
           {/* People */}
           <button onClick={() => {
             const next = !isParticipantsOpen
