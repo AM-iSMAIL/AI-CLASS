@@ -55,6 +55,7 @@ import {
   checkIsIdKicked,
   checkIsKicked,
   isStudentRegistered,
+  joinSession,
 } from "@/lib/session-service"
 import { classroomContext } from "@/lib/classroom-context"
 import { subscribeToAuthChanges } from "@/lib/auth-service"
@@ -320,25 +321,48 @@ export default function SessionPage() {
         }
       }
 
-      // 2. Check registration status
+      // 2. Check session status
+      if (session.status === "Completed") {
+        setError("This session has already ended.")
+        return
+      }
+
+      if (session.status === "Active" && session.allowLateJoins === false) {
+        setError("This session has already started. Late joins are disabled by the teacher.")
+        return
+      }
+
+      // 3. Register student identity locally & in database
       if (studentId) {
         const registered = await isStudentRegistered(sessionCode, studentId)
         if (!registered) {
-          if (session.status === "Active" || session.status === "Completed") {
-            setError("This session has already started or ended. Late joins are not allowed.")
-          } else {
-            // Redirect to join page to enter name/code properly
-            router.push(`/auth?role=student&code=${sessionCode}`)
+          try {
+            const actualName = studentName || "Guest Student"
+            await joinSession(actualName, sessionCode)
+          } catch (err: any) {
+            console.warn("Auto-register error on session load:", err)
           }
         }
       } else {
-        // No student ID, redirect to auth
-        router.push(`/auth?role=student&code=${sessionCode}`)
+        // No student ID on this device — auto-register guest student identity seamlessly
+        try {
+          const guestName = studentName || `Student_${Math.floor(1000 + Math.random() * 9000)}`
+          const newStudentId = await joinSession(guestName, sessionCode)
+          if (typeof window !== "undefined") {
+            localStorage.setItem("studentName", guestName)
+            localStorage.setItem("studentId", newStudentId)
+            localStorage.setItem("userRole", "student")
+          }
+          setStudentName(guestName)
+          setStudentId(newStudentId)
+        } catch (err: any) {
+          console.error("Error auto-joining guest student:", err)
+        }
       }
     }
 
     verifyAccess()
-  }, [session, loading, authLoading, currentUser, studentId, studentName, sessionCode, router])
+  }, [session, loading, authLoading, isTeacher, studentId, studentName, sessionCode])
 
 
   // 5a. Helper: show transition animation, save data to localStorage, then navigate to /live

@@ -196,6 +196,14 @@ export default function AuthPage() {
           )
         ])
         
+        // Save student credentials to localStorage so session page recognizes identity on redirect
+        if (typeof window !== "undefined") {
+          localStorage.setItem("studentName", name)
+          localStorage.setItem("studentId", studentId)
+          localStorage.setItem("userRole", "student")
+          localStorage.setItem(`teacher_session_${formattedCode}`, "false")
+        }
+
         // Pre-warm / Request camera permission immediately on click
         try {
           if (typeof navigator !== "undefined" && navigator.mediaDevices?.getUserMedia) {

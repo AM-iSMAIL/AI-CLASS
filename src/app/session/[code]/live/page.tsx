@@ -37,7 +37,7 @@ import { getFile } from "@/lib/fileStorage"
 import { extractPDFPages } from "@/lib/pdfParser"
 import StudentCamera from "@/components/StudentCamera"
 import type { FocusMetrics } from "@/lib/cv/use-cv-pipeline"
-import { subscribeToStudents, subscribeToSession, syncClassroomProgress, setStudentOffline, checkIsIdKicked, checkIsKicked, isStudentRegistered, endSession, kickStudent, removeStudent, updateStudentEngagement, updateTeacherEngagement } from "@/lib/session-service"
+import { subscribeToStudents, subscribeToSession, syncClassroomProgress, setStudentOffline, checkIsIdKicked, checkIsKicked, isStudentRegistered, endSession, kickStudent, removeStudent, updateStudentEngagement, updateTeacherEngagement, joinSession } from "@/lib/session-service"
 import { classroomContext } from "@/lib/classroom-context"
 
 /* ─── MOCK DATA ─── */
@@ -673,9 +673,20 @@ export default function LiveClassroomPage() {
         }
 
         if (!registered) {
-          setError("Access Denied. You did not join during the waiting time or are not registered in this session.")
-          setLoading(false)
-          return
+          // Auto-register student identity on new device seamless entry
+          try {
+            const guestName = storedStudentName && storedStudentName !== "Guest Student" ? storedStudentName : `Student_${Math.floor(1000 + Math.random() * 9000)}`
+            const newId = await joinSession(guestName, sessionCode)
+            if (typeof window !== "undefined") {
+              localStorage.setItem("studentName", guestName)
+              localStorage.setItem("studentId", newId)
+              localStorage.setItem("userRole", "student")
+            }
+            setStudentId(newId)
+            setStudentName(guestName)
+          } catch (regErr) {
+            console.warn("Auto-registration fallback on live entry:", regErr)
+          }
         }
       } catch (err) {
         console.error("Error verifying student access:", err)
