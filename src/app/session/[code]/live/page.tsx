@@ -965,36 +965,10 @@ export default function LiveClassroomPage() {
         }
 
         function fallbackDurationProgress() {
-          if (typeof window !== "undefined" && "speechSynthesis" in window) {
-            try {
-              window.speechSynthesis.cancel();
-              const utter = new SpeechSynthesisUtterance(clean);
-              utter.rate = 1.0;
-              utter.pitch = 1.0;
-              utter.onend = () => {
-                if (nextChunk.runId !== ttsRunIdRef.current) return;
-                isTtsPlayingRef.current = false;
-                setAiSpeechState("idle");
-                if (nextChunk.onEnd) nextChunk.onEnd();
-                runQueue();
-              };
-              utter.onerror = () => {
-                if (nextChunk.runId !== ttsRunIdRef.current) return;
-                isTtsPlayingRef.current = false;
-                setAiSpeechState("idle");
-                if (nextChunk.onEnd) nextChunk.onEnd();
-                runQueue();
-              };
-              window.speechSynthesis.speak(utter);
-              return;
-            } catch (err) {
-              console.warn("SpeechSynthesis fallback error:", err);
-            }
-          }
-
+          console.warn("[Camb AI]: Audio payload pending or failed for clause, maintaining slide timing.");
           isTtsPlayingRef.current = true;
           setAiSpeechState("speaking");
-          const duration = Math.max(1000, clean.split(/\s+/).length * 200);
+          const duration = Math.max(1200, clean.split(/\s+/).length * 220);
           setTimeout(() => {
             if (nextChunk.runId !== ttsRunIdRef.current) return;
             isTtsPlayingRef.current = false;
