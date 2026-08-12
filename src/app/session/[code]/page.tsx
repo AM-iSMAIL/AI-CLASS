@@ -585,10 +585,30 @@ export default function SessionPage() {
         }
 
         if (nextChunk.error || !nextChunk.audio) {
-          console.warn("[TTS]: Camb AI failed due to network latency.")
-          isTtsPlayingRef.current = false
-          if (nextChunk.onEnd) nextChunk.onEnd()
-          runQueue()
+          console.warn("[TTS]: Camb AI failed due to network latency, attempting SpeechSynthesis fallback.");
+          if (typeof window !== "undefined" && "speechSynthesis" in window) {
+            try {
+              window.speechSynthesis.cancel();
+              const utter = new SpeechSynthesisUtterance(nextChunk.text);
+              utter.onend = () => {
+                isTtsPlayingRef.current = false;
+                if (nextChunk.onEnd) nextChunk.onEnd();
+                runQueue();
+              };
+              utter.onerror = () => {
+                isTtsPlayingRef.current = false;
+                if (nextChunk.onEnd) nextChunk.onEnd();
+                runQueue();
+              };
+              window.speechSynthesis.speak(utter);
+              return;
+            } catch (e) {
+              console.warn("SpeechSynthesis error:", e);
+            }
+          }
+          isTtsPlayingRef.current = false;
+          if (nextChunk.onEnd) nextChunk.onEnd();
+          runQueue();
           return;
         }
 

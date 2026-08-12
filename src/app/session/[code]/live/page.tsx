@@ -99,44 +99,29 @@ const parseExplanationToSlides = (text: string) => {
 
 
 const splitIntoShortClauses = (text: string): string[] => {
-  const parts = text.split(/([,;:!?.\n])/);
-  const rawClauses: string[] = [];
-  let currentClause = "";
+  if (!text) return [];
 
-  for (let i = 0; i < parts.length; i += 2) {
-    const segment = parts[i];
-    const delimiter = parts[i + 1] || "";
-    const combined = (segment + delimiter).trim();
-    if (!combined) continue;
+  // Strip markdown symbols (**bold**, *italic*, `code`, headers, lists)
+  const cleanText = text
+    .replace(/IMAGE_PROMPT:.*$/gm, "")
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/\*(.*?)\*/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/^#+\s+/gm, "")
+    .replace(/^[-*]\s+/gm, "")
+    .trim();
 
-    if (currentClause) {
-      const wordCount = currentClause.split(/\s+/).length;
-      if (wordCount < 6) {
-        currentClause += " " + combined;
-        continue;
-      }
-      rawClauses.push(currentClause.trim());
-    }
-    currentClause = combined;
-  }
-  if (currentClause) {
-    rawClauses.push(currentClause.trim());
-  }
+  if (!cleanText) return [];
 
-  const finalClauses: string[] = [];
-  for (const clause of rawClauses) {
-    const words = clause.split(/\s+/);
-    if (words.length > 8) {
-      for (let i = 0; i < words.length; i += 7) {
-        const subWords = words.slice(i, i + 7);
-        finalClauses.push(subWords.join(" "));
-      }
-    } else {
-      finalClauses.push(clause);
-    }
-  }
+  // Split cleanly on sentence-ending punctuation (. ! ? ;)
+  const sentences = cleanText
+    .split(/(?<=[.!?;\n])\s+/)
+    .map(s => s.trim())
+    .filter(s => s.length > 0 && !/^[-*#.]+$/.test(s));
 
-  return finalClauses.filter(Boolean);
+  if (sentences.length > 0) return sentences;
+  return [cleanText];
 };
 
 
@@ -980,6 +965,33 @@ export default function LiveClassroomPage() {
         }
 
         function fallbackDurationProgress() {
+          if (typeof window !== "undefined" && "speechSynthesis" in window) {
+            try {
+              window.speechSynthesis.cancel();
+              const utter = new SpeechSynthesisUtterance(clean);
+              utter.rate = 1.0;
+              utter.pitch = 1.0;
+              utter.onend = () => {
+                if (nextChunk.runId !== ttsRunIdRef.current) return;
+                isTtsPlayingRef.current = false;
+                setAiSpeechState("idle");
+                if (nextChunk.onEnd) nextChunk.onEnd();
+                runQueue();
+              };
+              utter.onerror = () => {
+                if (nextChunk.runId !== ttsRunIdRef.current) return;
+                isTtsPlayingRef.current = false;
+                setAiSpeechState("idle");
+                if (nextChunk.onEnd) nextChunk.onEnd();
+                runQueue();
+              };
+              window.speechSynthesis.speak(utter);
+              return;
+            } catch (err) {
+              console.warn("SpeechSynthesis fallback error:", err);
+            }
+          }
+
           isTtsPlayingRef.current = true;
           setAiSpeechState("speaking");
           const duration = Math.max(1000, clean.split(/\s+/).length * 200);
