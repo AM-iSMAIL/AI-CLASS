@@ -684,8 +684,13 @@ export default function LiveClassroomPage() {
             }
             setStudentId(newId)
             setStudentName(guestName)
-          } catch (regErr) {
-            console.warn("Auto-registration fallback on live entry:", regErr)
+          } catch (regErr: any) {
+            console.warn("Auto-registration error on live entry:", regErr)
+            if (regErr?.message) {
+              setError(regErr.message)
+              setLoading(false)
+              return
+            }
           }
         }
       } catch (err) {

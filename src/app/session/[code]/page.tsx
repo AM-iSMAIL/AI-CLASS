@@ -379,6 +379,7 @@ export default function SessionPage() {
         localStorage.setItem("teachingMode", session.teachingMode || "AI")
         localStorage.setItem("userRole", isTeacher ? "teacher" : "student")
         if (studentId) localStorage.setItem("studentId", studentId)
+        if (studentName) localStorage.setItem("studentName", studentName)
       }
     } catch { /* localStorage blocked — live page will use defaults */ }
 
