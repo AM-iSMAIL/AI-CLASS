@@ -152,9 +152,10 @@ export default function SessionPage() {
   const isTtsPlayingRef = useRef<boolean>(false)
   const ttsRunIdRef = useRef(0)
 
-  // 1. Mount log
+  // 1. Mount log & background preload MediaPipe FaceMesh for instant 0ms classroom entry
   useEffect(() => {
     console.log("Classroom mounted")
+    import("@mediapipe/face_mesh").catch(() => {})
   }, [])
 
   // 2. Load identities from LocalStorage & Auth (with fallback)

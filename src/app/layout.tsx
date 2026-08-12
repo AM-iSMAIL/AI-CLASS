@@ -29,6 +29,13 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
     >
+      <head>
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+        <link rel="preload" href="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh_solution_packed_assets.data" as="fetch" crossOrigin="anonymous" />
+        <link rel="preload" href="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh_wasm_bin.wasm" as="fetch" crossOrigin="anonymous" />
+        <link rel="preload" href="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" as="script" crossOrigin="anonymous" />
+      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         {children}
       </body>
