@@ -188,7 +188,7 @@ export default function LiveClassroomPage() {
   const [speechEnabled, setSpeechEnabled] = useState(true)
   const speechRef = useRef<SpeechSynthesisUtterance | null>(null)
   const activeAudioRef = useRef<HTMLAudioElement | null>(null)
-  const ttsQueueRef = useRef<Array<{ text: string; onEnd?: () => void; audio?: HTMLAudioElement | null; promise?: Promise<any> | null; error?: boolean; imagePrompt?: string; imageUrl?: string | null; imagePromise?: Promise<any> | null; runId: number; slideIndex: number }>>([])
+  const ttsQueueRef = useRef<Array<{ text: string; onEnd?: () => void; audio?: HTMLAudioElement | null; audioSrc?: string | null; promise?: Promise<any> | null; error?: boolean; imagePrompt?: string; imageUrl?: string | null; imagePromise?: Promise<any> | null; runId: number; slideIndex: number }>>([])
   const isTtsPlayingRef = useRef<boolean>(false)
   const ttsRunIdRef = useRef(0)
   const currentSlideIdxRef = useRef(0)
@@ -814,24 +814,23 @@ export default function LiveClassroomPage() {
   }
 
   const processTtsQueue = useCallback(() => {
-    function runQueue() {
-      if (isTtsPlayingRef.current) return
+    async function runQueue() {
+      if (isTtsPlayingRef.current) return;
 
-      const nextChunk = ttsQueueRef.current[0]
+      const nextChunk = ttsQueueRef.current[0];
       if (!nextChunk) {
-        isTtsPlayingRef.current = false
-        setAiSpeechState("idle")
-        return
+        isTtsPlayingRef.current = false;
+        setAiSpeechState("idle");
+        return;
       }
 
-      isTtsPlayingRef.current = true
-      setAiSpeechState("speaking")
-      setLiveSubtitles(nextChunk.text)
-      currentSlideIdxRef.current = nextChunk.slideIndex
+      isTtsPlayingRef.current = true;
+      setAiSpeechState("speaking");
+      setLiveSubtitles(nextChunk.text);
+      currentSlideIdxRef.current = nextChunk.slideIndex;
 
       // Trigger image display/loader for this chunk's prompt (concurrency-safe)
       if (nextChunk.imagePrompt) {
-        // Start generating the image asynchronously if not already triggered
         if (!nextChunk.imagePromise) {
           nextChunk.imagePromise = fetch("/api/image", {
             method: "POST",
@@ -851,7 +850,6 @@ export default function LiveClassroomPage() {
         setImageError(null);
 
         const showImage = () => {
-          // Double-check if the run is still active
           if (nextChunk.runId !== ttsRunIdRef.current) return;
           setIsGeneratingImage(false);
           if (nextChunk.imageUrl) {
@@ -863,7 +861,6 @@ export default function LiveClassroomPage() {
         if (nextChunk.imageUrl) {
           showImage();
         } else {
-          // Non-blocking loader: pop up image asynchronously when ready without pausing speech
           nextChunk.imagePromise.then(showImage).catch(() => {
             if (nextChunk.runId === ttsRunIdRef.current) {
               setIsGeneratingImage(false);
@@ -875,122 +872,104 @@ export default function LiveClassroomPage() {
         setImageError(null);
       }
 
-      const playItem = () => {
-        // If the runId has changed since this item was queued, it's stale! Discard it!
-        if (nextChunk.runId !== ttsRunIdRef.current) return;
+      // Await TTS promise so audio payload is completely downloaded before dequeuing
+      if (nextChunk.promise) {
+        try { await nextChunk.promise; } catch {}
+      }
 
-        // Remove from queue since we're starting play
-        ttsQueueRef.current.shift();
+      if (nextChunk.runId !== ttsRunIdRef.current) return;
 
-        const clean = nextChunk.text.split("\n").filter(l => !l.trim().startsWith("IMAGE_PROMPT:")).join("\n").trim();
-        if (!clean) {
-          isTtsPlayingRef.current = false;
-          if (nextChunk.onEnd) nextChunk.onEnd();
-          runQueue();
-          return;
-        }
+      // Remove from queue after audio payload is ready
+      ttsQueueRef.current.shift();
 
-        setLiveSubtitles(clean);
+      const clean = nextChunk.text.split("\n").filter(l => !l.trim().startsWith("IMAGE_PROMPT:")).join("\n").trim();
+      if (!clean) {
+        isTtsPlayingRef.current = false;
+        if (nextChunk.onEnd) nextChunk.onEnd();
+        runQueue();
+        return;
+      }
 
-        // 1. Primary Engine: Play Camb AI Audio (Realistic Human Voice)
-        if (nextChunk.audio) {
-          const audio = nextChunk.audio;
-          audio.volume = 1.0;
-          activeAudioRef.current = audio;
+      setLiveSubtitles(clean);
 
-          audio.onplay = () => {
-            if (nextChunk.runId !== ttsRunIdRef.current) return;
-            setAiSpeechState("speaking");
-          };
-          audio.onended = () => {
-            if (nextChunk.runId !== ttsRunIdRef.current) return;
-            isTtsPlayingRef.current = false;
-            if (nextChunk.onEnd) nextChunk.onEnd();
-            runQueue();
-          };
-          audio.onerror = (e) => {
-            console.warn("[Camb AI Audio]: Playback error, advancing:", e);
-            if (nextChunk.runId !== ttsRunIdRef.current) return;
-            isTtsPlayingRef.current = false;
-            if (nextChunk.onEnd) nextChunk.onEnd();
-            runQueue();
-          };
-
-          audio.play().catch(err => {
-            console.warn("[Camb AI Audio]: Playback exception, advancing:", err);
-            if (nextChunk.runId !== ttsRunIdRef.current) return;
-            isTtsPlayingRef.current = false;
-            if (nextChunk.onEnd) nextChunk.onEnd();
-            runQueue();
-          });
-          return;
-        }
-
-        // If audio wasn't pre-fetched yet, fetch from Camb AI directly
-        if (speechEnabled && !nextChunk.error) {
+      // On-demand fetch fallback if audio payload is missing
+      if (!nextChunk.audioSrc && !nextChunk.audio && speechEnabled && !nextChunk.error) {
+        try {
           console.log(`[Camb AI] On-demand fetching voice for: "${clean.substring(0, 25)}..."`);
-          fetch("/api/tts", {
+          const r = await fetch("/api/tts", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ text: clean })
-          })
-            .then(r => r.json())
-            .then(data => {
-              if (data.audioContent && nextChunk.runId === ttsRunIdRef.current) {
-                const audio = new Audio("data:audio/mpeg;base64," + data.audioContent);
-                audio.volume = 1.0;
-                activeAudioRef.current = audio;
-                audio.onplay = () => setAiSpeechState("speaking");
-                audio.onended = () => {
-                  isTtsPlayingRef.current = false;
-                  if (nextChunk.onEnd) nextChunk.onEnd();
-                  runQueue();
-                };
-                audio.onerror = () => {
-                  isTtsPlayingRef.current = false;
-                  if (nextChunk.onEnd) nextChunk.onEnd();
-                  runQueue();
-                };
-                audio.play().catch(() => {
-                  isTtsPlayingRef.current = false;
-                  if (nextChunk.onEnd) nextChunk.onEnd();
-                  runQueue();
-                });
-                return;
-              }
-              fallbackDurationProgress();
-            })
-            .catch(() => fallbackDurationProgress());
+          });
+          const data = await r.json();
+          if (data.audioContent) {
+            nextChunk.audioSrc = "data:audio/mpeg;base64," + data.audioContent;
+          }
+        } catch (err) {
+          console.warn("[Camb AI]: On-demand fetch error:", err);
+        }
+      }
+
+      const audioSrcToPlay = nextChunk.audioSrc || (nextChunk.audio ? nextChunk.audio.src : null);
+
+      if (audioSrcToPlay && speechEnabled) {
+        if (!activeAudioRef.current) {
+          activeAudioRef.current = new Audio();
+        }
+        const player = activeAudioRef.current;
+        player.pause();
+        player.src = audioSrcToPlay;
+        player.volume = 1.0;
+
+        player.onplay = () => {
+          if (nextChunk.runId !== ttsRunIdRef.current) return;
+          setAiSpeechState("speaking");
+        };
+
+        player.onended = () => {
+          if (nextChunk.runId !== ttsRunIdRef.current) return;
+          isTtsPlayingRef.current = false;
+          if (nextChunk.onEnd) nextChunk.onEnd();
+          runQueue();
+        };
+
+        player.onerror = (e) => {
+          console.warn("[Camb AI Player Error]:", e);
+          if (nextChunk.runId !== ttsRunIdRef.current) return;
+          isTtsPlayingRef.current = false;
+          if (nextChunk.onEnd) nextChunk.onEnd();
+          runQueue();
+        };
+
+        try {
+          await player.play();
+          return;
+        } catch (playErr) {
+          console.warn("[Camb AI Player Play Exception]:", playErr);
+          // Retry play once if browser suspended audio context
+          setTimeout(() => {
+            player.play().catch(() => {
+              if (nextChunk.runId !== ttsRunIdRef.current) return;
+              isTtsPlayingRef.current = false;
+              if (nextChunk.onEnd) nextChunk.onEnd();
+              runQueue();
+            });
+          }, 150);
           return;
         }
-
-        function fallbackDurationProgress() {
-          console.warn("[Camb AI]: Audio payload pending or failed for clause, maintaining slide timing.");
-          isTtsPlayingRef.current = true;
-          setAiSpeechState("speaking");
-          const duration = Math.max(1200, clean.split(/\s+/).length * 220);
-          setTimeout(() => {
-            if (nextChunk.runId !== ttsRunIdRef.current) return;
-            isTtsPlayingRef.current = false;
-            setAiSpeechState("idle");
-            if (nextChunk.onEnd) nextChunk.onEnd();
-            runQueue();
-          }, duration);
-        }
-
-        fallbackDurationProgress();
       }
 
-      const triggerPlay = () => {
-        if (nextChunk.promise) {
-          nextChunk.promise.then(playItem).catch(playItem)
-        } else {
-          playItem()
-        }
-      }
-
-      // NON-BLOCKING EXECUTION: Start voice playback immediately without waiting for image generation!
-      triggerPlay();
+      // Fallback timer if speech is disabled or payload failed entirely
+      isTtsPlayingRef.current = true;
+      setAiSpeechState("speaking");
+      const duration = Math.max(1500, clean.split(/\s+/).length * 250);
+      setTimeout(() => {
+        if (nextChunk.runId !== ttsRunIdRef.current) return;
+        isTtsPlayingRef.current = false;
+        setAiSpeechState("idle");
+        if (nextChunk.onEnd) nextChunk.onEnd();
+        runQueue();
+      }, duration);
     }
 
     runQueue();
@@ -1033,6 +1012,7 @@ export default function LiveClassroomPage() {
           slideIndex: startFromIndex + index,
           onEnd: (isLast && clauseIdx === clauses.length - 1) ? onEnd : undefined,
           audio: null as HTMLAudioElement | null,
+          audioSrc: null as string | null,
           promise: null as Promise<any> | null,
           error: false,
           imagePrompt: (slide.imagePrompt || clause).trim(),
@@ -1040,25 +1020,22 @@ export default function LiveClassroomPage() {
           imagePromise: (isFirst && clauseIdx === 0 && firstImageUrl) ? Promise.resolve() : null as Promise<any> | null
         };
 
-        if (speechEnabled && cleanClause) {
-          item.promise = fetch("/api/tts", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: cleanClause })
-          })
-            .then(r => r.json())
-            .then(data => {
-              if (data.audioContent) {
-                const audio = new Audio("data:audio/mpeg;base64," + data.audioContent);
-                audio.preload = "auto";
-                audio.load();
-                item.audio = audio;
-              }
-            })
-            .catch(() => {
-              item.error = true;
-            });
-        } else {
+                if (speechEnabled && cleanClause) {
+                  item.promise = fetch("/api/tts", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ text: cleanClause })
+                  })
+                    .then(r => r.json())
+                    .then(data => {
+                      if (data.audioContent) {
+                        item.audioSrc = "data:audio/mpeg;base64," + data.audioContent;
+                      }
+                    })
+                    .catch(() => {
+                      item.error = true;
+                    });
+                } else {
           item.promise = Promise.resolve();
         }
 
@@ -1359,6 +1336,7 @@ export default function LiveClassroomPage() {
                   slideIndex: currentSlideIdx,
                   onEnd: (isLast && clauseIdx === clauses.length - 1) ? onPlaybackEnd : undefined,
                   audio: null as HTMLAudioElement | null,
+                  audioSrc: null as string | null,
                   promise: null as Promise<any> | null,
                   error: false,
                   imagePrompt: (imgPrompt || clause).trim(),
@@ -1375,10 +1353,7 @@ export default function LiveClassroomPage() {
                     .then(r => r.json())
                     .then(data => {
                       if (data.audioContent) {
-                        const audio = new Audio("data:audio/mpeg;base64," + data.audioContent);
-                        audio.preload = "auto";
-                        audio.load();
-                        item.audio = audio;
+                        item.audioSrc = "data:audio/mpeg;base64," + data.audioContent;
                       }
                     })
                     .catch(() => {
