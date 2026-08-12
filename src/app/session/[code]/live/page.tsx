@@ -797,18 +797,15 @@ export default function LiveClassroomPage() {
     const trimmed = buffer.trim();
     if (!trimmed) return false;
 
-    // 1. Hard punctuation (end of sentence/paragraph) or soft pauses (commas, semicolons, colons)
-    if (/[.!?,;:](|$)/.test(trimmed)) return true;
-
-    // 2. Newline: Only flush if it's a meaningful phrase (at least 3 words or 15 chars)
-    if (buffer.includes("\n")) {
-      const words = trimmed.split(/\s+/);
-      if (words.length >= 3 || trimmed.length >= 15) return true;
-    }
-
-    // 3. Fallback: Only flush as a safety if the sentence is long (15+ words)
+    // 1. Only flush on true sentence-ending punctuation (. ! ?) with at least 8 words
     const words = trimmed.split(/\s+/);
-    if (words.length >= 15 && buffer.endsWith(" ")) return true;
+    if (words.length >= 8 && /[.!?]$/.test(trimmed)) return true;
+
+    // 2. Newline: Flush if it's a complete sentence or paragraph block (at least 8 words)
+    if (buffer.includes("\n") && words.length >= 8) return true;
+
+    // 3. Fallback: Only flush as a safety if the sentence is very long (18+ words)
+    if (words.length >= 18 && buffer.endsWith(" ")) return true;
 
     return false;
   }
