@@ -137,8 +137,8 @@ export default function StudentCamera({
   // Status dot and detail label
   const statusDotColor =
     metrics.status === "focused" ? "bg-emerald-400" :
-    metrics.status === "distracted" ? "bg-amber-400" :
-    metrics.status === "away" ? "bg-rose-400" : "bg-gray-400";
+      metrics.status === "distracted" ? "bg-amber-400" :
+        metrics.status === "away" ? "bg-rose-400" : "bg-gray-400";
 
   const detailLabel = (() => {
     if (!metrics.faceDetected) return "No face";
@@ -154,7 +154,7 @@ export default function StudentCamera({
   // Iris engagement label & color
   const irisColor =
     metrics.irisEngagement >= 60 ? "text-emerald-400/60" :
-    metrics.irisEngagement >= 40 ? "text-amber-400/60" : "text-rose-400/60";
+      metrics.irisEngagement >= 40 ? "text-amber-400/60" : "text-rose-400/60";
 
   return (
     <>

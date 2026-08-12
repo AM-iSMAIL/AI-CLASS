@@ -41,11 +41,10 @@ const MOUTH_BOTTOM = 14;
 const MOUTH_LEFT = 78;
 const MOUTH_RIGHT = 308;
 
-// Critical landmarks that must be within frame bounds
+// Critical landmarks that must be within frame bounds (standard 468-point landmarks)
 const CRITICAL_LANDMARKS = [
   NOSE_TIP, FOREHEAD, CHIN, LEFT_CHEEK, RIGHT_CHEEK,
   LEFT_EYE_TOP, LEFT_EYE_BOTTOM, RIGHT_EYE_TOP, RIGHT_EYE_BOTTOM,
-  LEFT_IRIS_CENTER, RIGHT_IRIS_CENTER,
 ];
 
 export {
@@ -72,7 +71,6 @@ export class LandmarkDetectorModule implements CVModule<Map<string, StructuredLa
     if (!config) return new Map();
 
     const results = new Map<string, StructuredLandmarks | null>();
-    const margin = config.landmarkBoundsMargin;
 
     for (const student of ctx.trackedStudents) {
       if (student.faceIndex < 0 || !ctx.faceLandmarks) {
@@ -86,27 +84,29 @@ export class LandmarkDetectorModule implements CVModule<Map<string, StructuredLa
         continue;
       }
 
-      // Validate face completeness
+      // Validate face completeness — face is complete if nose & eyes are within the camera frame
       let faceComplete = true;
       for (const idx of CRITICAL_LANDMARKS) {
         const pt = lm[idx];
-        if (!pt || pt.x < margin || pt.x > 1 - margin || pt.y < margin || pt.y > 1 - margin) {
+        if (!pt || pt.x < 0.001 || pt.x > 0.999 || pt.y < 0.001 || pt.y > 0.999) {
           faceComplete = false;
           break;
         }
       }
 
-      const pick = (indices: number[]): Point3D[] => indices.map(i => lm[i]);
+      const pick = (indices: number[]): Point3D[] => indices.map(i => lm[i] || lm[0]);
+
+      const hasRefinedIris = lm.length >= 478 && lm[LEFT_IRIS_CENTER] && lm[RIGHT_IRIS_CENTER];
 
       const structured: StructuredLandmarks = {
         raw: lm,
         faceComplete,
         leftEyeContour: pick(LEFT_EYE_CONTOUR),
         rightEyeContour: pick(RIGHT_EYE_CONTOUR),
-        leftIrisCenter: lm[LEFT_IRIS_CENTER],
-        leftIrisRing: pick(LEFT_IRIS_RING),
-        rightIrisCenter: lm[RIGHT_IRIS_CENTER],
-        rightIrisRing: pick(RIGHT_IRIS_RING),
+        leftIrisCenter: hasRefinedIris ? lm[LEFT_IRIS_CENTER] : lm[LEFT_EYE_CENTER_LM],
+        leftIrisRing: hasRefinedIris ? pick(LEFT_IRIS_RING) : pick(LEFT_EYE_EAR),
+        rightIrisCenter: hasRefinedIris ? lm[RIGHT_IRIS_CENTER] : lm[RIGHT_EYE_CENTER_LM],
+        rightIrisRing: hasRefinedIris ? pick(RIGHT_IRIS_RING) : pick(RIGHT_EYE_EAR),
         leftEyeEAR: pick(LEFT_EYE_EAR),
         rightEyeEAR: pick(RIGHT_EYE_EAR),
         leftEyeTop: lm[LEFT_EYE_TOP],

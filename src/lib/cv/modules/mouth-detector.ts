@@ -40,7 +40,7 @@ export class MouthDetectorModule implements CVModule<Map<string, MouthState | nu
       const analysis = ctx.studentAnalysis.get(student.trackingId);
       const lm = analysis?.landmarks;
 
-      if (!lm || !lm.faceComplete) {
+      if (!lm || !lm.raw) {
         results.set(student.trackingId, null);
         continue;
       }

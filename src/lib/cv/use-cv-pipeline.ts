@@ -80,7 +80,7 @@ export function useCVPipeline({
       status = 'distracted';
     }
 
-    const faceDetected = output.presence !== 'absent' && output.presence !== 'no_face' && output.presence !== 'partial_face';
+    const faceDetected = output.presence !== 'absent' && output.presence !== 'no_face';
 
     // Estimate effective deviation angle (degrees)
     const yaw = output.headPose?.yaw ?? 0;

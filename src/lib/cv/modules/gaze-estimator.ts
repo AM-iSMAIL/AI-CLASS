@@ -54,7 +54,7 @@ export class GazeEstimatorModule implements CVModule<Map<string, GazeEstimate | 
       const lm = analysis?.landmarks;
 
       // Skip if eyes are closed (blink module may not have run yet, so check landmarks)
-      if (!lm || !lm.faceComplete) {
+      if (!lm || !lm.raw) {
         results.set(student.trackingId, null);
         continue;
       }

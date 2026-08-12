@@ -128,14 +128,18 @@ function computeRawScore(
   const gaze = analysis.gaze;
   const mouth = analysis.mouth;
 
-  // No face / not present / partial face
-  if (!presence || presence.status === 'absent' || presence.status === 'no_face' || presence.status === 'partial_face') return 0;
+  // No face / not present
+  if (!presence || presence.status === 'absent' || presence.status === 'no_face') return 0;
   if (presence.status === 'camera_blocked') return 0;
 
   // Eyes closed + drowsy
   if (blink && !blink.eyesOpen && blink.isDrowsy) return 15;
 
   let score = 100;
+
+  if (presence.status === 'partial_face') {
+    score -= 15;
+  }
 
   // ── Phone Usage Penalty (60 pts) ──
   const phoneDetected = ctx?.objectDetections.some(

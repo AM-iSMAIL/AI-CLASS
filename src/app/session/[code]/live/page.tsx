@@ -315,7 +315,7 @@ export default function LiveClassroomPage() {
           isEndingSessionRef.current = true;
           const storedName = studentName || (isTeacher ? "Teacher" : "Participant");
           if (studentId && sessionCode) {
-            await kickStudent(sessionCode, studentId, storedName).catch(() => {});
+            await kickStudent(sessionCode, studentId, storedName).catch(() => { });
           }
           window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=three_strikes`;
         };
@@ -397,7 +397,7 @@ export default function LiveClassroomPage() {
         isEndingSessionRef.current = true;
         const storedName = studentName || (isTeacher ? "Teacher" : "Participant");
         if (studentId && sessionCode) {
-          await kickStudent(sessionCode, studentId, storedName).catch(() => {});
+          await kickStudent(sessionCode, studentId, storedName).catch(() => { });
         }
         window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
       }, 5000);
@@ -417,7 +417,7 @@ export default function LiveClassroomPage() {
       const executeKick = async () => {
         const storedName = studentName || (isTeacher ? "Teacher" : "Participant");
         if (studentId && sessionCode) {
-          await kickStudent(sessionCode, studentId, storedName).catch(() => {});
+          await kickStudent(sessionCode, studentId, storedName).catch(() => { });
         }
         window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=device_usage`;
       };
@@ -1815,7 +1815,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       setKickReason(reason);
       setIsKicked(true);
       const storedName = studentName || "Unknown";
-      kickStudent(sessionCode, studentId, storedName).catch(() => {});
+      kickStudent(sessionCode, studentId, storedName).catch(() => { });
     };
 
     const handleVisibilityChange = () => {
@@ -2037,10 +2037,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             const existingPublications = roomRef.current.localParticipant.videoTrackPublications;
             for (const pub of existingPublications.values()) {
               if (pub.track) {
-                await roomRef.current.localParticipant.unpublishTrack(pub.track).catch(() => {});
+                await roomRef.current.localParticipant.unpublishTrack(pub.track).catch(() => { });
               }
             }
-            await roomRef.current.localParticipant.publishTrack(videoTrack).catch(() => {});
+            await roomRef.current.localParticipant.publishTrack(videoTrack).catch(() => { });
           } catch (e) {
             console.warn("Video track update error:", e);
           }
@@ -2231,7 +2231,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
     stopSpeaking();
     lectureAbortRef.current?.abort();
     if (studentId && sessionCode) {
-      await setStudentOffline(sessionCode, studentId).catch(() => {});
+      await setStudentOffline(sessionCode, studentId).catch(() => { });
     }
     window.location.href = "/student-dashboard";
   };
@@ -2765,9 +2765,9 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           {/* ── PROFESSOR AI — Response Panel ── */}
           <div
             className={`rounded-[22px] border border-[rgba(15,23,42,.08)] p-[28px] flex gap-4 flex-shrink-0 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] relative bg-white shadow-[0_8px_24px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(15,23,42,.08)] ${lecturePlayState === "PAUSED_FOR_DOUBT" ? "border-amber-400/50"
-                : aiSpeechState === "speaking" ? "tile-glow"
-                  : aiSpeechState === "paused" ? "border-amber-400/30"
-                    : "border-[rgba(15,23,42,.08)]"
+              : aiSpeechState === "speaking" ? "tile-glow"
+                : aiSpeechState === "paused" ? "border-amber-400/30"
+                  : "border-[rgba(15,23,42,.08)]"
               }`}
           >
             {/* LIVE / PAUSED badge */}
@@ -2787,10 +2787,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             <div className="flex flex-col items-center gap-2 flex-shrink-0 justify-center">
               <div
                 className={`rounded-full flex items-center justify-center border-[3px] border-white transition-all duration-500 shadow-[0_10px_20px_rgba(37,99,235,.18)] ${aiSpeechState === "speaking"
-                    ? "bg-[#2563EB] text-white orb-active"
-                    : aiSpeechState === "paused"
-                      ? "bg-[#2563EB]/80 text-white orb-idle"
-                      : "bg-[#2563EB] text-white orb-idle"
+                  ? "bg-[#2563EB] text-white orb-active"
+                  : aiSpeechState === "paused"
+                    ? "bg-[#2563EB]/80 text-white orb-idle"
+                    : "bg-[#2563EB] text-white orb-idle"
                   }`}
                 style={{ width: 48, height: 48 }}
               >
@@ -2810,7 +2810,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                 <h3 className="text-[18px] font-bold text-[#111827] leading-tight">Professor AI</h3>
                 <span className="text-xs text-[#9CA3AF]">·</span>
                 <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full truncate transition-colors duration-300 ${lecturePlayState === "PAUSED_FOR_DOUBT" ? "bg-[#FEF3C7] text-[#D97706]"
-                    : aiSpeechState === "speaking" ? "bg-[#EFF6FF] text-[#2563EB]" : aiSpeechState === "paused" ? "bg-[#FEF3C7] text-[#D97706]" : "bg-[#F3F4F6] text-[#6B7280]"
+                  : aiSpeechState === "speaking" ? "bg-[#EFF6FF] text-[#2563EB]" : aiSpeechState === "paused" ? "bg-[#FEF3C7] text-[#D97706]" : "bg-[#F3F4F6] text-[#6B7280]"
                   }`}>
                   {lecturePlayState === "PAUSED_FOR_DOUBT" ? "Answering doubt..."
                     : aiSpeechState === "speaking" ? activeLabel : aiSpeechState === "paused" ? "Paused" : "Waiting..."}
@@ -2937,8 +2937,8 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                 <div key={msg.id} className={`flex flex-col gap-1 max-w-[90%] slide-up ${msg.isAI ? "self-start" : "self-end items-end"}`}>
                   <span className="text-[9px] text-[#374151] font-bold">{msg.sender} • {msg.time}</span>
                   <div className={`text-[11px] px-3.5 py-2.5 rounded-[18px] leading-relaxed transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] ${msg.isAI
-                      ? "bg-white text-[#111827] font-semibold border-2 border-[#2563EB] rounded-tl-none flex gap-2 items-start shadow-xs"
-                      : "bg-[#EFF6FF] text-[#1E40AF] border-2 border-[#2563EB] rounded-tr-none shadow-xs font-semibold"
+                    ? "bg-white text-[#111827] font-semibold border-2 border-[#2563EB] rounded-tl-none flex gap-2 items-start shadow-xs"
+                    : "bg-[#EFF6FF] text-[#1E40AF] border-2 border-[#2563EB] rounded-tr-none shadow-xs font-semibold"
                     }`}>
                     {msg.isAI && <Brain className="h-3.5 w-3.5 text-[#2563EB] flex-shrink-0 mt-0.5" />}
                     <span>{msg.text}</span>
@@ -3264,8 +3264,8 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             <button
               onClick={() => setShowOnlyActive(prev => !prev)}
               className={`px-2.5 py-1 rounded-lg border text-[10px] font-bold transition-all flex items-center gap-1.5 cursor-pointer ${showOnlyActive
-                  ? "bg-blue-50 border-blue-200 text-blue-600"
-                  : "bg-slate-50 border-slate-200 text-slate-650 hover:bg-slate-100"
+                ? "bg-blue-50 border-blue-200 text-blue-600"
+                : "bg-slate-50 border-slate-200 text-slate-650 hover:bg-slate-100"
                 }`}
             >
               <span className={`h-1.5 w-1.5 rounded-full ${showOnlyActive ? "bg-blue-500 animate-pulse" : "bg-slate-300"}`} />
@@ -3290,8 +3290,8 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                 <div
                   key={s.id}
                   className={`flex items-center justify-between p-2.5 rounded-xl transition-all border border-transparent ${isSpeaking
-                      ? "bg-blue-50/50 border-blue-200"
-                      : "hover:bg-slate-50"
+                    ? "bg-blue-50/50 border-blue-200"
+                    : "hover:bg-slate-50"
                     }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
@@ -3336,8 +3336,8 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
                     {/* mic status */}
                     <div className={`p-1.5 rounded-lg border ${isMuted
-                        ? "bg-red-50 border-red-100 text-red-500"
-                        : "bg-slate-50 border-slate-200 text-slate-400"
+                      ? "bg-red-50 border-red-100 text-red-500"
+                      : "bg-slate-50 border-slate-200 text-slate-400"
                       }`}>
                       {isMuted ? <MicOff className="h-3 w-3" /> : <Mic className="h-3 w-3" />}
                     </div>

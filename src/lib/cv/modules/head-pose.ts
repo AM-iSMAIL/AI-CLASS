@@ -24,7 +24,7 @@ export class HeadPoseModule implements CVModule<Map<string, HeadPose | null>> {
       const analysis = ctx.studentAnalysis.get(student.trackingId);
       const lm = analysis?.landmarks;
 
-      if (!lm || !lm.faceComplete) {
+      if (!lm || !lm.raw) {
         results.set(student.trackingId, null);
         continue;
       }

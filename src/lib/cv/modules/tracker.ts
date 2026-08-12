@@ -58,7 +58,9 @@ export class TrackerModule implements CVModule<TrackedStudent[]> {
         }
       }
 
-      if (bestIdx >= 0 && bestIoU >= config.trackingIoUThreshold) {
+      const isSingleTrackMatch = faces.length === 1 && this.tracks.length === 1 && bestIdx === 0;
+
+      if (bestIdx >= 0 && (bestIoU >= config.trackingIoUThreshold || isSingleTrackMatch)) {
         // Matched — update track
         track.currentPosition = faces[bestIdx].bbox;
         track.lastSeen = now;
