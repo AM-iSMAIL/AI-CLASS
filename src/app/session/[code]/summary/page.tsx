@@ -467,7 +467,7 @@ export default function SummaryPage() {
           {/* Navigation Button */}
           <div className="text-center pt-2">
             <button
-              onClick={() => router.push("/dashboard")}
+              onClick={() => { window.location.href = "/dashboard"; }}
               className="px-6 py-3 bg-[#111827] hover:bg-[#1F2937] hover:-translate-y-0.5 rounded-[16px] text-xs font-bold text-white shadow-[0_12px_24px_rgba(17,24,39,.12)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] inline-flex items-center gap-2 cursor-pointer group"
             >
               <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-300" />
@@ -482,22 +482,15 @@ export default function SummaryPage() {
   // ─── STUDENT VIEW ───
   return (
     <div className="min-h-screen bg-[#F6F7F9] flex flex-col items-center justify-center text-[#111827] p-6 font-sans antialiased">
-      
-      <div className="max-w-md w-full relative z-10 bg-white border border-[rgba(15,23,42,.08)] p-8 rounded-[24px] shadow-[0_12px_32px_rgba(15,23,42,.05)] text-center space-y-6">
+      <div className="max-w-md w-full bg-white border border-[rgba(15,23,42,.08)] rounded-[28px] p-8 text-center space-y-6 shadow-[0_1px_2px_rgba(15,23,42,.03),0_12px_32px_rgba(15,23,42,.05)]">
         {kicked ? (
           <>
-            <div className="w-20 h-20 bg-[#FEF2F2] border border-[#FECACA] rounded-full flex items-center justify-center mx-auto mb-2 animate-pulse">
+            <div className="w-20 h-20 bg-[#FEF2F2] border border-[#FECACA] rounded-full flex items-center justify-center mx-auto mb-2">
               <ShieldAlert className="w-10 h-10 text-[#DC2626]" />
             </div>
-            <h1 className="text-2xl font-black text-[#111827]">Removed from Session</h1>
+            <h1 className="text-2xl font-bold text-[#DC2626]">Session Terminated</h1>
             <p className="text-sm text-[#6B7280] leading-relaxed font-medium">
-              {reason === "out_of_frame" ? (
-                <>You were automatically removed from session <span className="font-bold text-[#DC2626]">{sessionCode}</span> because the AI vision system detected you left the camera frame.</>
-              ) : reason === "device_usage" ? (
-                <>You were automatically removed from session <span className="font-bold text-[#DC2626]">{sessionCode}</span> because the AI vision system detected prohibited phone/tablet usage.</>
-              ) : (
-                <>You were automatically removed from session <span className="font-bold text-[#DC2626]">{sessionCode}</span> because the AI vision system detected you were away from your keyboard or deeply distracted for an extended period.</>
-              )}
+              You were removed from session <span className="font-bold text-[#111827]">{sessionCode}</span> due to distraction or violation of monitoring rules.
             </p>
           </>
         ) : (
@@ -514,7 +507,7 @@ export default function SummaryPage() {
 
         <div className="pt-4 border-t border-[#E5E7EB]">
           <button
-            onClick={() => router.push("/student-dashboard")}
+            onClick={() => { window.location.href = "/student-dashboard"; }}
             className="w-full py-4 bg-[#111827] hover:bg-[#1F2937] hover:-translate-y-0.5 text-white rounded-[16px] text-sm font-bold shadow-[0_12px_24px_rgba(17,24,39,.12)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] flex items-center justify-center gap-2 cursor-pointer group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />

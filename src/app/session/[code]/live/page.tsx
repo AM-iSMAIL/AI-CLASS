@@ -3529,7 +3529,10 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                   <button
                     onClick={() => {
                       isEndingSessionRef.current = true;
-                      router.push("/student-dashboard");
+                      try {
+                        if (typeof bypassBeforeUnload === "function") bypassBeforeUnload();
+                      } catch (_) { }
+                      window.location.href = isTeacher ? "/dashboard" : "/student-dashboard";
                     }}
                     className="w-full py-4 px-6 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold rounded-2xl shadow-lg shadow-rose-600/20 transition-all transform active:scale-95 cursor-pointer uppercase tracking-wider text-xs flex items-center justify-center gap-2"
                   >
