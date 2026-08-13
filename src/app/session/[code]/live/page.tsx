@@ -300,7 +300,7 @@ export default function LiveClassroomPage() {
           isEndingSessionRef.current = true;
           const storedName = studentName || (isTeacher ? "Teacher" : "Participant");
           if (studentId && sessionCode) {
-            await kickStudent(sessionCode, studentId, storedName).catch(() => { });
+            await kickStudent(sessionCode, studentId, storedName, localMetrics.score, "three_strikes").catch(() => { });
           }
           window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=three_strikes`;
         };
@@ -382,12 +382,12 @@ export default function LiveClassroomPage() {
         isEndingSessionRef.current = true;
         const storedName = studentName || (isTeacher ? "Teacher" : "Participant");
         if (studentId && sessionCode) {
-          await kickStudent(sessionCode, studentId, storedName).catch(() => { });
+          await kickStudent(sessionCode, studentId, storedName, localMetrics.score, "out_of_frame").catch(() => { });
         }
         window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=out_of_frame`;
       }, 5000);
     }
-  }, [localMetrics.faceDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus, startupGraceActive]);
+  }, [localMetrics.faceDetected, localMetrics.score, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus, startupGraceActive]);
 
   // ── Phone usage instant kick engine ──
   useEffect(() => {
@@ -402,13 +402,13 @@ export default function LiveClassroomPage() {
       const executeKick = async () => {
         const storedName = studentName || (isTeacher ? "Teacher" : "Participant");
         if (studentId && sessionCode) {
-          await kickStudent(sessionCode, studentId, storedName).catch(() => { });
+          await kickStudent(sessionCode, studentId, storedName, localMetrics.score, "device_usage").catch(() => { });
         }
         window.location.href = `/session/${sessionCode}/summary?kicked=true&reason=device_usage`;
       };
       executeKick();
     }
-  }, [localMetrics.phoneDetected, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus, startupGraceActive]);
+  }, [localMetrics.phoneDetected, localMetrics.score, hasEntered, videoOn, isTeacher, sessionCode, studentId, studentName, endCountdown, sessionStatus, startupGraceActive]);
   const chatEndRef = useRef<HTMLDivElement>(null)
   const transcriptEndRef = useRef<HTMLDivElement>(null)
 

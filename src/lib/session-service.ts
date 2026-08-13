@@ -384,7 +384,9 @@ export const syncClassroomProgress = async (sessionCode: string, currentTopicInd
 export const kickStudent = async (
   sessionCode: string,
   studentId: string,
-  studentName: string
+  studentName: string,
+  finalScore?: number,
+  reason?: string
 ): Promise<void> => {
   try {
     const code = sessionCode.trim().toUpperCase()
@@ -396,6 +398,8 @@ export const kickStudent = async (
       name: studentName,
       nameLower: studentName.trim().toLowerCase(),
       kickedAt: serverTimestamp(),
+      engagementScore: typeof finalScore === "number" && !isNaN(finalScore) ? Math.round(finalScore) : 0,
+      reason: reason || "distraction",
     })
   } catch (error) {
     console.error("Error kicking student:", error)
@@ -463,6 +467,8 @@ export interface KickedStudent {
   name: string
   nameLower: string
   kickedAt: any
+  engagementScore?: number
+  reason?: string
 }
 
 // 14. Subscribe to kicked list updates

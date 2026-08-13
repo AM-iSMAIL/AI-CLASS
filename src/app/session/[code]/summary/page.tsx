@@ -104,19 +104,30 @@ export default function SummaryPage() {
   // Export Attendance CSV function
   const handleExportCSV = () => {
     try {
-      const headers = ["Student Name", "Status", "Join Time", "Average Focus Score"];
+      const isHostStudent = (s: Student) => {
+        if (s.id === session?.teacherId) return true;
+        if ((s as any).isTeacher || (s as any).role === "teacher") return true;
+        const lower = s.name.toLowerCase();
+        return lower.includes("host") || lower.includes("teacher");
+      };
+
+      const headers = ["Participant Name", "Role / Status", "Time", "Average Focus Score"];
       const rows = [
-        ...studentsList.filter(s => s.id !== session?.teacherId).map(s => {
+        ...studentsList.map(s => {
+          const isHost = isHostStudent(s);
           const joinedTime = s.joinedAt?.seconds 
             ? new Date(s.joinedAt.seconds * 1000).toLocaleTimeString() 
             : "Unknown";
-          return [s.name, s.status === "offline" ? "Left Class" : "Present", joinedTime, `${s.engagementScore}%`];
+          const statusText = isHost ? "Host / Teacher" : s.status === "offline" ? "Left Class" : "Present";
+          const score = typeof s.engagementScore === "number" && !isNaN(s.engagementScore) ? `${Math.round(s.engagementScore)}%` : "100%";
+          return [s.name, statusText, joinedTime, score];
         }),
         ...kickedList.map(k => {
           const kickedTime = k.kickedAt?.seconds 
             ? new Date(k.kickedAt.seconds * 1000).toLocaleTimeString() 
             : "Unknown";
-          return [k.name, "Kicked/Removed", kickedTime, "0%"];
+          const score = typeof k.engagementScore === "number" && !isNaN(k.engagementScore) ? `${Math.round(k.engagementScore)}%` : "0%";
+          return [k.name, "Kicked/Removed", kickedTime, score];
         })
       ];
 
@@ -166,7 +177,20 @@ export default function SummaryPage() {
       teacherId: "teacher",
     };
 
-    const totalAttendees = studentsList.length + kickedList.length;
+    // Helper to check if a student record is the Host / Teacher
+    const isHostStudent = (s: Student) => {
+      if (s.id === sessionData.teacherId) return true;
+      if ((s as any).isTeacher || (s as any).role === "teacher") return true;
+      const lower = s.name.toLowerCase();
+      return lower.includes("host") || lower.includes("teacher");
+    };
+
+    const hostStudent = studentsList.find(s => isHostStudent(s));
+    const studentListOnly = studentsList.filter(s => !isHostStudent(s));
+
+    // Total Student Attendees = Non-teacher students + Kicked students
+    const totalAttendees = studentListOnly.length + kickedList.length;
+    const presentAtCloseCount = studentListOnly.filter(s => s.status !== "offline").length;
 
     // 1. Compute Teacher Focus Score
     let teacherFocusScore: number | null = null;
@@ -180,20 +204,41 @@ export default function SummaryPage() {
       }
     }
 
-    // 2. Compute Class Average Focus Score (including Teacher + Students)
-    const allScores = studentsList
-      .map(s => {
-        const isHost = s.id === sessionData.teacherId || (s as any).isTeacher || (s as any).role === "teacher";
-        if (isHost && teacherFocusScore !== null) {
-          return teacherFocusScore;
-        }
-        return s.engagementScore ?? (s as any).score;
-      })
-      .filter(sc => typeof sc === "number" && !isNaN(sc) && sc > 0);
+    // 2. Compute TRUE Student Average Focus Score (strictly non-teacher students)
+    const studentScores: number[] = [];
 
-    let avgFocusScore = teacherFocusScore ?? 100;
-    if (allScores.length > 0) {
-      avgFocusScore = Math.round(allScores.reduce((acc, val) => acc + val, 0) / allScores.length);
+    studentListOnly.forEach(s => {
+      let score = s.engagementScore ?? (s as any).score;
+      if ((typeof score !== "number" || isNaN(score)) && typeof window !== "undefined") {
+        const cached = localStorage.getItem(`student_focus_${sessionCode}_${s.id}`) || localStorage.getItem(`student_focus_${sessionCode}`);
+        if (cached && !isNaN(Number(cached))) {
+          score = Number(cached);
+        }
+      }
+      if (typeof score === "number" && !isNaN(score)) {
+        studentScores.push(Math.max(0, Math.min(100, Math.round(score))));
+      }
+    });
+
+    kickedList.forEach(k => {
+      let score = k.engagementScore;
+      if ((typeof score !== "number" || isNaN(score)) && typeof window !== "undefined") {
+        const cached = localStorage.getItem(`student_focus_${sessionCode}_${k.id}`);
+        if (cached && !isNaN(Number(cached))) {
+          score = Number(cached);
+        }
+      }
+      if (typeof score === "number" && !isNaN(score)) {
+        studentScores.push(Math.max(0, Math.min(100, Math.round(score))));
+      } else {
+        // Kicked students without explicit score count as 0%
+        studentScores.push(0);
+      }
+    });
+
+    let avgFocusScore = 0;
+    if (studentScores.length > 0) {
+      avgFocusScore = Math.round(studentScores.reduce((acc, val) => acc + val, 0) / studentScores.length);
     } else if (typeof window !== "undefined") {
       const cachedClassFocus = localStorage.getItem(`student_focus_${sessionCode}`) || localStorage.getItem("classFocus");
       if (cachedClassFocus && !isNaN(Number(cachedClassFocus)) && Number(cachedClassFocus) > 0) {
@@ -265,7 +310,7 @@ export default function SummaryPage() {
                 <span className="text-[10px] font-black uppercase tracking-wider font-mono">Student Avg Focus</span>
                 <Brain className="h-4 w-4 text-[#16A34A]" />
               </div>
-              <h3 className="text-2xl font-black text-[#000000]">{avgFocusScore}%</h3>
+              <h3 className="text-2xl font-black text-[#000000]">{totalAttendees > 0 ? `${avgFocusScore}%` : "--"}</h3>
               <span className="text-[10px] text-[#16A34A] font-bold">Student class focus average</span>
             </div>
 
@@ -276,7 +321,7 @@ export default function SummaryPage() {
                 <CheckCircle2 className="h-4 w-4 text-[#16A34A]" />
               </div>
               <h3 className="text-2xl font-black text-[#000000]">
-                {studentsList.filter(s => s.status !== "offline").length}
+                {presentAtCloseCount}
               </h3>
               <span className="text-[10px] text-[#111827] font-bold">Active till the end</span>
             </div>
@@ -302,30 +347,47 @@ export default function SummaryPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-[#E5E7EB] text-[10px] font-black uppercase tracking-wider text-[#000000] bg-[#F9FAFB] font-mono">
-                    <th className="px-6 py-3.5">Student Name</th>
+                    <th className="px-6 py-3.5">Participant Name</th>
                     <th className="px-4 py-3.5">Final Status</th>
                     <th className="px-4 py-3.5">Join Time</th>
                     <th className="px-6 py-3.5 text-right font-mono">Avg Focus Score</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#E5E7EB]">
-                  {/* Active & Offline Attendees (Teacher + Students) */}
-                  {studentsList.map((student) => {
-                    const isHost = student.id === sessionData.teacherId || (student as any).isTeacher || (student as any).role === "teacher";
+                  {/* Host / Teacher Row */}
+                  {hostStudent && (
+                    <tr key={hostStudent.id} className="border-b border-[#E5E7EB] hover:bg-[#F8FAFC] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] text-xs">
+                      <td className="px-6 py-4 font-bold text-[#000000]">
+                        {hostStudent.name} <span className="ml-1.5 px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] text-[9px] font-mono font-bold uppercase">Host / Teacher</span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <span className="inline-flex items-center rounded-full bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-0.5 text-[9px] font-extrabold text-[#16A34A] uppercase font-mono">
+                          Present
+                        </span>
+                      </td>
+                      <td className="px-4 py-4 text-[#111827] font-bold">{formatTimestamp(hostStudent.joinedAt)}</td>
+                      <td className="px-6 py-4 text-right">
+                        <span className="inline-flex px-2 py-0.5 rounded-md border border-[#A7F3D0] text-[#16A34A] bg-[#ECFDF5] text-[10px] font-bold">
+                          {teacherFocusScore !== null ? `${teacherFocusScore}%` : "100%"}
+                        </span>
+                      </td>
+                    </tr>
+                  )}
+
+                  {/* Active & Offline Students (Excludes Teacher) */}
+                  {studentListOnly.map((student) => {
                     let focusScore = student.engagementScore ?? (student as any).score;
 
-                    if (isHost && teacherFocusScore !== null) {
-                      focusScore = teacherFocusScore;
-                    } else if ((!focusScore || focusScore === 100) && typeof window !== "undefined") {
+                    if ((typeof focusScore !== "number" || isNaN(focusScore)) && typeof window !== "undefined") {
                       const cachedStudentFocus = localStorage.getItem(`student_focus_${sessionCode}_${student.id}`) || localStorage.getItem(`student_focus_${sessionCode}`);
                       if (cachedStudentFocus && !isNaN(Number(cachedStudentFocus))) {
                         focusScore = Number(cachedStudentFocus);
                       }
                     }
-                    if (typeof focusScore !== "number" || isNaN(focusScore) || focusScore <= 0) {
-                      focusScore = avgFocusScore;
+                    if (typeof focusScore !== "number" || isNaN(focusScore)) {
+                      focusScore = 0;
                     }
-                    focusScore = Math.round(focusScore);
+                    focusScore = Math.max(0, Math.min(100, Math.round(focusScore)));
 
                     const focusBadge = 
                       focusScore >= 80 ? "bg-[#ECFDF5] text-[#16A34A] border-[#A7F3D0]" :
@@ -335,7 +397,7 @@ export default function SummaryPage() {
                     return (
                       <tr key={student.id} className="border-b border-[#E5E7EB] hover:bg-[#F8FAFC] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] text-xs">
                         <td className="px-6 py-4 font-bold text-[#000000]">
-                          {student.name} {isHost && <span className="ml-1.5 px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] text-[9px] font-mono font-bold uppercase">Host / Teacher</span>}
+                          {student.name}
                         </td>
                         <td className="px-4 py-4">
                           {student.status === "offline" ? (
@@ -359,24 +421,35 @@ export default function SummaryPage() {
                   })}
 
                   {/* Kicked Students */}
-                  {kickedList.map((kickedStud) => (
-                    <tr key={kickedStud.id} className="border-b border-[#E5E7EB] hover:bg-[#F8FAFC] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] text-xs bg-[#FEF2F2]/30">
-                      <td className="px-6 py-4 font-bold text-[#DC2626]">{kickedStud.name}</td>
-                      <td className="px-4 py-4">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-[#FEF2F2] border border-[#FECACA] px-2.5 py-0.5 text-[9px] font-bold text-[#DC2626] uppercase">
-                          Kicked
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 text-[#6B7280] font-medium">{formatTimestamp(kickedStud.kickedAt)}</td>
-                      <td className="px-6 py-4 text-right">
-                        <span className="inline-flex px-2 py-0.5 rounded-md border border-[#FECACA] text-[#DC2626] bg-[#FEF2F2] text-[10px] font-bold">
-                          --
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+                  {kickedList.map((kickedStud) => {
+                    let score = kickedStud.engagementScore;
+                    if ((typeof score !== "number" || isNaN(score)) && typeof window !== "undefined") {
+                      const cached = localStorage.getItem(`student_focus_${sessionCode}_${kickedStud.id}`);
+                      if (cached && !isNaN(Number(cached))) {
+                        score = Number(cached);
+                      }
+                    }
+                    const kickedScore = typeof score === "number" && !isNaN(score) ? Math.max(0, Math.min(100, Math.round(score))) : 0;
+                    
+                    return (
+                      <tr key={kickedStud.id} className="border-b border-[#E5E7EB] hover:bg-[#F8FAFC] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] text-xs bg-[#FEF2F2]/30">
+                        <td className="px-6 py-4 font-bold text-[#DC2626]">{kickedStud.name}</td>
+                        <td className="px-4 py-4">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-[#FEF2F2] border border-[#FECACA] px-2.5 py-0.5 text-[9px] font-bold text-[#DC2626] uppercase font-mono">
+                            Kicked
+                          </span>
+                        </td>
+                        <td className="px-4 py-4 text-[#6B7280] font-medium">{formatTimestamp(kickedStud.kickedAt)}</td>
+                        <td className="px-6 py-4 text-right">
+                          <span className="inline-flex px-2 py-0.5 rounded-md border border-[#FECACA] text-[#DC2626] bg-[#FEF2F2] text-[10px] font-bold">
+                            {kickedScore}%
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
 
-                  {studentsList.length === 0 && kickedList.length === 0 && (
+                  {!hostStudent && studentListOnly.length === 0 && kickedList.length === 0 && (
                     <tr>
                       <td colSpan={4} className="px-6 py-12 text-center text-xs font-medium">
                         <Users className="h-10 w-10 text-[#CBD5E1] mb-2.5 mx-auto" />
