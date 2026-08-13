@@ -181,16 +181,9 @@ export default function SummaryPage() {
     const isHostStudent = (s: Student) => {
       if (s.id === sessionData.teacherId) return true;
       if ((s as any).isTeacher || (s as any).role === "teacher") return true;
-      const lower = s.name.toLowerCase();
+      const lower = s.name ? s.name.toLowerCase() : "";
       return lower.includes("host") || lower.includes("teacher");
     };
-
-    const hostStudent = studentsList.find(s => isHostStudent(s));
-    const studentListOnly = studentsList.filter(s => !isHostStudent(s));
-
-    // Total Student Attendees = Non-teacher students + Kicked students
-    const totalAttendees = studentListOnly.length + kickedList.length;
-    const presentAtCloseCount = studentListOnly.filter(s => s.status !== "offline").length;
 
     // 1. Compute Teacher Focus Score
     let teacherFocusScore: number | null = null;
@@ -204,19 +197,44 @@ export default function SummaryPage() {
       }
     }
 
-    // 2. Compute TRUE Student Average Focus Score (strictly non-teacher students)
+    // Build effective student list ensuring Teacher is included as a student participant
+    const effectiveStudentsList: Student[] = [...studentsList];
+    const hasTeacherInList = effectiveStudentsList.some(s => isHostStudent(s));
+
+    if (!hasTeacherInList) {
+      effectiveStudentsList.unshift({
+        id: sessionData.teacherId || "teacher_host",
+        name: (sessionData as any).teacherName || "Teacher (Host)",
+        status: "active",
+        joinedAt: (sessionData as any).createdAt || null,
+        engagementScore: teacherFocusScore ?? 100,
+        isTeacher: true,
+      } as any);
+    }
+
+    // Total Attendees = Students + Teacher + Kicked students
+    const totalAttendees = effectiveStudentsList.length + kickedList.length;
+    const presentAtCloseCount = effectiveStudentsList.filter(s => s.status !== "offline").length;
+
+    // 2. Compute Class Average Focus Score (including Teacher as student + all students + kicked)
     const studentScores: number[] = [];
 
-    studentListOnly.forEach(s => {
+    effectiveStudentsList.forEach(s => {
+      const isHost = isHostStudent(s);
       let score = s.engagementScore ?? (s as any).score;
+      if (isHost && teacherFocusScore !== null) {
+        score = teacherFocusScore;
+      }
       if ((typeof score !== "number" || isNaN(score)) && typeof window !== "undefined") {
-        const cached = localStorage.getItem(`student_focus_${sessionCode}_${s.id}`) || localStorage.getItem(`student_focus_${sessionCode}`);
+        const cached = localStorage.getItem(`student_focus_${sessionCode}_${s.id}`) || localStorage.getItem(`student_focus_${sessionCode}`) || (isHost ? localStorage.getItem(`teacher_focus_${sessionCode}`) : null);
         if (cached && !isNaN(Number(cached))) {
           score = Number(cached);
         }
       }
       if (typeof score === "number" && !isNaN(score)) {
         studentScores.push(Math.max(0, Math.min(100, Math.round(score))));
+      } else if (isHost) {
+        studentScores.push(100);
       }
     });
 
@@ -301,17 +319,17 @@ export default function SummaryPage() {
                 <Users className="h-4 w-4 text-[#2563EB]" />
               </div>
               <h3 className="text-2xl font-black text-[#000000]">{totalAttendees}</h3>
-              <span className="text-[10px] text-[#111827] font-bold">Students joined waitlist</span>
+              <span className="text-[10px] text-[#111827] font-bold">Total session participants</span>
             </div>
 
             {/* Student Average Focus Score */}
             <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
               <div className="flex items-center justify-between text-[#111827] mb-3">
-                <span className="text-[10px] font-black uppercase tracking-wider font-mono">Student Avg Focus</span>
+                <span className="text-[10px] font-black uppercase tracking-wider font-mono">Class Avg Focus</span>
                 <Brain className="h-4 w-4 text-[#16A34A]" />
               </div>
               <h3 className="text-2xl font-black text-[#000000]">{totalAttendees > 0 ? `${avgFocusScore}%` : "--"}</h3>
-              <span className="text-[10px] text-[#16A34A] font-bold">Student class focus average</span>
+              <span className="text-[10px] text-[#16A34A] font-bold">Overall session focus average</span>
             </div>
 
             {/* Present at Close */}
@@ -354,38 +372,22 @@ export default function SummaryPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#E5E7EB]">
-                  {/* Host / Teacher Row */}
-                  {hostStudent && (
-                    <tr key={hostStudent.id} className="border-b border-[#E5E7EB] hover:bg-[#F8FAFC] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] text-xs">
-                      <td className="px-6 py-4 font-bold text-[#000000]">
-                        {hostStudent.name} <span className="ml-1.5 px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] text-[9px] font-mono font-bold uppercase">Host / Teacher</span>
-                      </td>
-                      <td className="px-4 py-4">
-                        <span className="inline-flex items-center rounded-full bg-[#ECFDF5] border border-[#A7F3D0] px-2.5 py-0.5 text-[9px] font-extrabold text-[#16A34A] uppercase font-mono">
-                          Present
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 text-[#111827] font-bold">{formatTimestamp(hostStudent.joinedAt)}</td>
-                      <td className="px-6 py-4 text-right">
-                        <span className="inline-flex px-2 py-0.5 rounded-md border border-[#A7F3D0] text-[#16A34A] bg-[#ECFDF5] text-[10px] font-bold">
-                          {teacherFocusScore !== null ? `${teacherFocusScore}%` : "100%"}
-                        </span>
-                      </td>
-                    </tr>
-                  )}
-
-                  {/* Active & Offline Students (Excludes Teacher) */}
-                  {studentListOnly.map((student) => {
+                  {/* Active & Offline Participants (Teacher + Students) */}
+                  {effectiveStudentsList.map((student) => {
+                    const isHost = isHostStudent(student);
                     let focusScore = student.engagementScore ?? (student as any).score;
 
+                    if (isHost && teacherFocusScore !== null) {
+                      focusScore = teacherFocusScore;
+                    }
                     if ((typeof focusScore !== "number" || isNaN(focusScore)) && typeof window !== "undefined") {
-                      const cachedStudentFocus = localStorage.getItem(`student_focus_${sessionCode}_${student.id}`) || localStorage.getItem(`student_focus_${sessionCode}`);
+                      const cachedStudentFocus = localStorage.getItem(`student_focus_${sessionCode}_${student.id}`) || localStorage.getItem(`student_focus_${sessionCode}`) || (isHost ? localStorage.getItem(`teacher_focus_${sessionCode}`) : null);
                       if (cachedStudentFocus && !isNaN(Number(cachedStudentFocus))) {
                         focusScore = Number(cachedStudentFocus);
                       }
                     }
                     if (typeof focusScore !== "number" || isNaN(focusScore)) {
-                      focusScore = 0;
+                      focusScore = isHost ? 100 : 0;
                     }
                     focusScore = Math.max(0, Math.min(100, Math.round(focusScore)));
 
@@ -397,7 +399,7 @@ export default function SummaryPage() {
                     return (
                       <tr key={student.id} className="border-b border-[#E5E7EB] hover:bg-[#F8FAFC] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] text-xs">
                         <td className="px-6 py-4 font-bold text-[#000000]">
-                          {student.name}
+                          {student.name} {isHost && <span className="ml-1.5 px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] text-[9px] font-mono font-bold uppercase">Teacher / Student</span>}
                         </td>
                         <td className="px-4 py-4">
                           {student.status === "offline" ? (
@@ -449,11 +451,11 @@ export default function SummaryPage() {
                     );
                   })}
 
-                  {!hostStudent && studentListOnly.length === 0 && kickedList.length === 0 && (
+                  {effectiveStudentsList.length === 0 && kickedList.length === 0 && (
                     <tr>
                       <td colSpan={4} className="px-6 py-12 text-center text-xs font-medium">
                         <Users className="h-10 w-10 text-[#CBD5E1] mb-2.5 mx-auto" />
-                        <p className="text-[#6B7280]">No students attended this session.</p>
+                        <p className="text-[#6B7280]">No participants attended this session.</p>
                       </td>
                     </tr>
                   )}
