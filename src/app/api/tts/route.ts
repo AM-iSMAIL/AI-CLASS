@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     const voiceId = body.voiceId ?? body.voice_id ?? 147320;
     const language = body.language ?? body.lang ?? "en-us";
     const speechModel = body.speechModel ?? body.speech_model ?? "mars-8.1-flash-beta";
-    
+
     if (!text || !text.trim()) {
       return NextResponse.json({ error: "Missing 'text' parameter" }, { status: 400 });
     }
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     if (!response || !response.ok) {
       const errText = response ? await response.text() : "Network error";
       console.error("[Camb AI API Error]:", errText);
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: errText || "Camb AI TTS synthesis failed."
       }, { status: response ? response.status : 500 });
     }
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
     }
 
     const base64Audio = Buffer.from(audioBuffer).toString("base64");
-    
+
     // Store in LRU cache
     if (ttsCache.size >= MAX_CACHE_SIZE) {
       const firstKey = ttsCache.keys().next().value;

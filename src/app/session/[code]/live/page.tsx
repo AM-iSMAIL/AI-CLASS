@@ -871,7 +871,7 @@ export default function LiveClassroomPage() {
 
       // Await TTS promise so audio payload is completely downloaded before dequeuing
       if (nextChunk.promise) {
-        try { await nextChunk.promise; } catch {}
+        try { await nextChunk.promise; } catch { }
       }
 
       if (nextChunk.runId !== ttsRunIdRef.current) return;
@@ -1017,22 +1017,22 @@ export default function LiveClassroomPage() {
           imagePromise: (isFirst && clauseIdx === 0 && firstImageUrl) ? Promise.resolve() : null as Promise<any> | null
         };
 
-                if (speechEnabled && cleanClause) {
-                  item.promise = fetch("/api/tts", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ text: cleanClause })
-                  })
-                    .then(r => r.json())
-                    .then(data => {
-                      if (data.audioContent) {
-                        item.audioSrc = "data:audio/mpeg;base64," + data.audioContent;
-                      }
-                    })
-                    .catch(() => {
-                      item.error = true;
-                    });
-                } else {
+        if (speechEnabled && cleanClause) {
+          item.promise = fetch("/api/tts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: cleanClause })
+          })
+            .then(r => r.json())
+            .then(data => {
+              if (data.audioContent) {
+                item.audioSrc = "data:audio/mpeg;base64," + data.audioContent;
+              }
+            })
+            .catch(() => {
+              item.error = true;
+            });
+        } else {
           item.promise = Promise.resolve();
         }
 
