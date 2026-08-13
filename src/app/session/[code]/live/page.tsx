@@ -793,19 +793,26 @@ export default function LiveClassroomPage() {
   }, [])
 
 
-  const shouldFlushSpeechBuffer = (buffer: string) => {
+  const shouldFlushSpeechBuffer = (buffer: string, isFirstInTopic = false) => {
     const trimmed = buffer.trim();
     if (!trimmed) return false;
 
-    // 1. Only flush on true sentence-ending punctuation (. ! ?) with at least 8 words
     const words = trimmed.split(/\s+/);
-    if (words.length >= 8 && /[.!?]$/.test(trimmed)) return true;
 
-    // 2. Newline: Flush if it's a complete sentence or paragraph block (at least 8 words)
-    if (buffer.includes("\n") && words.length >= 8) return true;
+    // Instant initial speech: Flush on 3+ words (or 2+ words with punctuation) for immediate voice start when class begins
+    if (isFirstInTopic) {
+      if (words.length >= 3) return true;
+      if (words.length >= 2 && /[.,!?;:]$/.test(trimmed)) return true;
+    }
 
-    // 3. Fallback: Only flush as a safety if the sentence is very long (18+ words)
-    if (words.length >= 18 && buffer.endsWith(" ")) return true;
+    // 1. Flush on sentence-ending punctuation (. ! ?) with at least 5 words
+    if (words.length >= 5 && /[.!?]$/.test(trimmed)) return true;
+
+    // 2. Newline: Flush if clause has completed (at least 4 words)
+    if (buffer.includes("\n") && words.length >= 4) return true;
+
+    // 3. Fallback: Flush if sentence is getting longer (10+ words)
+    if (words.length >= 10 && buffer.endsWith(" ")) return true;
 
     return false;
   }
@@ -1111,8 +1118,8 @@ export default function LiveClassroomPage() {
                         fullText += delta;
                         sentenceBuffer += delta;
 
-                        // 1. Trigger first TTS prefetch on-the-fly
-                        if (!firstTtsTriggered && shouldFlushSpeechBuffer(sentenceBuffer) && !sentenceBuffer.includes("IMAGE_PROMPT:")) {
+                        // 1. Trigger first TTS prefetch on-the-fly (pass true for instant start)
+                        if (!firstTtsTriggered && shouldFlushSpeechBuffer(sentenceBuffer, true) && !sentenceBuffer.includes("IMAGE_PROMPT:")) {
                           firstTtsTriggered = true;
                           const ttsText = sentenceBuffer.trim();
                           if (ttsText) {
@@ -1270,11 +1277,12 @@ export default function LiveClassroomPage() {
             // Inject pre-fetched first audio into the first queue item for instant playback
             if (cached.firstAudioBase64 && ttsQueueRef.current.length > 0) {
               const firstItem = ttsQueueRef.current[0];
-              const audio = new Audio("data:audio/mpeg;base64," + cached.firstAudioBase64);
-              audio.volume = 1.0;
-              firstItem.audio = audio;
+              const base64Data = "data:audio/mpeg;base64," + cached.firstAudioBase64;
+              firstItem.audioSrc = base64Data;
+              firstItem.audio = new Audio(base64Data);
+              firstItem.audio.volume = 1.0;
               firstItem.promise = Promise.resolve(); // Already resolved — play immediately
-              console.log(`[Latency] Injected pre-fetched audio into first slide`);
+              console.log(`[Latency] Injected pre-fetched audio into first slide for instant playback`);
               processTtsQueue(); // Kick the queue in case it was waiting
             }
 
@@ -1453,7 +1461,8 @@ export default function LiveClassroomPage() {
                           (lastIdx === 0 || cleanUpper[lastIdx - 1] === " " || cleanUpper[lastIdx - 1] === "\n") &&
                           "IMAGE_PROMPT:".startsWith(cleanUpper.substring(lastIdx));
 
-                        if (!isPartiallyReceivingImagePrompt && shouldFlushSpeechBuffer(sentenceBuffer)) {
+                        const isFirstInTopic = (ttsQueueRef.current.length === 0 && !isTtsPlayingRef.current);
+                        if (!isPartiallyReceivingImagePrompt && shouldFlushSpeechBuffer(sentenceBuffer, isFirstInTopic)) {
                           flushSlide(sentenceBuffer, "", false);
                           sentenceBuffer = "";
                         }
@@ -1551,7 +1560,7 @@ export default function LiveClassroomPage() {
                               sentenceBuffer += delta;
 
                               // 1. Trigger first TTS prefetch on-the-fly
-                              if (!firstTtsTriggered && shouldFlushSpeechBuffer(sentenceBuffer) && !sentenceBuffer.includes("IMAGE_PROMPT:")) {
+                              if (!firstTtsTriggered && shouldFlushSpeechBuffer(sentenceBuffer, true) && !sentenceBuffer.includes("IMAGE_PROMPT:")) {
                                 firstTtsTriggered = true;
                                 const ttsText = sentenceBuffer.trim();
                                 if (ttsText) {
