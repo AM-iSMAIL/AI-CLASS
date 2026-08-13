@@ -799,19 +799,19 @@ export default function LiveClassroomPage() {
 
     const words = trimmed.split(/\s+/);
 
-    // Instant initial speech: Flush on 3+ words (or 2+ words with punctuation) for immediate voice start when class begins
+    // Initial clause when starting class: flush at 6+ words or 5+ words with punctuation for rapid start with zero gap
     if (isFirstInTopic) {
-      if (words.length >= 3) return true;
-      if (words.length >= 2 && /[.,!?;:]$/.test(trimmed)) return true;
+      if (words.length >= 6) return true;
+      if (words.length >= 5 && /[.,!?;:]$/.test(trimmed)) return true;
     }
 
-    // 1. Flush on sentence-ending punctuation (. ! ?) with at least 5 words
-    if (words.length >= 5 && /[.!?]$/.test(trimmed)) return true;
+    // 1. Natural sentence clause: Flush on sentence-ending punctuation (. ! ?) with at least 6 words
+    if (words.length >= 6 && /[.!?]$/.test(trimmed)) return true;
 
-    // 2. Newline: Flush if clause has completed (at least 4 words)
-    if (buffer.includes("\n") && words.length >= 4) return true;
+    // 2. Clause punctuation / Newline: Flush if a comma, semicolon, colon, or newline occurs with at least 6 words
+    if ((buffer.includes("\n") || /[,;:]$/.test(trimmed)) && words.length >= 6) return true;
 
-    // 3. Fallback: Flush if sentence is getting longer (10+ words)
+    // 3. Fallback: Flush if sentence reaches 10+ words for smooth phrase flow
     if (words.length >= 10 && buffer.endsWith(" ")) return true;
 
     return false;
@@ -947,6 +947,20 @@ export default function LiveClassroomPage() {
 
         try {
           await player.play();
+
+          // Pipelined Audio Pre-loading: Pre-fetch & instantiate next audio element while current audio is playing
+          const upcomingItem = ttsQueueRef.current[0];
+          if (upcomingItem && upcomingItem.promise && !upcomingItem.audioSrc && !upcomingItem.audio && !upcomingItem.error) {
+            upcomingItem.promise
+              .then(() => {
+                if (upcomingItem.audioSrc && !upcomingItem.audio) {
+                  const preloadAudio = new Audio(upcomingItem.audioSrc);
+                  preloadAudio.preload = "auto";
+                  upcomingItem.audio = preloadAudio;
+                }
+              })
+              .catch(() => {});
+          }
           return;
         } catch (playErr) {
           console.warn("[Camb AI Player Play Exception]:", playErr);
