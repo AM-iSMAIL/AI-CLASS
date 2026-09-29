@@ -59,7 +59,7 @@ export const signInWithGoogle = async (): Promise<User | null> => {
 
     if (error.code === "auth/unauthorized-domain") {
       const customErr = new Error(
-        "Google Sign-In domain authorization pending in Firebase. Please use 'Instant 1-Tap Sign In' or Email below!"
+        "Google Sign-In requires 'aiclass-six.vercel.app' to be authorized in Firebase Console > Authentication > Settings > Authorized Domains."
       )
       ;(customErr as any).code = "auth/unauthorized-domain"
       throw customErr
@@ -71,7 +71,7 @@ export const signInWithGoogle = async (): Promise<User | null> => {
       error.message?.includes("disallowed_useragent")
     ) {
       const customErr = new Error(
-        "Google Sign-In is restricted in mobile WebViews. Please use 'Instant 1-Tap Sign In' or Email below!"
+        "Google blocks sign-in inside embedded mobile WebViews. Please sign in with email & password."
       )
       ;(customErr as any).code = "auth/disallowed-useragent"
       throw customErr
@@ -79,33 +79,6 @@ export const signInWithGoogle = async (): Promise<User | null> => {
 
     console.error("Google Sign-In Error:", error)
     throw error
-  }
-}
-
-// 1b. Instant 1-Tap Demo Sign In (Works natively on Android, iOS & Web)
-export const signInOrSignUpDemo = async (
-  role: "teacher" | "student" = "teacher"
-): Promise<User> => {
-  const email = role === "teacher" ? "demo.teacher@aiclass.edu" : "demo.student@aiclass.edu"
-  const password = "DemoPassword123!"
-  const displayName = role === "teacher" ? "Prof. Sarah Jenkins" : "Alex Johnson"
-
-  try {
-    const result = await signInWithEmailAndPassword(auth, email, password)
-    await saveUserProfile(result.user.uid, result.user.email, result.user.displayName || displayName, role)
-    return result.user
-  } catch (err: any) {
-    if (
-      err.code === "auth/user-not-found" ||
-      err.code === "auth/invalid-credential" ||
-      err.code === "auth/invalid-login-credentials"
-    ) {
-      const result = await createUserWithEmailAndPassword(auth, email, password)
-      await updateProfile(result.user, { displayName })
-      await saveUserProfile(result.user.uid, email, displayName, role)
-      return result.user
-    }
-    throw err
   }
 }
 

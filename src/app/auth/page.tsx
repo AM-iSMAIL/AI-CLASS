@@ -3,13 +3,12 @@
 import { useState, useEffect, useCallback } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, Sparkles, Loader2, AlertCircle } from "lucide-react"
+import { ArrowLeft, Loader2, AlertCircle } from "lucide-react"
 import {
   signInWithGoogle,
   signInWithEmail,
   signUpWithEmail,
   saveUserProfile,
-  signInOrSignUpDemo,
 } from "@/lib/auth-service"
 import { getRedirectResult } from "firebase/auth"
 import { auth } from "@/lib/firebase"
@@ -111,30 +110,6 @@ export default function AuthPage() {
     }
   }, [tab])
 
-  // 1-Tap Instant Demo Access (Works natively on Android, iOS & Web without redirects)
-  const handleDemoSignIn = async () => {
-    try {
-      setIsSubmitting(true)
-      setError(null)
-      const currentRole = tab === "student" ? "student" : "teacher"
-      setSuccess(`Connecting to verified ${currentRole} demo account...`)
-      const user = await signInOrSignUpDemo(currentRole)
-      setSuccess(`Signed in as ${user.displayName || user.email}! Opening ${currentRole === "student" ? "Student Dashboard" : "Dashboard"}...`)
-      if (currentRole === "student") {
-        localStorage.setItem("studentName", user.displayName || "Alex Johnson")
-        localStorage.setItem("studentId", user.uid)
-        localStorage.setItem("userRole", "student")
-      }
-      setTimeout(() => {
-        window.location.href = currentRole === "student" ? "/student-dashboard" : "/dashboard"
-      }, 700)
-    } catch (err: any) {
-      console.error("Demo sign-in error:", err)
-      setError(err.message || "Failed to sign in with demo account.")
-      setIsSubmitting(false)
-    }
-  }
-
   // Sign in with Google
   const handleGoogleSignIn = async () => {
     try {
@@ -165,7 +140,7 @@ export default function AuthPage() {
       } else if (err.code === "auth/unauthorized-domain" || err.code === "auth/disallowed-useragent") {
         setError(err.message)
       } else {
-        setError(err.message || "Google sign-in error. Please use 1-Tap Demo or Email below.")
+        setError(err.message || "Google sign-in error. Please try again or use Email below.")
       }
     }
   }
@@ -450,21 +425,6 @@ export default function AuthPage() {
                         <p className="text-sm text-neutral-500 mt-1">Sign in to manage your classrooms</p>
                       </div>
 
-                      {/* Instant 1-Tap Teacher Sign In */}
-                      <button
-                        type="button"
-                        disabled={isSubmitting || !isFirebaseConfigured}
-                        onClick={handleDemoSignIn}
-                        className="w-full h-[52px] bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg flex items-center justify-center gap-2.5 transition-all shadow-md shadow-purple-500/20 active:scale-[0.98] cursor-pointer disabled:opacity-50"
-                      >
-                        {isSubmitting ? (
-                          <Loader2 className="h-5 w-5 animate-spin text-white" />
-                        ) : (
-                          <Sparkles className="h-5 w-5 text-amber-300 animate-pulse" />
-                        )}
-                        <span>Instant 1-Tap Teacher Sign In</span>
-                      </button>
-
                       {/* Google Button */}
                       <button
                         type="button"
@@ -502,7 +462,7 @@ export default function AuthPage() {
                           <div className="w-full border-t border-neutral-200" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                          <span className="bg-white px-3 text-neutral-400 font-medium">or continue with email</span>
+                          <span className="bg-white px-3 text-neutral-400 font-medium">or</span>
                         </div>
                       </div>
 
@@ -522,19 +482,7 @@ export default function AuthPage() {
 
                       {/* Password */}
                       <div className="space-y-1.5">
-                        <div className="flex justify-between items-center">
-                          <label className="text-xs font-semibold text-neutral-700 uppercase tracking-wider">Password</label>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEmail("demo.teacher@aiclass.edu")
-                              setPassword("DemoPassword123!")
-                            }}
-                            className="text-xs text-purple-600 hover:text-purple-700 font-semibold cursor-pointer underline"
-                          >
-                            Fill Demo Credentials
-                          </button>
-                        </div>
+                        <label className="text-xs font-semibold text-neutral-700 uppercase tracking-wider">Password</label>
                         <input
                           type="password"
                           required
@@ -577,20 +525,6 @@ export default function AuthPage() {
                         <p className="text-sm text-neutral-500 mt-1">Get started with ClassAI today</p>
                       </div>
 
-                      {/* Instant 1-Tap Teacher Sign In */}
-                      <button
-                        type="button"
-                        disabled={isSubmitting || !isFirebaseConfigured}
-                        onClick={handleDemoSignIn}
-                        className="w-full h-[52px] bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg flex items-center justify-center gap-2.5 transition-all shadow-md shadow-purple-500/20 active:scale-[0.98] cursor-pointer disabled:opacity-50"
-                      >
-                        {isSubmitting ? (
-                          <Loader2 className="h-5 w-5 animate-spin text-white" />
-                        ) : (
-                          <Sparkles className="h-5 w-5 text-amber-300 animate-pulse" />
-                        )}
-                        <span>Instant 1-Tap Teacher Sign In</span>
-                      </button>
 
                       {/* Google Button */}
                       <button
@@ -731,20 +665,6 @@ export default function AuthPage() {
                             <p className="text-sm text-neutral-500 mt-1">Sign in to access your student dashboard</p>
                           </div>
 
-                          {/* Instant 1-Tap Student Sign In */}
-                          <button
-                            type="button"
-                            disabled={isSubmitting || !isFirebaseConfigured}
-                            onClick={handleDemoSignIn}
-                            className="w-full h-[52px] bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg flex items-center justify-center gap-2.5 transition-all shadow-md shadow-purple-500/20 active:scale-[0.98] cursor-pointer disabled:opacity-50"
-                          >
-                            {isSubmitting ? (
-                              <Loader2 className="h-5 w-5 animate-spin text-white" />
-                            ) : (
-                              <Sparkles className="h-5 w-5 text-amber-300 animate-pulse" />
-                            )}
-                            <span>Instant 1-Tap Student Sign In</span>
-                          </button>
 
                           {/* Google Button */}
                           <button
@@ -803,19 +723,7 @@ export default function AuthPage() {
 
                           {/* Password */}
                           <div className="space-y-1.5">
-                            <div className="flex justify-between items-center">
-                              <label className="text-xs font-semibold text-neutral-700 uppercase tracking-wider">Password</label>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setEmail("demo.student@aiclass.edu")
-                                  setPassword("DemoPassword123!")
-                                }}
-                                className="text-xs text-purple-600 hover:text-purple-700 font-semibold cursor-pointer underline"
-                              >
-                                Fill Demo Credentials
-                              </button>
-                            </div>
+                            <label className="text-xs font-semibold text-neutral-700 uppercase tracking-wider">Password</label>
                             <input
                               type="password"
                               required
@@ -855,20 +763,6 @@ export default function AuthPage() {
                             <p className="text-sm text-neutral-500 mt-1">Create an account to save your dashboard progress</p>
                           </div>
 
-                          {/* Instant 1-Tap Student Sign In */}
-                          <button
-                            type="button"
-                            disabled={isSubmitting || !isFirebaseConfigured}
-                            onClick={handleDemoSignIn}
-                            className="w-full h-[52px] bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg flex items-center justify-center gap-2.5 transition-all shadow-md shadow-purple-500/20 active:scale-[0.98] cursor-pointer disabled:opacity-50"
-                          >
-                            {isSubmitting ? (
-                              <Loader2 className="h-5 w-5 animate-spin text-white" />
-                            ) : (
-                              <Sparkles className="h-5 w-5 text-amber-300 animate-pulse" />
-                            )}
-                            <span>Instant 1-Tap Student Sign In</span>
-                          </button>
 
                           {/* Google Button */}
                           <button
