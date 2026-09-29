@@ -2622,14 +2622,14 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       `}</style>
 
       {/* ═══ TOP BAR ═══ */}
-      <header className="pt-7 sm:pt-0 h-20 sm:h-[72px] bg-white border-b border-[rgba(15,23,42,.08)] px-3 sm:px-6 flex items-center justify-between flex-shrink-0 z-30 antialiased">
+      <header className="pt-6 sm:pt-0 landscape:pt-0 h-16 sm:h-[72px] landscape:h-11 bg-white border-b border-[rgba(15,23,42,.08)] px-3 sm:px-6 flex items-center justify-between flex-shrink-0 z-30 antialiased">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-[#EFF6FF] flex items-center justify-center border border-[#BFDBFE] shadow-xs flex-shrink-0">
-            <Brain className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-[#2563EB]" />
+          <div className="h-7 w-7 sm:h-9 sm:w-9 rounded-xl bg-[#EFF6FF] flex items-center justify-center border border-[#BFDBFE] shadow-xs flex-shrink-0">
+            <Brain className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-[#2563EB]" />
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-xs sm:text-sm font-black text-[#2563EB] leading-none tracking-tight">AI <span className="text-[#111827]">CLASS</span></span>
-            <span className="text-[10px] sm:text-[11px] text-[#6B7280] font-medium tracking-wide uppercase truncate max-w-[110px] xs:max-w-[150px] sm:max-w-[160px] mt-0.5 sm:mt-1">{sessionTitle}</span>
+            <span className="text-[11px] sm:text-sm font-black text-[#2563EB] leading-none tracking-tight">AI <span className="text-[#111827]">CLASS</span></span>
+            <span className="text-[9px] sm:text-[11px] text-[#6B7280] font-medium tracking-wide uppercase truncate max-w-[100px] xs:max-w-[150px] sm:max-w-[160px] mt-0.5">{sessionTitle}</span>
           </div>
         </div>
         <div className="hidden md:flex flex-col items-center gap-1.5 w-72">
@@ -2649,23 +2649,23 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             <span className={`${focusText} font-bold`}>{classFocus}%</span>
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white border border-[#E5E7EB] px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full font-mono text-[#111827] text-xs font-bold shadow-xs hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer">
+          <div className="flex items-center gap-1 sm:gap-2.5 bg-white border border-[#E5E7EB] px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-full font-mono text-[#111827] text-[11px] sm:text-xs font-bold shadow-xs">
             <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#9CA3AF]" />
             <span>{fmt(elapsedSeconds)}</span>
-            <span className="border-l border-[#E5E7EB] pl-1.5 sm:pl-2.5 flex items-center gap-1">
+            <span className="border-l border-[#E5E7EB] pl-1 sm:pl-2.5 flex items-center gap-1">
               <Users className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#2563EB]" />{students.length}
             </span>
           </div>
           {isTeacher ? (
             <div className="flex items-center gap-2">
-              <button id="end-session-btn" onClick={handleEndSession} className="px-2.5 sm:px-4 py-1.5 sm:py-2 bg-[#DC2626] hover:bg-[#B91C1C] hover:-translate-y-0.5 text-white rounded-[14px] sm:rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer text-[11px] sm:text-xs font-bold shadow-[0_12px_24px_rgba(220,38,38,.18)] active:scale-95">
+              <button id="end-session-btn" onClick={handleEndSession} className="px-2.5 sm:px-4 py-1 sm:py-2 bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-xl sm:rounded-[16px] transition-all cursor-pointer text-[10px] sm:text-xs font-bold shadow-xs active:scale-95">
                 <span className="hidden xs:inline">End Session</span>
                 <span className="xs:hidden">End</span>
               </button>
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <button onClick={handleStudentLeave} className="px-2.5 sm:px-4 py-1.5 sm:py-2 bg-[#DC2626] hover:bg-[#B91C1C] hover:-translate-y-0.5 text-white rounded-[14px] sm:rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer text-[11px] sm:text-xs font-bold shadow-[0_12px_24px_rgba(220,38,38,.18)] active:scale-95 flex items-center gap-1 sm:gap-1.5">
+              <button onClick={handleStudentLeave} className="px-2.5 sm:px-4 py-1 sm:py-2 bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-xl sm:rounded-[16px] transition-all cursor-pointer text-[10px] sm:text-xs font-bold shadow-xs active:scale-95 flex items-center gap-1 sm:gap-1.5">
                 <LogOut className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 <span className="hidden xs:inline">Leave Class</span>
                 <span className="xs:hidden">Leave</span>
@@ -2675,27 +2675,27 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
         </div>
       </header>
 
-      {/* ═══ MAIN AREA ═══ */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0 relative bg-[#F6F7F9]">
+      {/* ═══ MAIN AREA — Landscape switches to side-by-side widescreen row! ═══ */}
+      <div className="flex-1 flex flex-col landscape:flex-row lg:flex-row overflow-y-auto landscape:overflow-hidden lg:overflow-hidden min-h-0 relative bg-[#F6F7F9]">
 
-        {/* ─── LEFT COLUMN — Main Stage ─── */}
-        <div className="flex-1 flex flex-col p-2 sm:p-4 gap-2 sm:gap-4 min-h-[45vh] lg:min-h-0 pb-20 lg:pb-[84px] overflow-hidden">
+        {/* ─── LEFT COLUMN — Main Stage (Widescreen in Landscape) ─── */}
+        <div className="flex-none landscape:flex-1 lg:flex-1 flex flex-col p-2 sm:p-4 landscape:p-2 gap-2 sm:gap-3 landscape:gap-1.5 min-h-0 pb-3 landscape:pb-2 lg:pb-[84px] overflow-hidden">
 
-          {/* ── CONTENT / IMAGE AREA (HERO — presentation panel widescreen fill with black border frame) ── */}
-          <div className="flex-1 bg-white border-2 border-[#111827] rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,.08)] hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(15,23,42,.12)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] overflow-hidden flex flex-col relative min-h-0">
+          {/* ── CONTENT / IMAGE AREA (Hero Presentation Panel) ── */}
+          <div className="h-[260px] xs:h-[300px] landscape:h-full landscape:flex-1 lg:h-auto lg:flex-1 bg-white border-2 border-[#111827] rounded-[18px] sm:rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,.08)] overflow-hidden flex flex-col relative">
             {/* Image / Fallback — fills entire area */}
-            <div className="flex-1 relative overflow-hidden min-h-0 bg-white">
+            <div className="flex-1 relative overflow-hidden min-h-0 bg-neutral-950 flex items-center justify-center">
               {topicImageUrl && imageLoaded ? (
-                <div className={`absolute inset-0 ${imageFading ? "img-out" : "img-in"}`}>
+                <div className={`absolute inset-0 flex items-center justify-center bg-black/90 ${imageFading ? "img-out" : "img-in"}`}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={topicImageUrl}
                     alt={activeLabel}
-                    className="rounded-[20px]"
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    className="max-h-full max-w-full"
+                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
                     onError={() => { setImageLoaded(false); setTopicImageUrl(null) }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-white/10 via-transparent to-white/5" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10 pointer-events-none" />
                 </div>
               ) : (
                 /* Beautiful initial fallback image instead of a blank gradient */
@@ -2704,14 +2704,14 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                   <img
                     src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1024&auto=format&fit=crop"
                     alt="Classroom Visual Aid"
-                    className="rounded-[20px]"
+                    className="rounded-[16px] sm:rounded-[20px]"
                     style={{ width: "100%", height: "100%", objectFit: "cover", filter: "brightness(0.95)" }}
                   />
                   <div className="absolute inset-0 bg-[#F6F7F9]/50 backdrop-blur-[2px]" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center space-y-3 px-8">
-                      <h2 className="text-[34px] font-bold text-[#111827] tracking-tight">{activeLabel}</h2>
-                      <p className="text-[15px] text-[#6B7280] font-medium">{isPdfMode ? "Page" : "Topic"} {activeTopicIdx + 1} of {totalItems}</p>
+                    <div className="text-center space-y-2 sm:space-y-3 px-4 sm:px-8">
+                      <h2 className="text-xl sm:text-[34px] font-bold text-[#111827] tracking-tight">{activeLabel}</h2>
+                      <p className="text-xs sm:text-[15px] text-[#6B7280] font-medium">{isPdfMode ? "Page" : "Topic"} {activeTopicIdx + 1} of {totalItems}</p>
                     </div>
                   </div>
                 </div>
@@ -2719,26 +2719,26 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
               {/* Overlaid visual aid loading state */}
               {isGeneratingImage && (
-                <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md border border-[#E5E7EB] rounded-full px-3.5 py-1.5 flex items-center gap-2 z-20 shadow-md animate-pulse">
-                  <Loader2 className="animate-spin text-[#2563EB] h-3.5 w-3.5" />
-                  <span className="text-[10px] text-[#374151] font-bold tracking-wider uppercase font-mono">Generating AI Visual Aid...</span>
+                <div className="absolute bottom-2.5 left-2.5 bg-white/95 backdrop-blur-md border border-[#E5E7EB] rounded-full px-3 py-1 flex items-center gap-1.5 z-20 shadow-md animate-pulse">
+                  <Loader2 className="animate-spin text-[#2563EB] h-3 w-3" />
+                  <span className="text-[9px] text-[#374151] font-bold tracking-wider uppercase font-mono">Generating AI Visual Aid...</span>
                 </div>
               )}
 
               {imageError && (
-                <div className="absolute inset-0 bg-rose-50/95 backdrop-blur-md flex flex-col items-center justify-center gap-3 border border-red-200 px-8 text-center z-20">
-                  <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
-                    <span className="text-red-600 text-lg">⚠️</span>
+                <div className="absolute inset-0 bg-rose-50/95 backdrop-blur-md flex flex-col items-center justify-center gap-2 border border-red-200 px-4 text-center z-20">
+                  <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
+                    <span className="text-red-600 text-sm">⚠️</span>
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-[#111827]">Visual Aid Failed to Generate</h4>
-                    <p className="text-xs text-[#6B7280] mt-1">{imageError}</p>
+                    <h4 className="text-xs sm:text-sm font-bold text-[#111827]">Visual Aid Failed to Generate</h4>
+                    <p className="text-[10px] sm:text-xs text-[#6B7280] mt-0.5">{imageError}</p>
                   </div>
                   <button
                     onClick={() => {
                       setImageError(null);
                     }}
-                    className="mt-1 px-3 py-1 bg-white hover:bg-slate-50 border border-[#E5E7EB] rounded-lg text-[10px] text-[#111827] font-bold tracking-wide transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer"
+                    className="mt-1 px-2.5 py-0.5 bg-white hover:bg-slate-50 border border-[#E5E7EB] rounded-md text-[9px] text-[#111827] font-bold tracking-wide cursor-pointer"
                   >
                     Clear Error
                   </button>
@@ -2746,15 +2746,15 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
               )}
             </div>
             {/* Caption bar */}
-            <div className="h-10 border-t-2 border-[#111827] bg-white flex items-center justify-between px-4 flex-shrink-0 relative z-10">
-              <span className="text-xs font-bold text-[#111827] truncate max-w-[80%]">{activeLabel}</span>
-              <span className="px-2.5 py-0.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[9px] font-bold text-[#2563EB] uppercase tracking-wider font-mono">IMAGE</span>
+            <div className="h-7 sm:h-10 border-t-2 border-[#111827] bg-white flex items-center justify-between px-3 sm:px-4 flex-shrink-0 relative z-10">
+              <span className="text-[10px] sm:text-xs font-bold text-[#111827] truncate max-w-[80%]">{activeLabel}</span>
+              <span className="px-2 py-0.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[8px] sm:text-[9px] font-bold text-[#2563EB] uppercase tracking-wider font-mono">IMAGE</span>
             </div>
           </div>
 
-          {/* ── PROFESSOR AI — Response Panel ── */}
+          {/* ── PROFESSOR AI — Compact Voice Strip (Scaled for Mobile) ── */}
           <div
-            className={`rounded-[22px] border border-[rgba(15,23,42,.08)] p-[28px] flex gap-4 flex-shrink-0 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] relative bg-white shadow-[0_8px_24px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(15,23,42,.08)] ${lecturePlayState === "PAUSED_FOR_DOUBT" ? "border-amber-400/50"
+            className={`rounded-[16px] sm:rounded-[22px] border border-[rgba(15,23,42,.08)] p-2 sm:p-4 landscape:py-1 landscape:px-2.5 landscape:h-12 flex items-center landscape:items-center gap-2 sm:gap-4 flex-shrink-0 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] relative bg-white shadow-[0_4px_16px_rgba(15,23,42,.04)] ${lecturePlayState === "PAUSED_FOR_DOUBT" ? "border-amber-400/50"
               : aiSpeechState === "speaking" ? "tile-glow"
                 : aiSpeechState === "paused" ? "border-amber-400/30"
                   : "border-[rgba(15,23,42,.08)]"
@@ -2762,44 +2762,42 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           >
             {/* LIVE / PAUSED badge */}
             {lecturePlayState === "PAUSED_FOR_DOUBT" ? (
-              <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-[#FEF3C7] border border-[#FDE68A] px-3 py-1 rounded-full z-10">
+              <div className="absolute top-2.5 right-2.5 sm:top-4 sm:right-4 flex items-center gap-1 bg-[#FEF3C7] border border-[#FDE68A] px-2 py-0.5 sm:px-3 sm:py-1 rounded-full z-10">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#D97706]" />
-                <span className="text-[10px] font-bold text-[#D97706] uppercase tracking-wider font-mono">Paused</span>
+                <span className="text-[9px] sm:text-[10px] font-bold text-[#D97706] uppercase tracking-wider font-mono">Paused</span>
               </div>
             ) : (
-              <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-[#FEF2F2] border border-[#FECACA] px-3 py-1 rounded-full z-10">
+              <div className="absolute top-2.5 right-2.5 sm:top-4 sm:right-4 flex items-center gap-1 bg-[#FEF2F2] border border-[#FECACA] px-2 py-0.5 sm:px-3 sm:py-1 rounded-full z-10">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#DC2626] animate-pulse" />
-                <span className="text-[10px] font-bold text-[#DC2626] uppercase tracking-wider font-mono">Live</span>
+                <span className="text-[9px] sm:text-[10px] font-bold text-[#DC2626] uppercase tracking-wider font-mono">Live</span>
               </div>
             )}
 
             {/* Orb + waveform ── */}
-            <div className="flex flex-col items-center gap-2 flex-shrink-0 justify-center">
+            <div className="flex flex-col items-center gap-1.5 flex-shrink-0 justify-center">
               <div
-                className={`rounded-full flex items-center justify-center border-[3px] border-white transition-all duration-500 shadow-[0_10px_20px_rgba(37,99,235,.18)] ${aiSpeechState === "speaking"
+                className={`rounded-full flex items-center justify-center border-2 sm:border-[3px] border-white transition-all shadow-sm ${aiSpeechState === "speaking"
                   ? "bg-[#2563EB] text-white orb-active"
-                  : aiSpeechState === "paused"
-                    ? "bg-[#2563EB]/80 text-white orb-idle"
-                    : "bg-[#2563EB] text-white orb-idle"
+                  : "bg-[#2563EB] text-white orb-idle"
                   }`}
-                style={{ width: 48, height: 48 }}
+                style={{ width: 34, height: 34 }}
               >
-                <Brain className="h-5 w-5 text-white" />
+                <Brain className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
               </div>
-              <div className="flex items-end justify-center gap-[2px] h-3.5 w-8">
+              <div className="flex items-end justify-center gap-[2px] h-2.5 sm:h-3.5 w-6 sm:w-8">
                 {aiSpeechState === "speaking" && lecturePlayState !== "PAUSED_FOR_DOUBT"
-                  ? [1, 2, 3, 4, 5].map((i) => <div key={i} className={`w-[2.5px] rounded-full bg-[#2563EB] wv wv-${i}`} style={{ height: "100%" }} />)
-                  : [1, 2, 3, 4, 5].map((i) => <div key={i} className="w-[2.5px] h-[2.5px] rounded-full bg-[#E5E7EB]" />)
+                  ? [1, 2, 3, 4, 5].map((i) => <div key={i} className={`w-[2px] sm:w-[2.5px] rounded-full bg-[#2563EB] wv wv-${i}`} style={{ height: "100%" }} />)
+                  : [1, 2, 3, 4, 5].map((i) => <div key={i} className="w-[2px] sm:w-[2.5px] h-[2px] sm:h-[2.5px] rounded-full bg-[#E5E7EB]" />)
                 }
               </div>
             </div>
 
             {/* Name, topic, transcript */}
-            <div className="flex-1 flex flex-col min-w-0 overflow-hidden gap-1 max-w-[92%]">
-              <div className="flex items-center gap-2">
-                <h3 className="text-[18px] font-bold text-[#111827] leading-tight">Professor AI</h3>
-                <span className="text-xs text-[#9CA3AF]">·</span>
-                <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full truncate transition-colors duration-300 ${lecturePlayState === "PAUSED_FOR_DOUBT" ? "bg-[#FEF3C7] text-[#D97706]"
+            <div className="flex-1 flex flex-col min-w-0 overflow-hidden gap-0.5 sm:gap-1 max-w-[85%] sm:max-w-[92%]">
+              <div className="flex items-center gap-1.5">
+                <h3 className="text-xs sm:text-[16px] font-bold text-[#111827] leading-tight">Professor AI</h3>
+                <span className="text-[10px] text-[#9CA3AF]">·</span>
+                <span className={`text-[10px] sm:text-xs font-semibold px-2 py-0.2 rounded-full truncate transition-colors duration-300 ${lecturePlayState === "PAUSED_FOR_DOUBT" ? "bg-[#FEF3C7] text-[#D97706]"
                   : aiSpeechState === "speaking" ? "bg-[#EFF6FF] text-[#2563EB]" : aiSpeechState === "paused" ? "bg-[#FEF3C7] text-[#D97706]" : "bg-[#F3F4F6] text-[#6B7280]"
                   }`}>
                   {lecturePlayState === "PAUSED_FOR_DOUBT" ? "Answering doubt..."
@@ -2807,22 +2805,22 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                 </span>
               </div>
 
-              {/* Transcript — styled with 1.8 line height and rich dark black text */}
-              <div className="flex-1 relative min-h-[3.5rem] max-h-28 overflow-hidden">
+              {/* Transcript */}
+              <div className="flex-1 relative min-h-[2rem] max-h-14 sm:max-h-24 landscape:max-h-11 overflow-hidden">
                 <div className="absolute inset-0 overflow-y-auto cscroll pr-2">
                   {pastTranscripts.map((pt, i) => (
-                    <p key={i} className="text-[14px] text-[#111827] mb-1.5 leading-[1.8] font-semibold">{pt}</p>
+                    <p key={i} className="text-xs sm:text-[14px] text-[#111827] mb-1 leading-relaxed font-semibold">{pt}</p>
                   ))}
                   {transcript && (
-                    <p className="text-[16px] text-[#000000] font-bold leading-[1.8]">
+                    <p className="text-xs sm:text-[15px] text-[#000000] font-bold leading-relaxed">
                       {transcript}
                     </p>
                   )}
                   {lecturePlayState === "PAUSED_FOR_DOUBT" && (
-                    <p className="text-xs text-[#D97706] italic mt-1 font-bold leading-[1.8]">Lecture paused — will resume automatically.</p>
+                    <p className="text-[10px] sm:text-xs text-[#D97706] italic mt-0.5 font-bold leading-snug">Lecture paused — will resume automatically.</p>
                   )}
                   {!transcript && !pastTranscripts.length && (
-                    <p className="text-xs text-[#4B5563] italic leading-[1.8] font-medium">Transcript appears when lecture starts...</p>
+                    <p className="text-[10px] sm:text-xs text-[#4B5563] italic leading-snug font-medium">Transcript appears when lecture starts...</p>
                   )}
                   <div ref={transcriptEndRef} />
                 </div>
@@ -2831,8 +2829,8 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           </div>
         </div>
 
-        {/* ─── RIGHT SIDEBAR — Participants + Doubt Chat (16px vertical spacing) ─── */}
-        <aside className="w-full lg:w-[30%] border-t-2 lg:border-t-0 lg:border-l-2 border-[#BFDBFE] bg-white flex flex-col min-h-0 pb-[84px] lg:pb-0 overflow-hidden antialiased">
+        {/* ─── RIGHT SIDEBAR — Participants + Doubt Chat (Side column in Landscape) ─── */}
+        <aside className="w-full landscape:w-[260px] lg:w-[30%] border-t-2 landscape:border-t-0 landscape:border-l-2 lg:border-t-0 lg:border-l-2 border-[#BFDBFE] bg-white flex flex-col min-h-0 pb-20 landscape:pb-0 lg:pb-0 overflow-y-auto landscape:overflow-y-auto antialiased">
 
           {/* ── STUDENT TILES (16px spacing) ── */}
           <div className="flex-none p-4 pb-0 space-y-4">
@@ -2974,25 +2972,24 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             }
           }, 2000)
         }}
-        className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[45] flex items-center gap-3 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] ${showToolbar ? "translate-y-0 opacity-100" : "translate-y-28 opacity-0 pointer-events-none"
+        className={`fixed bottom-3 sm:bottom-6 landscape:bottom-2 left-1/2 -translate-x-1/2 z-[45] flex items-center gap-2 sm:gap-3 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] landscape:scale-80 landscape:origin-bottom ${showToolbar ? "translate-y-0 opacity-100" : "translate-y-28 opacity-0 pointer-events-none"
           }`}
       >
         <div
-          className="flex items-center px-3 rounded-[24px] shadow-[0_20px_40px_rgba(15,23,42,.08)] border border-[rgba(15,23,42,.08)] bg-white/95 backdrop-blur-md relative gap-1"
-          style={{ height: 64 }}
+          className="flex items-center px-2 sm:px-3 rounded-[18px] sm:rounded-[24px] shadow-[0_20px_40px_rgba(15,23,42,.08)] border border-[rgba(15,23,42,.08)] bg-white/95 backdrop-blur-md relative gap-0.5 sm:gap-1 h-12 sm:h-16"
         >
           {/* Mic */}
           <button id="mic-toggle" onClick={() => { setMicOn(v => !v); addToast(micOn ? "Mic off" : "Mic on") }}
-            className={`group flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer hover:-translate-y-0.5 ${micOn ? "text-[#374151] hover:bg-[#F3F4F6]" : "text-[#DC2626] bg-[#FEF2F2]"}`}>
-            {micOn ? <Mic className="h-[18px] w-[18px] group-hover:scale-[1.08] transition-transform duration-300" /> : <MicOff className="h-[18px] w-[18px] group-hover:scale-[1.08] transition-transform duration-300" />}
-            <span className="text-[11px] font-medium">Mic</span>
+            className={`group flex flex-col items-center justify-center gap-0.5 px-2.5 sm:px-3.5 h-full rounded-[14px] sm:rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer hover:-translate-y-0.5 ${micOn ? "text-[#374151] hover:bg-[#F3F4F6]" : "text-[#DC2626] bg-[#FEF2F2]"}`}>
+            {micOn ? <Mic className="h-4 w-4 sm:h-[18px] sm:w-[18px] group-hover:scale-[1.08] transition-transform duration-300" /> : <MicOff className="h-4 w-4 sm:h-[18px] sm:w-[18px] group-hover:scale-[1.08] transition-transform duration-300" />}
+            <span className="text-[9px] sm:text-[11px] font-medium">Mic</span>
           </button>
 
           {/* Camera */}
           <button id="camera-toggle" onClick={() => { setVideoOn(v => !v); addToast(videoOn ? "Camera off" : "Camera on") }}
-            className={`group flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer hover:-translate-y-0.5 ${videoOn ? "text-[#374151] hover:bg-[#F3F4F6]" : "text-[#DC2626] bg-[#FEF2F2]"}`}>
-            {videoOn ? <Video className="h-[18px] w-[18px] group-hover:scale-[1.08] transition-transform duration-300" /> : <VideoOff className="h-[18px] w-[18px] group-hover:scale-[1.08] transition-transform duration-300" />}
-            <span className="text-[11px] font-medium">Camera</span>
+            className={`group flex flex-col items-center justify-center gap-0.5 px-2.5 sm:px-3.5 h-full rounded-[14px] sm:rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer hover:-translate-y-0.5 ${videoOn ? "text-[#374151] hover:bg-[#F3F4F6]" : "text-[#DC2626] bg-[#FEF2F2]"}`}>
+            {videoOn ? <Video className="h-4 w-4 sm:h-[18px] sm:w-[18px] group-hover:scale-[1.08] transition-transform duration-300" /> : <VideoOff className="h-4 w-4 sm:h-[18px] sm:w-[18px] group-hover:scale-[1.08] transition-transform duration-300" />}
+            <span className="text-[9px] sm:text-[11px] font-medium">Camera</span>
           </button>
 
           {/* People */}
@@ -3004,19 +3001,19 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             }
             localStorage.setItem("participantsOpen", next ? "true" : "false")
           }}
-            className={`group flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer hover:-translate-y-0.5 ${isParticipantsOpen ? "text-[#2563EB] bg-[#EFF6FF]" : "text-[#374151] hover:bg-[#F3F4F6]"}`}>
-            <Users className="h-[18px] w-[18px] group-hover:scale-[1.08] transition-transform duration-300" />
-            <span className="text-[11px] font-medium">People</span>
+            className={`group flex flex-col items-center justify-center gap-0.5 px-2.5 sm:px-3.5 h-full rounded-[14px] sm:rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer hover:-translate-y-0.5 ${isParticipantsOpen ? "text-[#2563EB] bg-[#EFF6FF]" : "text-[#374151] hover:bg-[#F3F4F6]"}`}>
+            <Users className="h-4 w-4 sm:h-[18px] sm:w-[18px] group-hover:scale-[1.08] transition-transform duration-300" />
+            <span className="text-[9px] sm:text-[11px] font-medium">People</span>
           </button>
 
           {/* More Popover Button */}
           <div className="relative h-full flex items-center">
             <button
               onClick={() => setShowMoreMenu(v => !v)}
-              className={`group flex flex-col items-center justify-center gap-0.5 px-3.5 h-full rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer hover:-translate-y-0.5 ${showMoreMenu ? "text-[#2563EB] bg-[#EFF6FF]" : "text-[#374151] hover:bg-[#F3F4F6]"}`}
+              className={`group flex flex-col items-center justify-center gap-0.5 px-2.5 sm:px-3.5 h-full rounded-[14px] sm:rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer hover:-translate-y-0.5 ${showMoreMenu ? "text-[#2563EB] bg-[#EFF6FF]" : "text-[#374151] hover:bg-[#F3F4F6]"}`}
             >
-              <MoreHorizontal className="h-[18px] w-[18px] group-hover:scale-[1.08] transition-transform duration-300" />
-              <span className="text-[11px] font-medium">More</span>
+              <MoreHorizontal className="h-4 w-4 sm:h-[18px] sm:w-[18px] group-hover:scale-[1.08] transition-transform duration-300" />
+              <span className="text-[9px] sm:text-[11px] font-medium">More</span>
             </button>
 
             {/* Popover Menu */}

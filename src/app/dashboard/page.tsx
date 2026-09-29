@@ -382,77 +382,77 @@ function DashboardContent() {
           {currentTab === "dashboard" && (
             <div className="space-y-5 sm:space-y-8 animate-fadeIn">
               {/* Stats Row */}
-              <section className="grid gap-2.5 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+              <section className="grid gap-2 sm:gap-4 grid-cols-2 lg:grid-cols-4">
                 {/* Card 1: Total Sessions */}
-                <div className="card p-3 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[105px] sm:min-h-[140px] min-w-0">
+                <div className="card p-2.5 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[90px] sm:min-h-[140px] min-w-0">
                   <div className="flex items-center justify-between gap-1">
-                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800 truncate">TOTAL SESSIONS</span>
+                    <span className="text-[8px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800 truncate">TOTAL SESSIONS</span>
                     <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg sm:rounded-xl bg-[#e6f0fa] flex items-center justify-center text-[#2185d0] flex-shrink-0">
                       <Video className="h-3 w-3 sm:h-4 sm:w-4" />
                     </div>
                   </div>
-                  <div className="mt-2 sm:mt-4">
-                    <h3 className="text-xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : totalSessionsCount}</h3>
-                    <span className="text-[9px] sm:text-[10px] font-serif text-neutral-400 mt-1 sm:mt-2 block truncate">All active & finished</span>
+                  <div className="mt-1.5 sm:mt-4">
+                    <h3 className="text-lg sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : totalSessionsCount}</h3>
+                    <span className="text-[8px] sm:text-[10px] font-serif text-neutral-400 mt-0.5 sm:mt-2 block truncate">All active & finished</span>
                   </div>
                 </div>
 
                 {/* Card 2: Students Taught */}
-                <div className="card p-3 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[105px] sm:min-h-[140px] min-w-0">
+                <div className="card p-2.5 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[90px] sm:min-h-[140px] min-w-0">
                   <div className="flex items-center justify-between gap-1">
-                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800 truncate">STUDENTS TAUGHT</span>
+                    <span className="text-[8px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800 truncate">STUDENTS TAUGHT</span>
                     <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg sm:rounded-xl bg-[#ffebeb] flex items-center justify-center text-[#db2828] flex-shrink-0">
                       <GraduationCap className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </div>
                   </div>
-                  <div className="mt-2 sm:mt-4">
-                    <h3 className="text-xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : studentsTaughtCount}</h3>
-                    <span className="text-[9px] sm:text-[10px] font-serif text-neutral-400 mt-1 sm:mt-2 block truncate">From registers</span>
+                  <div className="mt-1.5 sm:mt-4">
+                    <h3 className="text-lg sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : studentsTaughtCount}</h3>
+                    <span className="text-[8px] sm:text-[10px] font-serif text-neutral-400 mt-0.5 sm:mt-2 block truncate">From registers</span>
                   </div>
                 </div>
 
                 {/* Card 3: Hours of Teaching */}
-                <div className="card p-3 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[105px] sm:min-h-[140px] min-w-0">
+                <div className="card p-2.5 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[90px] sm:min-h-[140px] min-w-0">
                   <div className="flex items-center justify-between gap-1">
-                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800 truncate">TEACHING TIME</span>
+                    <span className="text-[8px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800 truncate">TEACHING TIME</span>
                     <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg sm:rounded-xl bg-[#fff5e6] flex items-center justify-center text-[#f2711c] flex-shrink-0">
                       <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
                     </div>
                   </div>
-                  <div className="mt-2 sm:mt-4">
-                    <h3 className="text-xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : `${teachingHours}h`}</h3>
-                    <span className="text-[9px] sm:text-[10px] font-serif text-neutral-400 mt-1 sm:mt-2 block truncate">Total live duration</span>
+                  <div className="mt-1.5 sm:mt-4">
+                    <h3 className="text-lg sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : `${teachingHours}h`}</h3>
+                    <span className="text-[8px] sm:text-[10px] font-serif text-neutral-400 mt-0.5 sm:mt-2 block truncate">Total live duration</span>
                   </div>
                 </div>
 
                 {/* Card 4: Avg Engagement */}
-                <div className="card p-3 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[105px] sm:min-h-[140px] min-w-0">
+                <div className="card p-2.5 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[90px] sm:min-h-[140px] min-w-0">
                   <div className="flex items-center justify-between gap-1">
-                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800 truncate">AVG ENGAGEMENT</span>
+                    <span className="text-[8px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800 truncate">AVG ENGAGEMENT</span>
                     <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg sm:rounded-xl bg-[#e6f6ec] flex items-center justify-center text-[#21ba45] flex-shrink-0">
                       <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </div>
                   </div>
-                  <div className="mt-2 sm:mt-4">
-                    <h3 className="text-xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingRoster ? "..." : `${avgEngagementRate}%`}</h3>
-                    <span className="text-[9px] sm:text-[10px] font-serif text-neutral-400 mt-1 sm:mt-2 block truncate">Class average</span>
+                  <div className="mt-1.5 sm:mt-4">
+                    <h3 className="text-lg sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingRoster ? "..." : `${avgEngagementRate}%`}</h3>
+                    <span className="text-[8px] sm:text-[10px] font-serif text-neutral-400 mt-0.5 sm:mt-2 block truncate">Class average</span>
                   </div>
                 </div>
               </section>
 
               {/* Columns Split */}
-              <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
+              <div className="grid gap-4 sm:gap-8 lg:grid-cols-3">
                 {/* Left Column (Quick Start & Recent) */}
-                <div className="lg:col-span-2 space-y-6">
+                <div className="lg:col-span-2 space-y-4 sm:space-y-6">
                   {/* Quick Start Card */}
-                  <div className="card p-4 sm:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6">
-                    <div className="w-full flex-1 space-y-3 sm:space-y-4">
+                  <div className="card p-3 sm:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-6">
+                    <div className="w-full flex-1 space-y-2.5 sm:space-y-4">
                       <div className="flex items-center justify-between w-full">
                         <div>
-                          <h2 className="text-lg sm:text-xl font-serif font-bold text-neutral-900">Start a New Session</h2>
-                          <p className="text-xs text-neutral-500 mt-0.5">Your AI teacher is ready to go live.</p>
+                          <h2 className="text-base sm:text-xl font-serif font-bold text-neutral-900">Start a New Session</h2>
+                          <p className="text-[11px] sm:text-xs text-neutral-500 mt-0.5">Your AI teacher is ready to go live.</p>
                         </div>
-                        <div className="w-12 h-12 sm:hidden relative flex-shrink-0">
+                        <div className="w-10 h-10 sm:hidden relative flex-shrink-0">
                           <Image
                             src="/ai-teacher-tablet.png"
                             alt="AI Teacher"
@@ -464,7 +464,7 @@ function DashboardContent() {
                       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full">
                         <ShinyButton 
                           onClick={() => router.push("/dashboard/create-session")}
-                          className="!w-full sm:!w-auto !px-5 !py-2.5 !text-xs !font-bold flex items-center justify-center gap-1.5"
+                          className="!w-full sm:!w-auto !px-4 sm:!px-5 !py-2 sm:!py-2.5 !text-xs !font-bold flex items-center justify-center gap-1.5"
                         >
                           Create Session
                           <ArrowRight className="h-3.5 w-3.5 text-white" />

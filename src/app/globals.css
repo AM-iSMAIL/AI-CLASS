@@ -313,7 +313,8 @@
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.sidebar-container:hover .sidebar-label {
+.sidebar-container:hover .sidebar-label,
+aside:not(.sidebar-container) .sidebar-label {
   opacity: 1;
   transform: translateX(0);
   pointer-events: auto;
