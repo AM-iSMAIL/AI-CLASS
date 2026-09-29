@@ -22,7 +22,7 @@ export const REVENUECAT_PLANS: RevenueCatPlan[] = [
     badge: "SAVE 20% • POPULAR",
     description: "Unlimited high-definition AI lectures & real-time classroom analytics",
     features: [
-      "Unlimited 6-minute lectures with 80 dynamic visual slides",
+      "Unlimited AI lectures with dynamic visual slides",
       "Ultra-realistic Camb AI professor voice synthesis",
       "Real-time multi-student computer vision attention & proctoring",
       "Priority NVIDIA NIM sub-second inference",
@@ -36,7 +36,7 @@ export const REVENUECAT_PLANS: RevenueCatPlan[] = [
     period: "/month, billed monthly",
     description: "Full access to AI Class teaching suite with monthly flexibility",
     features: [
-      "Unlimited 6-minute lectures with 80 dynamic visual slides",
+      "Unlimited AI lectures with dynamic visual slides",
       "Ultra-realistic Camb AI professor voice synthesis",
       "Real-time multi-student computer vision attention & proctoring",
       "Priority NVIDIA NIM sub-second inference",

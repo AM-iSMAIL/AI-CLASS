@@ -984,7 +984,7 @@ export default function CreateSessionPage() {
                       </div>
                       <p className="text-[11px] text-neutral-500 mt-0.5">
                         {isPro
-                          ? "Unlimited 6-min lectures with 80 dynamic slides active."
+                          ? "Unlimited AI lectures with dynamic slides active."
                           : credits > 0
                           ? "1 lecture credit will be used to start this session."
                           : "0 credits left. Upgrade via RevenueCat to launch."}

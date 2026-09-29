@@ -97,7 +97,7 @@ export default function RevenueCatPaywall() {
             Supercharge Your AI Classroom
           </h2>
           <p className="text-sm text-blue-100 mt-1 max-w-lg">
-            Unlock complete 6-minute AI lectures with 80 dynamic slides, ultra-realistic Camb AI voice synthesis, and multi-student proctoring.
+            Unlock complete AI lectures with dynamic slides, ultra-realistic Camb AI voice synthesis, and multi-student proctoring.
           </p>
         </div>
 
@@ -178,7 +178,7 @@ export default function RevenueCatPaywall() {
             <div className="grid gap-2 sm:grid-cols-2 text-xs text-neutral-700">
               <div className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-                <span>Full 6-Min Lectures with 80 Visual Slides</span>
+                <span>Interactive AI Lectures with Dynamic Slides</span>
               </div>
               <div className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-emerald-600 flex-shrink-0" />
