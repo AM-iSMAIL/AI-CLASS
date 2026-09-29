@@ -51,17 +51,61 @@ export const signInWithGoogle = async (): Promise<User | null> => {
     }
     return user
   } catch (error: any) {
-    if (
-      error.code === "auth/popup-blocked" ||
-      error.code === "auth/operation-not-supported-in-this-environment" ||
-      error.code === "auth/unauthorized-domain"
-    ) {
-      console.warn("Popup blocked or unsupported in this environment, falling back to redirect...")
+    if (error.code === "auth/popup-blocked") {
+      console.warn("Popup blocked, falling back to redirect...")
       await signInWithRedirect(auth, googleProvider)
-      return null;
+      return null
     }
+
+    if (error.code === "auth/unauthorized-domain") {
+      const customErr = new Error(
+        "Google Sign-In domain authorization pending in Firebase. Please use 'Instant 1-Tap Sign In' or Email below!"
+      )
+      ;(customErr as any).code = "auth/unauthorized-domain"
+      throw customErr
+    }
+
+    if (
+      error.code === "auth/operation-not-supported-in-this-environment" ||
+      error.code === "auth/disallowed-useragent" ||
+      error.message?.includes("disallowed_useragent")
+    ) {
+      const customErr = new Error(
+        "Google Sign-In is restricted in mobile WebViews. Please use 'Instant 1-Tap Sign In' or Email below!"
+      )
+      ;(customErr as any).code = "auth/disallowed-useragent"
+      throw customErr
+    }
+
     console.error("Google Sign-In Error:", error)
     throw error
+  }
+}
+
+// 1b. Instant 1-Tap Demo Sign In (Works natively on Android, iOS & Web)
+export const signInOrSignUpDemo = async (
+  role: "teacher" | "student" = "teacher"
+): Promise<User> => {
+  const email = role === "teacher" ? "demo.teacher@aiclass.edu" : "demo.student@aiclass.edu"
+  const password = "DemoPassword123!"
+  const displayName = role === "teacher" ? "Prof. Sarah Jenkins" : "Alex Johnson"
+
+  try {
+    const result = await signInWithEmailAndPassword(auth, email, password)
+    await saveUserProfile(result.user.uid, result.user.email, result.user.displayName || displayName, role)
+    return result.user
+  } catch (err: any) {
+    if (
+      err.code === "auth/user-not-found" ||
+      err.code === "auth/invalid-credential" ||
+      err.code === "auth/invalid-login-credentials"
+    ) {
+      const result = await createUserWithEmailAndPassword(auth, email, password)
+      await updateProfile(result.user, { displayName })
+      await saveUserProfile(result.user.uid, email, displayName, role)
+      return result.user
+    }
+    throw err
   }
 }
 

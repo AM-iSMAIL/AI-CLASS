@@ -11,9 +11,6 @@ const config: CapacitorConfig = {
     allowNavigation: [
       "aiclass-six.vercel.app",
       "*.vercel.app",
-      "accounts.google.com",
-      "*.google.com",
-      "*.googleusercontent.com",
       "ai-class-d960b.firebaseapp.com",
       "*.firebaseapp.com",
       "*.googleapis.com",
@@ -22,9 +19,6 @@ const config: CapacitorConfig = {
   android: {
     allowMixedContent: true,
     webContentsDebuggingEnabled: true,
-    // Eliminates Google's 'disallowed_useragent' restriction in WebViews
-    overrideUserAgent:
-      "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Mobile Safari/537.36",
   },
   plugins: {
     SplashScreen: {
