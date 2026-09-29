@@ -3,7 +3,7 @@ import { classroomContext } from "../classroom-context";
 
 export const getTeacherConfig = (): TeacherConfig => {
   const apiKey = process.env.NVIDIA_API_KEY || "";
-  const model = process.env.NVIDIA_MODEL || "meta/llama-3.1-8b-instruct";
+  const model = process.env.NVIDIA_MODEL || "meta/llama-3.2-11b-vision-instruct";
 
   // Safe parsing of numeric values
   const rawTemp = process.env.NVIDIA_TEMPERATURE;
