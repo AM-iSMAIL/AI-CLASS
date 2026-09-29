@@ -103,6 +103,13 @@ export default function AuthPage() {
       .catch((err) => {
         if (!isMounted) return
         console.warn("Redirect sign-in error or cancelled:", err)
+        if (err.code === "auth/unauthorized-domain") {
+          setError(
+            "Domain not authorized in Firebase. Please add 'aiclass-six.vercel.app' to Firebase Console > Authentication > Settings > Authorized Domains."
+          )
+        } else if (err.code && err.code !== "auth/credential-already-in-use") {
+          setError(err.message || "Google sign-in error. Please sign in with Email below.")
+        }
       })
 
     return () => {

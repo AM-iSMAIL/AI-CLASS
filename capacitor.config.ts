@@ -14,6 +14,8 @@ const config: CapacitorConfig = {
       "ai-class-d960b.firebaseapp.com",
       "*.firebaseapp.com",
       "*.googleapis.com",
+      "accounts.google.com",
+      "*.google.com",
     ],
   },
   android: {

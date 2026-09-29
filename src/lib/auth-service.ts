@@ -41,9 +41,26 @@ export const saveUserProfile = async (
   }
 }
 
+// Helper to detect mobile browser or native Capacitor environment
+export const isMobileOrNative = (): boolean => {
+  if (typeof window === "undefined") return false
+  const ua = (navigator.userAgent || navigator.vendor || "").toLowerCase()
+  const isCapacitor = Boolean((window as any).Capacitor?.isNativePlatform?.())
+  const isMobile = /android|iphone|ipad|ipod|mobile/i.test(ua)
+  return isCapacitor || isMobile
+}
+
 // 1. Sign in with Google
 export const signInWithGoogle = async (): Promise<User | null> => {
   try {
+    // In mobile devices and native WebViews, popups lack window.opener communication,
+    // which causes the Firebase auth handler to get stuck on a blank page.
+    // Calling signInWithRedirect provides a clean full-page navigation.
+    if (isMobileOrNative()) {
+      await signInWithRedirect(auth, googleProvider)
+      return null
+    }
+
     const result = await signInWithPopup(auth, googleProvider)
     const user = result.user
     if (user) {
@@ -51,8 +68,12 @@ export const signInWithGoogle = async (): Promise<User | null> => {
     }
     return user
   } catch (error: any) {
-    if (error.code === "auth/popup-blocked") {
-      console.warn("Popup blocked, falling back to redirect...")
+    if (
+      error.code === "auth/popup-blocked" ||
+      error.code === "auth/cancelled-popup-request" ||
+      error.code === "auth/popup-closed-by-user"
+    ) {
+      console.warn("Popup blocked or closed, falling back to redirect...")
       await signInWithRedirect(auth, googleProvider)
       return null
     }
