@@ -418,6 +418,7 @@ export default function LiveClassroomPage() {
   // --- Immersive Meeting Design States & Refs ---
   const [showToolbar, setShowToolbar] = useState(true)
   const [isParticipantsOpen, setIsParticipantsOpen] = useState(false)
+  const [isLandscapeSidebarOpen, setIsLandscapeSidebarOpen] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [showOnlyActive, setShowOnlyActive] = useState(false)
   const [speakingStudentIds, setSpeakingStudentIds] = useState<Set<string>>(new Set())
@@ -2622,17 +2623,19 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       `}</style>
 
       {/* ═══ TOP BAR ═══ */}
-      <header className="pt-6 sm:pt-0 landscape:pt-0 h-16 sm:h-[72px] landscape:h-11 bg-white border-b border-[rgba(15,23,42,.08)] px-3 sm:px-6 flex items-center justify-between flex-shrink-0 z-30 antialiased">
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <div className="h-7 w-7 sm:h-9 sm:w-9 rounded-xl bg-[#EFF6FF] flex items-center justify-center border border-[#BFDBFE] shadow-xs flex-shrink-0">
-            <Brain className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-[#2563EB]" />
+      <header className="pt-6 sm:pt-0 landscape:pt-0 h-16 sm:h-[72px] landscape:h-9 bg-white border-b border-[rgba(15,23,42,.08)] px-3 sm:px-6 landscape:pl-8 landscape:pr-8 flex items-center justify-between flex-shrink-0 z-30 antialiased">
+        <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
+          <div className="h-7 w-7 sm:h-9 sm:w-9 landscape:h-6 landscape:w-6 rounded-lg sm:rounded-xl bg-[#EFF6FF] flex items-center justify-center border border-[#BFDBFE] shadow-xs flex-shrink-0">
+            <Brain className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 landscape:h-3 landscape:w-3 text-[#2563EB]" />
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-[11px] sm:text-sm font-black text-[#2563EB] leading-none tracking-tight">AI <span className="text-[#111827]">CLASS</span></span>
-            <span className="text-[9px] sm:text-[11px] text-[#6B7280] font-medium tracking-wide uppercase truncate max-w-[100px] xs:max-w-[150px] sm:max-w-[160px] mt-0.5">{sessionTitle}</span>
+            <span className="text-[11px] sm:text-sm landscape:text-[10px] font-black text-[#2563EB] leading-none tracking-tight">AI <span className="text-[#111827]">CLASS</span></span>
+            <span className="text-[9px] sm:text-[11px] landscape:text-[8px] text-[#6B7280] font-medium tracking-wide uppercase truncate max-w-[90px] xs:max-w-[150px] sm:max-w-[160px] mt-0.5">{sessionTitle}</span>
           </div>
         </div>
-        <div className="hidden md:flex flex-col items-center gap-1.5 w-72">
+
+        {/* Center Progress — only visible on large desktop to prevent notch overlap on mobile landscape */}
+        <div className="hidden lg:flex flex-col items-center gap-1.5 w-72">
           <div className="flex items-center gap-2 text-xs text-[#374151] font-semibold">
             <span className="text-[#2563EB] font-bold uppercase text-[9px] tracking-wider font-mono">{isPdfMode ? "PDF Page " : "Topic "} {activeTopicIdx + 1}/{totalItems}:</span>
             <span className="truncate max-w-[160px] font-bold text-[#111827]">{activeLabel}</span>
@@ -2641,31 +2644,32 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             <div className="h-full bg-[#2563EB] rounded-full transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]" style={{ width: `${progressPct}%` }} />
           </div>
         </div>
+
         <div className="flex items-center gap-1.5 sm:gap-2.5 text-xs font-semibold flex-shrink-0">
-          {/* Student Focus Avg Badge */}
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white border border-[#E5E7EB] shadow-xs hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer">
+          {/* Student Focus Avg Badge — hidden on mobile landscape */}
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white border border-[#E5E7EB] shadow-xs hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer">
             <span className={`h-2 w-2 rounded-full ${focusDot} animate-pulse`} />
             <span className="text-[#6B7280] font-medium">Student Avg:</span>
             <span className={`${focusText} font-bold`}>{classFocus}%</span>
           </div>
 
-          <div className="flex items-center gap-1 sm:gap-2.5 bg-white border border-[#E5E7EB] px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-full font-mono text-[#111827] text-[11px] sm:text-xs font-bold shadow-xs">
-            <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#9CA3AF]" />
+          <div className="flex items-center gap-1 sm:gap-2 bg-white border border-[#E5E7EB] px-2 sm:px-3.5 landscape:px-2 py-1 sm:py-1.5 landscape:py-0.5 rounded-full font-mono text-[#111827] text-[10px] sm:text-xs font-bold shadow-xs">
+            <Clock className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-[#9CA3AF]" />
             <span>{fmt(elapsedSeconds)}</span>
-            <span className="border-l border-[#E5E7EB] pl-1 sm:pl-2.5 flex items-center gap-1">
-              <Users className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#2563EB]" />{students.length}
+            <span className="border-l border-[#E5E7EB] pl-1 sm:pl-2 flex items-center gap-1">
+              <Users className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 text-[#2563EB]" />{students.length}
             </span>
           </div>
           {isTeacher ? (
             <div className="flex items-center gap-2">
-              <button id="end-session-btn" onClick={handleEndSession} className="px-2.5 sm:px-4 py-1 sm:py-2 bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-xl sm:rounded-[16px] transition-all cursor-pointer text-[10px] sm:text-xs font-bold shadow-xs active:scale-95">
+              <button id="end-session-btn" onClick={handleEndSession} className="px-2.5 sm:px-4 landscape:px-2 py-1 sm:py-2 landscape:py-0.5 bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-lg sm:rounded-[16px] transition-all cursor-pointer text-[9px] sm:text-xs font-bold shadow-xs active:scale-95">
                 <span className="hidden xs:inline">End Session</span>
                 <span className="xs:hidden">End</span>
               </button>
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <button onClick={handleStudentLeave} className="px-2.5 sm:px-4 py-1 sm:py-2 bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-xl sm:rounded-[16px] transition-all cursor-pointer text-[10px] sm:text-xs font-bold shadow-xs active:scale-95 flex items-center gap-1 sm:gap-1.5">
+              <button onClick={handleStudentLeave} className="px-2.5 sm:px-4 landscape:px-2 py-1 sm:py-2 landscape:py-0.5 bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-lg sm:rounded-[16px] transition-all cursor-pointer text-[9px] sm:text-xs font-bold shadow-xs active:scale-95 flex items-center gap-1 sm:gap-1.5">
                 <LogOut className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 <span className="hidden xs:inline">Leave Class</span>
                 <span className="xs:hidden">Leave</span>
@@ -2746,45 +2750,43 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
               )}
             </div>
             {/* Caption bar */}
-            <div className="h-7 sm:h-10 border-t-2 border-[#111827] bg-white flex items-center justify-between px-3 sm:px-4 flex-shrink-0 relative z-10">
-              <span className="text-[10px] sm:text-xs font-bold text-[#111827] truncate max-w-[80%]">{activeLabel}</span>
-              <span className="px-2 py-0.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[8px] sm:text-[9px] font-bold text-[#2563EB] uppercase tracking-wider font-mono">IMAGE</span>
+            <div className="h-7 sm:h-9 landscape:h-6 border-t-2 border-[#111827] bg-white flex items-center justify-between px-2.5 sm:px-4 flex-shrink-0 relative z-10">
+              <span className="text-[10px] sm:text-xs font-bold text-[#111827] truncate max-w-[65%]">{activeLabel}</span>
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsLandscapeSidebarOpen(v => !v)}
+                  className="hidden landscape:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 hover:bg-blue-100 border border-blue-200 text-[8px] font-bold text-blue-700 uppercase tracking-wider transition-colors cursor-pointer"
+                  title="Toggle Cinema Mode / Sidebar"
+                >
+                  <Eye className="h-2.5 w-2.5" />
+                  <span>{isLandscapeSidebarOpen ? "Cinema Mode" : "Show Chat"}</span>
+                </button>
+                <span className="px-1.5 py-0.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[8px] sm:text-[9px] font-bold text-[#2563EB] uppercase tracking-wider font-mono">IMAGE</span>
+              </div>
             </div>
           </div>
 
-          {/* ── PROFESSOR AI — Compact Voice Strip (Scaled for Mobile) ── */}
+          {/* ── PROFESSOR AI — Sleek Single-Line Ticker in Landscape ── */}
           <div
-            className={`rounded-[16px] sm:rounded-[22px] border border-[rgba(15,23,42,.08)] p-2 sm:p-4 landscape:py-1 landscape:px-2.5 landscape:h-12 flex items-center landscape:items-center gap-2 sm:gap-4 flex-shrink-0 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] relative bg-white shadow-[0_4px_16px_rgba(15,23,42,.04)] ${lecturePlayState === "PAUSED_FOR_DOUBT" ? "border-amber-400/50"
+            className={`rounded-[14px] sm:rounded-[22px] border border-[rgba(15,23,42,.08)] p-2 sm:p-4 landscape:py-1 landscape:px-2.5 landscape:h-9 flex items-center gap-2 sm:gap-4 flex-shrink-0 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] relative bg-white shadow-[0_4px_16px_rgba(15,23,42,.04)] ${lecturePlayState === "PAUSED_FOR_DOUBT" ? "border-amber-400/50"
               : aiSpeechState === "speaking" ? "tile-glow"
                 : aiSpeechState === "paused" ? "border-amber-400/30"
                   : "border-[rgba(15,23,42,.08)]"
               }`}
           >
-            {/* LIVE / PAUSED badge */}
-            {lecturePlayState === "PAUSED_FOR_DOUBT" ? (
-              <div className="absolute top-2.5 right-2.5 sm:top-4 sm:right-4 flex items-center gap-1 bg-[#FEF3C7] border border-[#FDE68A] px-2 py-0.5 sm:px-3 sm:py-1 rounded-full z-10">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#D97706]" />
-                <span className="text-[9px] sm:text-[10px] font-bold text-[#D97706] uppercase tracking-wider font-mono">Paused</span>
-              </div>
-            ) : (
-              <div className="absolute top-2.5 right-2.5 sm:top-4 sm:right-4 flex items-center gap-1 bg-[#FEF2F2] border border-[#FECACA] px-2 py-0.5 sm:px-3 sm:py-1 rounded-full z-10">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#DC2626] animate-pulse" />
-                <span className="text-[9px] sm:text-[10px] font-bold text-[#DC2626] uppercase tracking-wider font-mono">Live</span>
-              </div>
-            )}
-
             {/* Orb + waveform ── */}
-            <div className="flex flex-col items-center gap-1.5 flex-shrink-0 justify-center">
+            <div className="flex items-center gap-1.5 flex-shrink-0 justify-center">
               <div
-                className={`rounded-full flex items-center justify-center border-2 sm:border-[3px] border-white transition-all shadow-sm ${aiSpeechState === "speaking"
+                className={`rounded-full flex items-center justify-center border-2 border-white transition-all shadow-sm ${aiSpeechState === "speaking"
                   ? "bg-[#2563EB] text-white orb-active"
                   : "bg-[#2563EB] text-white orb-idle"
                   }`}
-                style={{ width: 34, height: 34 }}
+                style={{ width: 24, height: 24 }}
               >
-                <Brain className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                <Brain className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
               </div>
-              <div className="flex items-end justify-center gap-[2px] h-2.5 sm:h-3.5 w-6 sm:w-8">
+              <div className="hidden sm:flex landscape:hidden items-end justify-center gap-[2px] h-2.5 sm:h-3.5 w-6 sm:w-8">
                 {aiSpeechState === "speaking" && lecturePlayState !== "PAUSED_FOR_DOUBT"
                   ? [1, 2, 3, 4, 5].map((i) => <div key={i} className={`w-[2px] sm:w-[2.5px] rounded-full bg-[#2563EB] wv wv-${i}`} style={{ height: "100%" }} />)
                   : [1, 2, 3, 4, 5].map((i) => <div key={i} className="w-[2px] sm:w-[2.5px] h-[2px] sm:h-[2.5px] rounded-full bg-[#E5E7EB]" />)
@@ -2793,60 +2795,73 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             </div>
 
             {/* Name, topic, transcript */}
-            <div className="flex-1 flex flex-col min-w-0 overflow-hidden gap-0.5 sm:gap-1 max-w-[85%] sm:max-w-[92%]">
-              <div className="flex items-center gap-1.5">
-                <h3 className="text-xs sm:text-[16px] font-bold text-[#111827] leading-tight">Professor AI</h3>
+            <div className="flex-1 flex flex-col landscape:flex-row landscape:items-center min-w-0 overflow-hidden gap-0.5 sm:gap-1">
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <h3 className="text-xs sm:text-[16px] landscape:text-[11px] font-bold text-[#111827] leading-tight">Professor AI</h3>
                 <span className="text-[10px] text-[#9CA3AF]">·</span>
-                <span className={`text-[10px] sm:text-xs font-semibold px-2 py-0.2 rounded-full truncate transition-colors duration-300 ${lecturePlayState === "PAUSED_FOR_DOUBT" ? "bg-[#FEF3C7] text-[#D97706]"
+                <span className={`text-[9px] sm:text-xs font-semibold px-1.5 py-0.2 rounded-full truncate transition-colors duration-300 ${lecturePlayState === "PAUSED_FOR_DOUBT" ? "bg-[#FEF3C7] text-[#D97706]"
                   : aiSpeechState === "speaking" ? "bg-[#EFF6FF] text-[#2563EB]" : aiSpeechState === "paused" ? "bg-[#FEF3C7] text-[#D97706]" : "bg-[#F3F4F6] text-[#6B7280]"
                   }`}>
-                  {lecturePlayState === "PAUSED_FOR_DOUBT" ? "Answering doubt..."
+                  {lecturePlayState === "PAUSED_FOR_DOUBT" ? "Answering..."
                     : aiSpeechState === "speaking" ? activeLabel : aiSpeechState === "paused" ? "Paused" : "Waiting..."}
                 </span>
               </div>
 
               {/* Transcript */}
-              <div className="flex-1 relative min-h-[2rem] max-h-14 sm:max-h-24 landscape:max-h-11 overflow-hidden">
-                <div className="absolute inset-0 overflow-y-auto cscroll pr-2">
-                  {pastTranscripts.map((pt, i) => (
-                    <p key={i} className="text-xs sm:text-[14px] text-[#111827] mb-1 leading-relaxed font-semibold">{pt}</p>
-                  ))}
-                  {transcript && (
-                    <p className="text-xs sm:text-[15px] text-[#000000] font-bold leading-relaxed">
+              <div className="flex-1 relative min-h-[1.2rem] max-h-12 sm:max-h-24 landscape:max-h-5 overflow-hidden landscape:ml-2">
+                <div className="landscape:truncate">
+                  {transcript ? (
+                    <p className="text-xs sm:text-[15px] landscape:text-[11px] text-[#000000] font-bold leading-relaxed landscape:leading-none landscape:truncate">
                       {transcript}
                     </p>
+                  ) : pastTranscripts.length > 0 ? (
+                    <p className="text-xs sm:text-[14px] landscape:text-[11px] text-[#111827] leading-relaxed landscape:leading-none font-semibold landscape:truncate">
+                      {pastTranscripts[pastTranscripts.length - 1]}
+                    </p>
+                  ) : (
+                    <p className="text-[10px] sm:text-xs landscape:text-[10px] text-[#4B5563] italic leading-snug landscape:leading-none font-medium landscape:truncate">
+                      Transcript appears when lecture starts...
+                    </p>
                   )}
-                  {lecturePlayState === "PAUSED_FOR_DOUBT" && (
-                    <p className="text-[10px] sm:text-xs text-[#D97706] italic mt-0.5 font-bold leading-snug">Lecture paused — will resume automatically.</p>
-                  )}
-                  {!transcript && !pastTranscripts.length && (
-                    <p className="text-[10px] sm:text-xs text-[#4B5563] italic leading-snug font-medium">Transcript appears when lecture starts...</p>
-                  )}
-                  <div ref={transcriptEndRef} />
                 </div>
               </div>
+            </div>
+
+            {/* LIVE / PAUSED badge on far right */}
+            <div className="flex-shrink-0">
+              {lecturePlayState === "PAUSED_FOR_DOUBT" ? (
+                <div className="flex items-center gap-1 bg-[#FEF3C7] border border-[#FDE68A] px-2 py-0.5 rounded-full">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#D97706]" />
+                  <span className="text-[8px] sm:text-[10px] font-bold text-[#D97706] uppercase tracking-wider font-mono">Paused</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1 bg-[#FEF2F2] border border-[#FECACA] px-2 py-0.5 rounded-full">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#DC2626] animate-pulse" />
+                  <span className="text-[8px] sm:text-[10px] font-bold text-[#DC2626] uppercase tracking-wider font-mono">Live</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* ─── RIGHT SIDEBAR — Participants + Doubt Chat (Side column in Landscape) ─── */}
-        <aside className="w-full landscape:w-[260px] lg:w-[30%] border-t-2 landscape:border-t-0 landscape:border-l-2 lg:border-t-0 lg:border-l-2 border-[#BFDBFE] bg-white flex flex-col min-h-0 pb-20 landscape:pb-0 lg:pb-0 overflow-y-auto landscape:overflow-y-auto antialiased">
+        <aside className={`w-full landscape:w-[210px] lg:w-[30%] border-t-2 landscape:border-t-0 landscape:border-l-2 lg:border-t-0 lg:border-l-2 border-[#BFDBFE] bg-white flex flex-col min-h-0 pb-20 landscape:pb-0 lg:pb-0 overflow-y-auto landscape:overflow-y-auto antialiased transition-all duration-300 ${!isLandscapeSidebarOpen ? "landscape:hidden" : ""}`}>
 
-          {/* ── STUDENT TILES (16px spacing) ── */}
-          <div className="flex-none p-4 pb-0 space-y-4">
-            <h4 className="text-[#111827] font-bold text-xs tracking-[0.02em] uppercase font-mono pb-2.5 border-b-2 border-[#BFDBFE] flex items-center justify-between flex-shrink-0">
+          {/* ── STUDENT TILES ── */}
+          <div className="flex-none p-4 pb-0 landscape:p-2 landscape:pb-0 space-y-4 landscape:space-y-1.5">
+            <h4 className="text-[#111827] font-bold text-xs landscape:text-[10px] tracking-[0.02em] uppercase font-mono pb-2.5 landscape:pb-1 border-b-2 border-[#BFDBFE] flex items-center justify-between flex-shrink-0">
               <span className="flex items-center gap-1.5">
-                <Users className="h-3.5 w-3.5 text-[#2563EB]" />
+                <Users className="h-3.5 w-3.5 landscape:h-3 landscape:w-3 text-[#2563EB]" />
                 In Class ({students.length})
               </span>
               <span className="text-[#16A34A] flex items-center gap-1">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#16A34A] animate-pulse" />
-                <span className="text-[9px] font-bold uppercase font-mono">Active</span>
+                <span className="text-[9px] landscape:text-[8px] font-bold uppercase font-mono">Active</span>
               </span>
             </h4>
-            <div className="grid grid-cols-2 gap-2.5 max-h-[220px] overflow-y-auto cscroll pb-1">
+            <div className="grid grid-cols-2 gap-2.5 landscape:gap-1.5 max-h-[220px] landscape:max-h-[76px] overflow-y-auto cscroll pb-1">
               {/* Local User Tile */}
-              <div className={`relative aspect-video rounded-[22px] border-2 border-[#2563EB] bg-white overflow-hidden hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] shadow-xs p-4`}>
+              <div className={`relative aspect-video landscape:aspect-auto landscape:h-[68px] rounded-[18px] sm:rounded-[22px] landscape:rounded-xl border-2 border-[#2563EB] bg-white overflow-hidden hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] shadow-xs p-2 sm:p-4 landscape:p-1`}>
                 <div className="absolute inset-0 z-0">
                   <StudentCamera
                     sessionCode={sessionCode}
@@ -2860,11 +2875,11 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                   />
                 </div>
                 {/* Focus badge — solid white non-transparent badge */}
-                <div className="absolute top-1.5 right-1.5 px-2.5 py-1 rounded-full bg-white border-2 border-[#2563EB] flex items-center text-[9px] font-mono text-[#111827] font-bold z-10 gap-1.5 shadow-sm">
+                <div className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded-full bg-white border border-[#2563EB] flex items-center text-[8px] sm:text-[9px] font-mono text-[#111827] font-bold z-10 gap-1 shadow-xs">
                   <div className={`w-1.5 h-1.5 rounded-full ${localMetrics.status === "focused" ? "bg-[#16A34A]" : "bg-[#DC2626]"}`} />
                   <span>{localMetrics.score}%</span>
                 </div>
-                <div className="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-full bg-white border-2 border-[#2563EB] text-[9px] font-semibold text-[#111827] z-10 shadow-xs">
+                <div className="absolute bottom-1 right-1 px-1.5 py-0.2 rounded-full bg-white border border-[#2563EB] text-[8px] font-semibold text-[#111827] z-10 shadow-xs">
                   {isTeacher ? "You" : "You"}
                 </div>
               </div>
@@ -2877,7 +2892,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
                 const remoteStream = remoteStreams[student.id] || remoteStreams[`${student.id}_teacher`];
                 return (
-                  <div key={student.id} className="relative aspect-video rounded-[22px] border-2 border-[#2563EB] bg-white flex items-center justify-center hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] overflow-hidden shadow-xs p-4">
+                  <div key={student.id} className="relative aspect-video landscape:aspect-auto landscape:h-[68px] rounded-[18px] sm:rounded-[22px] landscape:rounded-xl border-2 border-[#2563EB] bg-white flex items-center justify-center hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] overflow-hidden shadow-xs p-2 sm:p-4 landscape:p-1">
                     {remoteStream ? (
                       <video
                         autoPlay
@@ -2891,14 +2906,14 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
                         }}
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-[#EFF6FF] border-2 border-[#2563EB] flex items-center justify-center text-[10px] font-bold text-[#2563EB] relative z-10 shadow-xs">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#EFF6FF] border border-[#2563EB] flex items-center justify-center text-[9px] font-bold text-[#2563EB] relative z-10 shadow-xs">
                         {student.name?.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase() || "?"}
                       </div>
                     )}
-                    <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded-full bg-white border-2 border-[#2563EB] text-[9px] font-semibold text-[#111827] z-10 truncate max-w-[80%] shadow-xs">
+                    <span className="absolute bottom-1 left-1 px-1.5 py-0.2 rounded-full bg-white border border-[#2563EB] text-[8px] font-semibold text-[#111827] z-10 truncate max-w-[80%] shadow-xs">
                       {student.name || "Student"}
                     </span>
-                    <div className="absolute top-1.5 right-1.5 px-2.5 py-1 rounded-full bg-white border-2 border-[#2563EB] flex items-center text-[9px] font-mono text-[#111827] font-bold z-10 gap-1.5 shadow-sm">
+                    <div className="absolute top-1 right-1 px-1.5 py-0.2 rounded-full bg-white border border-[#2563EB] flex items-center text-[8px] font-mono text-[#111827] font-bold z-10 gap-1 shadow-xs">
                       <div className={`w-1.5 h-1.5 rounded-full ${isFocused ? "bg-[#16A34A]" : "bg-[#DC2626]"}`} />
                       <span>{score}%</span>
                     </div>
@@ -2908,44 +2923,44 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             </div>
           </div>
 
-          {/* ── DOUBT CHAT (16px spacing) ── */}
-          <div className="flex-1 p-4 pt-4 flex flex-col overflow-hidden min-h-0 space-y-4">
-            <h4 className="text-[#111827] font-bold text-xs tracking-[0.02em] uppercase font-mono pb-2.5 border-t-2 border-b-2 border-[#BFDBFE] pt-2 flex items-center justify-between flex-shrink-0">
+          {/* ── DOUBT CHAT ── */}
+          <div className="flex-1 p-4 pt-3 landscape:p-2 landscape:pt-1 flex flex-col overflow-hidden min-h-0 space-y-3 landscape:space-y-1">
+            <h4 className="text-[#111827] font-bold text-xs landscape:text-[10px] tracking-[0.02em] uppercase font-mono pb-2 landscape:pb-0.5 border-t-2 border-b-2 border-[#BFDBFE] pt-1.5 landscape:pt-0.5 flex items-center justify-between flex-shrink-0">
               <span className="flex items-center gap-1.5">
-                <MessageSquare className="h-3.5 w-3.5 text-[#2563EB]" />
+                <MessageSquare className="h-3.5 w-3.5 landscape:h-3 landscape:w-3 text-[#2563EB]" />
                 Doubt Chat
               </span>
               <span className="flex items-center gap-1">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#16A34A] animate-pulse" />
-                <span className="text-[#16A34A] text-[9px] font-bold uppercase font-mono">Live</span>
+                <span className="text-[#16A34A] text-[9px] landscape:text-[8px] font-bold uppercase font-mono">Live</span>
               </span>
             </h4>
-            <div className="flex-1 overflow-y-auto cscroll space-y-3 pr-1 pt-[20px] flex flex-col min-h-0">
+            <div className="flex-1 overflow-y-auto cscroll space-y-2.5 landscape:space-y-1 pr-1 pt-2 landscape:pt-0.5 flex flex-col min-h-0">
               {messages.map((msg) => (
-                <div key={msg.id} className={`flex flex-col gap-1 max-w-[90%] slide-up ${msg.isAI ? "self-start" : "self-end items-end"}`}>
-                  <span className="text-[9px] text-[#374151] font-bold">{msg.sender} • {msg.time}</span>
-                  <div className={`text-[11px] px-3.5 py-2.5 rounded-[18px] leading-relaxed transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] ${msg.isAI
-                    ? "bg-white text-[#111827] font-semibold border-2 border-[#2563EB] rounded-tl-none flex gap-2 items-start shadow-xs"
+                <div key={msg.id} className={`flex flex-col gap-0.5 max-w-[95%] slide-up ${msg.isAI ? "self-start" : "self-end items-end"}`}>
+                  <span className="text-[8px] text-[#374151] font-bold">{msg.sender} • {msg.time}</span>
+                  <div className={`text-[11px] landscape:text-[10px] px-3 py-1.5 landscape:px-2 landscape:py-1 rounded-[14px] sm:rounded-[18px] landscape:rounded-lg leading-snug transition-all ${msg.isAI
+                    ? "bg-white text-[#111827] font-semibold border-2 border-[#2563EB] rounded-tl-none flex gap-1.5 items-start shadow-xs"
                     : "bg-[#EFF6FF] text-[#1E40AF] border-2 border-[#2563EB] rounded-tr-none shadow-xs font-semibold"
                     }`}>
-                    {msg.isAI && <Brain className="h-3.5 w-3.5 text-[#2563EB] flex-shrink-0 mt-0.5" />}
+                    {msg.isAI && <Brain className="h-3 w-3 text-[#2563EB] flex-shrink-0 mt-0.5" />}
                     <span>{msg.text}</span>
                   </div>
                 </div>
               ))}
               <div ref={chatEndRef} />
             </div>
-            {/* Input (52px height) */}
-            <div className="flex flex-col gap-2 pt-3 border-t-2 border-[#BFDBFE] flex-shrink-0">
-              <form onSubmit={handleSendDoubt} className="flex gap-2 w-full">
+            {/* Input */}
+            <div className="flex flex-col gap-1.5 pt-2 landscape:pt-1 border-t-2 border-[#BFDBFE] flex-shrink-0">
+              <form onSubmit={handleSendDoubt} className="flex gap-1.5 w-full">
                 <input
                   id="doubt-chat-input" type="text" required value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)} placeholder={isAnswering ? "Professor is answering..." : "Ask a doubt..."}
+                  onChange={(e) => setChatInput(e.target.value)} placeholder={isAnswering ? "Answering..." : "Ask a doubt..."}
                   disabled={isAnswering}
-                  className="flex-1 h-[52px] px-4 bg-white border-2 border-[#2563EB] rounded-[18px] text-xs focus:outline-none focus:border-[#2563EB] focus:ring-0 focus:shadow-[0_0_0_3px_rgba(37,99,235,.08)] text-[#111827] font-semibold placeholder:text-[#6B7280] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] disabled:opacity-50"
+                  className="flex-1 h-[44px] sm:h-[52px] landscape:h-8 px-3 landscape:px-2.5 bg-white border-2 border-[#2563EB] rounded-[14px] sm:rounded-[18px] landscape:rounded-lg text-xs landscape:text-[10px] focus:outline-none focus:border-[#2563EB] text-[#111827] font-semibold placeholder:text-[#6B7280] transition-all disabled:opacity-50"
                 />
-                <button type="submit" disabled={isAnswering} className="h-[52px] px-4 bg-[#111827] hover:bg-[#1F2937] hover:-translate-y-0.5 rounded-[16px] text-white shadow-[0_12px_24px_rgba(17,24,39,.12)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group flex items-center justify-center">
-                  <Send className="h-4 w-4 group-hover:translate-x-0.5 transition-transform duration-300" />
+                <button type="submit" disabled={isAnswering} className="h-[44px] sm:h-[52px] landscape:h-8 px-3.5 landscape:px-2.5 bg-[#111827] hover:bg-[#1F2937] rounded-[12px] sm:rounded-[16px] landscape:rounded-lg text-white shadow-xs transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center">
+                  <Send className="h-3.5 w-3.5 landscape:h-3 landscape:w-3" />
                 </button>
               </form>
             </div>
@@ -3141,7 +3156,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       {/* ─── EDGE SWIPE ZONE (MOBILE) ─── */}
       {!isParticipantsOpen && (
         <div
-          className="fixed right-0 top-0 bottom-0 w-6 z-[80] bg-transparent touch-none"
+          className="fixed right-0 top-0 bottom-0 w-6 z-[80] bg-transparent touch-none landscape:hidden"
           onTouchStart={handleTouchStart}
         />
       )}
@@ -3163,7 +3178,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
           }}
           onMouseDown={handleMouseDown}
           onTouchStart={handleTouchStart}
-          className="drawer-handle shadow-lg border-none outline-none focus:outline-none"
+          className="drawer-handle landscape:hidden shadow-lg border-none outline-none focus:outline-none"
         >
           <div className="flex flex-col items-center gap-2">
             <span className="text-[10px] text-blue-600 font-bold animate-pulse">◀</span>
@@ -3180,7 +3195,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
 
       {/* ─── INSTAGRAM HINT ─── */}
       {!isParticipantsOpen && showHint && (
-        <div className="hint-indicator">
+        <div className="hint-indicator landscape:hidden">
           {/* page indicator dot */}
           <div className="h-1.5 w-1.5 rounded-full bg-blue-500 shadow-lg shadow-blue-500/50 animate-pulse" />
           <div className="h-1 w-1 rounded-full bg-slate-300" />
