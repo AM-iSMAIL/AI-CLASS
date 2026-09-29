@@ -32,7 +32,8 @@ import {
   Sparkles,
   ChevronRight,
   Users2,
-  Info
+  Info,
+  Crown,
 } from "lucide-react"
 import { subscribeToAuthChanges, User } from "@/lib/auth-service"
 import { getTeacherSessions, getTeacherStudentsRoster, RosterStudent } from "@/lib/session-service"
@@ -42,10 +43,12 @@ import { ShinyButton } from "@/components/ui/shiny-button"
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import ClassroomAnalyticsSection from "@/components/ClassroomAnalyticsSection"
+import { useRevenueCat } from "@/lib/revenuecat/use-revenuecat"
 
 function DashboardContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { isPro, openPaywall } = useRevenueCat()
   const currentTab = searchParams.get("tab") || "dashboard"
 
   const [user, setUser] = useState<User | null>(null)
@@ -335,8 +338,27 @@ function DashboardContent() {
             </h1>
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="hidden sm:inline-flex text-xs font-semibold text-neutral-500 bg-neutral-100 px-3.5 py-1.5 rounded-lg border border-neutral-200">
+          <div className="flex items-center gap-3">
+            {isPro ? (
+              <button
+                onClick={openPaywall}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/15 to-purple-500/15 border border-amber-300/60 text-amber-800 text-xs font-bold hover:opacity-90 transition-all cursor-pointer"
+                title="View Pro Subscription"
+              >
+                <Crown className="h-3.5 w-3.5 text-amber-600" />
+                <span>Pro Educator</span>
+              </button>
+            ) : (
+              <button
+                onClick={openPaywall}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white text-xs font-bold shadow-sm hover:opacity-95 transition-all cursor-pointer"
+                title="Upgrade with RevenueCat"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Upgrade to Pro</span>
+              </button>
+            )}
+            <span className="hidden md:inline-flex text-xs font-semibold text-neutral-500 bg-neutral-100 px-3.5 py-1.5 rounded-lg border border-neutral-200">
               {currentDate}
             </span>
             <ShinyButton 

@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   keywords: ["AI", "classroom", "monitoring", "education", "analytics"],
 };
 
+import Providers from "@/components/providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -37,7 +39,7 @@ export default function RootLayout({
         <link rel="preload" href="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" as="script" crossOrigin="anonymous" />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

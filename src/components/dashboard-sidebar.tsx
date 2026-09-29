@@ -11,8 +11,12 @@ import {
   Settings,
   LogOut,
   X,
+  Sparkles,
+  Crown,
+  Zap,
 } from "lucide-react"
 import { subscribeToAuthChanges, signOutUser, User } from "@/lib/auth-service"
+import { useRevenueCat } from "@/lib/revenuecat/use-revenuecat"
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
@@ -34,6 +38,7 @@ export default function DashboardSidebar({
   onCloseMobile,
 }: DashboardSidebarProps) {
   const [user, setUser] = useState<User | null>(null)
+  const { isPro, credits, openPaywall } = useRevenueCat()
 
   useEffect(() => {
     const unsubscribe = subscribeToAuthChanges((currentUser) => {
@@ -96,6 +101,36 @@ export default function DashboardSidebar({
             )
           })}
         </nav>
+      </div>
+
+      {/* RevenueCat Plan Card */}
+      <div className="w-full px-1 my-2">
+        {isPro ? (
+          <div
+            onClick={openPaywall}
+            className="sidebar-label w-full p-3 rounded-2xl bg-gradient-to-r from-amber-500/10 via-purple-500/10 to-indigo-500/10 border border-amber-300/40 cursor-pointer hover:border-amber-400 transition-all text-left"
+          >
+            <div className="flex items-center gap-1.5 text-amber-700 font-bold text-xs">
+              <Crown className="h-3.5 w-3.5" />
+              <span>Pro Educator</span>
+            </div>
+            <p className="text-[10px] text-neutral-500 mt-0.5">Unlimited AI Classrooms</p>
+          </div>
+        ) : (
+          <div className="sidebar-label w-full p-3 rounded-2xl bg-gradient-to-br from-neutral-50 to-neutral-100 border border-neutral-200/80 text-left">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Free Tier</span>
+              <span className="text-[10px] font-semibold text-neutral-600">{credits} credit{credits === 1 ? "" : "s"}</span>
+            </div>
+            <button
+              onClick={openPaywall}
+              className="mt-2.5 w-full py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm hover:opacity-95 transition-all cursor-pointer"
+            >
+              <Sparkles className="h-3 w-3" />
+              <span>Upgrade</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* User Profile + Sign Out */}

@@ -24,11 +24,13 @@ import {
   ChevronDown,
   Globe,
   Lock,
+  Crown,
 } from "lucide-react"
 import DashboardSidebar from "@/components/dashboard-sidebar"
 import { subscribeToAuthChanges } from "@/lib/auth-service"
 import { createSession } from "@/lib/session-service"
 import { saveFile, clearFiles } from "@/lib/fileStorage"
+import { useRevenueCat } from "@/lib/revenuecat/use-revenuecat"
 
 const SUBJECTS = ["Mathematics", "Science", "History", "Computer Science", "Language", "Other"]
 const GRADE_LEVELS = ["Primary", "Middle School", "High School", "University", "Professional"]
@@ -55,6 +57,7 @@ function detectSubject(title: string): string | null {
 
 export default function CreateSessionPage() {
   const router = useRouter()
+  const { isPro, credits, openPaywall, consumeCredit } = useRevenueCat()
   const [user, setUser] = useState<any>(null)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [step, setStep] = useState(2) // Start directly on Step 2 (Session Info)
@@ -203,8 +206,13 @@ export default function CreateSessionPage() {
       alert("You must be logged in to create a session.")
       return
     }
+    if (!isPro && credits <= 0) {
+      openPaywall()
+      return
+    }
     setIsSubmitting(true)
     try {
+      consumeCredit()
       const activeDuration = duration === "Custom" ? `${customDuration} min` : duration
       
       const extraSettings: any = {}
@@ -953,8 +961,49 @@ export default function CreateSessionPage() {
                   )}
                 </div>
 
+                {/* RevenueCat Entitlement Status Card */}
+                <div className="p-4 rounded-2xl border border-neutral-200/80 bg-neutral-50/70 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    {isPro ? (
+                      <div className="h-8 w-8 rounded-xl bg-amber-500/15 flex items-center justify-center text-amber-700">
+                        <Crown className="h-4 w-4" />
+                      </div>
+                    ) : (
+                      <div className="h-8 w-8 rounded-xl bg-blue-500/15 flex items-center justify-center text-blue-600">
+                        <Sparkles className="h-4 w-4" />
+                      </div>
+                    )}
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-bold text-neutral-900">
+                          {isPro ? "Pro Educator Plan" : "Free Plan"}
+                        </span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-neutral-200 text-neutral-700 font-semibold uppercase">
+                          {isPro ? "Unlimited" : `${credits} Credit${credits === 1 ? "" : "s"}`}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-neutral-500 mt-0.5">
+                        {isPro
+                          ? "Unlimited 6-min lectures with 80 dynamic slides active."
+                          : credits > 0
+                          ? "1 lecture credit will be used to start this session."
+                          : "0 credits left. Upgrade via RevenueCat to launch."}
+                      </p>
+                    </div>
+                  </div>
+                  {!isPro && (
+                    <button
+                      type="button"
+                      onClick={openPaywall}
+                      className="text-xs font-bold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer flex items-center gap-1"
+                    >
+                      <span>Upgrade</span>
+                    </button>
+                  )}
+                </div>
+
                 {/* Final Launch Actions */}
-                <div className="space-y-4 pt-4">
+                <div className="space-y-4 pt-2">
                   <button
                     onClick={handleLaunch}
                     disabled={isSubmitting}
