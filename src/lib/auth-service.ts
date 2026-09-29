@@ -51,8 +51,12 @@ export const signInWithGoogle = async (): Promise<User | null> => {
     }
     return user
   } catch (error: any) {
-    if (error.code === "auth/popup-blocked") {
-      console.warn("Popup blocked, falling back to redirect...")
+    if (
+      error.code === "auth/popup-blocked" ||
+      error.code === "auth/operation-not-supported-in-this-environment" ||
+      error.code === "auth/unauthorized-domain"
+    ) {
+      console.warn("Popup blocked or unsupported in this environment, falling back to redirect...")
       await signInWithRedirect(auth, googleProvider)
       return null;
     }

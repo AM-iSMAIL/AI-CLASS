@@ -8,7 +8,10 @@ import {
   signInWithGoogle,
   signInWithEmail,
   signUpWithEmail,
+  saveUserProfile,
 } from "@/lib/auth-service"
+import { getRedirectResult } from "firebase/auth"
+import { auth } from "@/lib/firebase"
 import { joinSession } from "@/lib/session-service"
 import { LoadingScreen } from "@/components/ui/loading-screen"
 
@@ -78,6 +81,34 @@ export default function AuthPage() {
       setStudentFlow("self-learn")
     }, 0)
   }, [tab, teacherMode, studentMode])
+
+  // Check for redirect result from Google sign-in (crucial for mobile/WebView)
+  useEffect(() => {
+    let isMounted = true
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (!isMounted) return
+        if (result && result.user) {
+          const user = result.user
+          setIsSubmitting(true)
+          setSuccess(`Signed in successfully as ${user.displayName || user.email}!`)
+          await saveUserProfile(user.uid, user.email, user.displayName, tab === "student" ? "student" : "teacher")
+          localStorage.setItem("studentName", user.displayName || "Student")
+          localStorage.setItem("studentId", user.uid)
+          setTimeout(() => {
+            window.location.href = tab === "student" ? "/student-dashboard" : "/dashboard"
+          }, 800)
+        }
+      })
+      .catch((err) => {
+        if (!isMounted) return
+        console.warn("Redirect sign-in error or cancelled:", err)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [tab])
 
   // Sign in with Google
   const handleGoogleSignIn = async () => {
