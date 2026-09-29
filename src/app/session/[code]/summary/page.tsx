@@ -267,7 +267,7 @@ export default function SummaryPage() {
     return (
       <div className="min-h-screen bg-[#F6F7F9] text-[#111827] font-sans relative pb-12 flex flex-col z-10 antialiased">
         {/* Top Navbar */}
-        <header className="h-14 sm:h-16 border-b border-[rgba(15,23,42,.08)] bg-white px-3.5 sm:px-6 md:px-8 flex items-center justify-between sticky top-0 z-20">
+        <header className="pt-7 sm:pt-0 h-20 sm:h-16 border-b border-[rgba(15,23,42,.08)] bg-white px-3.5 sm:px-6 md:px-8 flex items-center justify-between sticky top-0 z-20">
           <div className="flex items-center gap-2.5 sm:gap-3">
             <Link 
               href="/dashboard" 
@@ -355,13 +355,116 @@ export default function SummaryPage() {
             </div>
           </section>
 
-          {/* Roster Table */}
+          {/* Roster Container */}
           <div className="bg-white rounded-[20px] sm:rounded-[24px] border border-[rgba(15,23,42,.08)] overflow-hidden shadow-[0_1px_2px_rgba(15,23,42,.03),0_12px_32px_rgba(15,23,42,.05)]">
             <div className="px-4 sm:px-6 py-3.5 sm:py-5 border-b border-[#E5E7EB] flex items-center justify-between">
               <h3 className="text-xs font-black uppercase tracking-wider text-[#000000] font-mono">Attendance Roster</h3>
+              <span className="text-[10px] font-bold text-[#6B7280] font-mono">{totalAttendees} participants</span>
             </div>
 
-            <div className="overflow-x-auto custom-scrollbar">
+            {/* MOBILE VIEW: Participant Cards (md:hidden) */}
+            <div className="divide-y divide-neutral-100 md:hidden">
+              {effectiveStudentsList.map((student) => {
+                const isHost = isHostStudent(student);
+                let focusScore = student.engagementScore ?? (student as any).score;
+
+                if (isHost && teacherFocusScore !== null) {
+                  focusScore = teacherFocusScore;
+                }
+                if ((typeof focusScore !== "number" || isNaN(focusScore)) && typeof window !== "undefined") {
+                  const cachedStudentFocus = localStorage.getItem(`student_focus_${sessionCode}_${student.id}`) || localStorage.getItem(`student_focus_${sessionCode}`) || (isHost ? localStorage.getItem(`teacher_focus_${sessionCode}`) : null);
+                  if (cachedStudentFocus && !isNaN(Number(cachedStudentFocus))) {
+                    focusScore = Number(cachedStudentFocus);
+                  }
+                }
+                if (typeof focusScore !== "number" || isNaN(focusScore)) {
+                  focusScore = isHost ? 100 : 0;
+                }
+                focusScore = Math.max(0, Math.min(100, Math.round(focusScore)));
+
+                const focusBadge = 
+                  focusScore >= 80 ? "bg-[#ECFDF5] text-[#16A34A] border-[#A7F3D0]" :
+                  focusScore >= 65 ? "bg-[#FEF3C7] text-[#D97706] border-[#FDE68A]" :
+                  "bg-[#FEF2F2] text-[#DC2626] border-[#FECACA]";
+
+                return (
+                  <div key={student.id} className="p-4 space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="h-8 w-8 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center font-bold text-xs text-neutral-700 flex-shrink-0">
+                          {student.name ? student.name.charAt(0).toUpperCase() : "S"}
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-xs font-bold text-[#111827] truncate block">
+                            {student.name}
+                          </span>
+                          {isHost && (
+                            <span className="px-1.5 py-0.2 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] text-[8px] font-mono font-bold uppercase inline-block">
+                              Teacher / Host
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <span className={`px-2 py-0.5 rounded-md border text-[10px] font-bold flex-shrink-0 ${focusBadge}`}>
+                        {focusScore}% Focus
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] text-[#6B7280] pt-1">
+                      <span>Joined: <strong className="text-[#111827]">{formatTimestamp(student.joinedAt)}</strong></span>
+                      {student.status === "offline" ? (
+                        <span className="inline-flex items-center rounded-full bg-[#F3F4F6] border border-[#111827] px-2 py-0.5 text-[8px] font-extrabold text-[#111827] uppercase font-mono">
+                          Left Class
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center rounded-full bg-[#ECFDF5] border border-[#A7F3D0] px-2 py-0.5 text-[8px] font-extrabold text-[#16A34A] uppercase font-mono">
+                          Present
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Kicked Students (Mobile) */}
+              {kickedList.map((kickedStud) => {
+                let score = kickedStud.engagementScore;
+                if ((typeof score !== "number" || isNaN(score)) && typeof window !== "undefined") {
+                  const cached = localStorage.getItem(`student_focus_${sessionCode}_${kickedStud.id}`);
+                  if (cached && !isNaN(Number(cached))) {
+                    score = Number(cached);
+                  }
+                }
+                const kickedScore = typeof score === "number" && !isNaN(score) ? Math.max(0, Math.min(100, Math.round(score))) : 0;
+
+                return (
+                  <div key={kickedStud.id} className="p-4 bg-red-50/30 space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-red-600 truncate">{kickedStud.name}</span>
+                      <span className="px-2 py-0.5 rounded-md border border-red-200 text-red-600 bg-red-50 text-[10px] font-bold">
+                        {kickedScore}% Focus
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-neutral-500">Dismissed: <strong className="text-neutral-700">{formatTimestamp(kickedStud.kickedAt)}</strong></span>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-red-100 border border-red-200 px-2 py-0.5 text-[8px] font-bold text-red-700 uppercase font-mono">
+                        Kicked
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {effectiveStudentsList.length === 0 && kickedList.length === 0 && (
+                <div className="p-8 text-center text-xs font-medium text-neutral-500">
+                  <Users className="h-8 w-8 text-neutral-300 mx-auto mb-2" />
+                  No participants attended this session.
+                </div>
+              )}
+            </div>
+
+            {/* DESKTOP VIEW: Table (hidden md:block) */}
+            <div className="hidden md:block overflow-x-auto custom-scrollbar">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-[#E5E7EB] text-[10px] font-black uppercase tracking-wider text-[#000000] bg-[#F9FAFB] font-mono">

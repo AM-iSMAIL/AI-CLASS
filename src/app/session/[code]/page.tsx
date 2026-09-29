@@ -958,7 +958,7 @@ export default function SessionPage() {
           />
 
           <div className="flex-1 lg:ml-64 flex flex-col">
-            <header className="h-14 sm:h-16 border-b border-slate-200/80 bg-white/80 backdrop-blur-xl px-3.5 sm:px-6 md:px-8 flex items-center justify-between sticky top-0 z-20 transition-all duration-300">
+            <header className="pt-7 sm:pt-0 h-20 sm:h-16 border-b border-slate-200/80 bg-white/80 backdrop-blur-xl px-3.5 sm:px-6 md:px-8 flex items-center justify-between sticky top-0 z-20 transition-all duration-300">
               <div className="flex items-center gap-2 sm:gap-3">
                 <button
                   onClick={() => setIsMobileSidebarOpen(true)}

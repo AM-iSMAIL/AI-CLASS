@@ -323,7 +323,7 @@ function DashboardContent() {
       <div className="flex-1 flex flex-col lg:ml-[72px]">
         
         {/* Header Topbar */}
-        <header className="h-16 border-b border-neutral-200/80 bg-white px-3 sm:px-6 md:px-8 flex items-center justify-between sticky top-0 z-20">
+        <header className="border-b border-neutral-200/80 bg-white px-3.5 sm:px-6 md:px-8 flex items-center justify-between sticky top-0 z-20 pt-7 sm:pt-0 h-20 sm:h-16">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             {/* Hamburger menu for mobile view */}
             <button
@@ -334,7 +334,7 @@ function DashboardContent() {
               <Menu className="h-5 w-5" />
             </button>
             
-            <h1 className="text-sm sm:text-base md:text-xl font-serif font-bold text-neutral-900 tracking-tight truncate max-w-[140px] xs:max-w-[200px] sm:max-w-none">
+            <h1 className="text-sm sm:text-base md:text-xl font-serif font-bold text-neutral-900 tracking-tight truncate max-w-[160px] xs:max-w-[220px] sm:max-w-none">
               Good morning, {teacherName}
             </h1>
           </div>
@@ -364,110 +364,120 @@ function DashboardContent() {
             </span>
             <ShinyButton 
               onClick={() => router.push("/dashboard/create-session")}
-              className="!px-3 sm:!px-5 !py-2 sm:!py-2.5 !text-xs !font-bold flex items-center gap-1.5 flex-shrink-0"
+              className="!px-3 sm:!px-5 !py-1.5 sm:!py-2.5 !text-xs !font-bold flex items-center gap-1 flex-shrink-0 !rounded-xl"
             >
-              <Plus className="h-3.5 w-3.5 text-white" />
+              <Plus className="h-4 w-4 text-white" />
               <span className="hidden sm:inline">New Session</span>
-              <span className="sm:hidden">New</span>
+              <span className="sm:hidden text-[11px]">New</span>
             </ShinyButton>
           </div>
         </header>
 
         {/* Dashboard Grid Content */}
-        <main className="flex-1 p-3 sm:p-6 md:p-8 space-y-6 sm:space-y-8 max-w-6xl w-full mx-auto pb-28 lg:pb-8">
+        <main className="flex-1 p-3 sm:p-6 md:p-8 space-y-5 sm:space-y-8 max-w-6xl w-full mx-auto pb-28 lg:pb-8">
           
           {/* ────────────────── TABS RENDERING ────────────────── */}
 
           {/* 1. DEFAULT DASHBOARD TAB */}
           {currentTab === "dashboard" && (
-            <div className="space-y-6 sm:space-y-8 animate-fadeIn">
+            <div className="space-y-5 sm:space-y-8 animate-fadeIn">
               {/* Stats Row */}
-              <section className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+              <section className="grid gap-2.5 sm:gap-4 grid-cols-2 lg:grid-cols-4">
                 {/* Card 1: Total Sessions */}
-                <div className="card p-3.5 sm:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[110px] sm:min-h-[140px]">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800">TOTAL SESSIONS</span>
-                    <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-xl bg-[#e6f0fa] flex items-center justify-center text-[#2185d0]">
-                      <Video className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <div className="card p-3 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[105px] sm:min-h-[140px] min-w-0">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800 truncate">TOTAL SESSIONS</span>
+                    <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg sm:rounded-xl bg-[#e6f0fa] flex items-center justify-center text-[#2185d0] flex-shrink-0">
+                      <Video className="h-3 w-3 sm:h-4 sm:w-4" />
                     </div>
                   </div>
                   <div className="mt-2 sm:mt-4">
-                    <h3 className="text-2xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : totalSessionsCount}</h3>
+                    <h3 className="text-xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : totalSessionsCount}</h3>
                     <span className="text-[9px] sm:text-[10px] font-serif text-neutral-400 mt-1 sm:mt-2 block truncate">All active & finished</span>
                   </div>
                 </div>
 
                 {/* Card 2: Students Taught */}
-                <div className="card p-3.5 sm:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[110px] sm:min-h-[140px]">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800">STUDENTS TAUGHT</span>
-                    <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-xl bg-[#ffebeb] flex items-center justify-center text-[#db2828]">
+                <div className="card p-3 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[105px] sm:min-h-[140px] min-w-0">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800 truncate">STUDENTS TAUGHT</span>
+                    <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg sm:rounded-xl bg-[#ffebeb] flex items-center justify-center text-[#db2828] flex-shrink-0">
                       <GraduationCap className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </div>
                   </div>
                   <div className="mt-2 sm:mt-4">
-                    <h3 className="text-2xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : studentsTaughtCount}</h3>
+                    <h3 className="text-xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : studentsTaughtCount}</h3>
                     <span className="text-[9px] sm:text-[10px] font-serif text-neutral-400 mt-1 sm:mt-2 block truncate">From registers</span>
                   </div>
                 </div>
 
                 {/* Card 3: Hours of Teaching */}
-                <div className="card p-3.5 sm:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[110px] sm:min-h-[140px]">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800">TEACHING TIME</span>
-                    <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-xl bg-[#fff5e6] flex items-center justify-center text-[#f2711c]">
-                      <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <div className="card p-3 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[105px] sm:min-h-[140px] min-w-0">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800 truncate">TEACHING TIME</span>
+                    <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg sm:rounded-xl bg-[#fff5e6] flex items-center justify-center text-[#f2711c] flex-shrink-0">
+                      <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
                     </div>
                   </div>
                   <div className="mt-2 sm:mt-4">
-                    <h3 className="text-2xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : `${teachingHours}h`}</h3>
+                    <h3 className="text-xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : `${teachingHours}h`}</h3>
                     <span className="text-[9px] sm:text-[10px] font-serif text-neutral-400 mt-1 sm:mt-2 block truncate">Total live duration</span>
                   </div>
                 </div>
 
                 {/* Card 4: Avg Engagement */}
-                <div className="card p-3.5 sm:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[110px] sm:min-h-[140px]">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800">AVG ENGAGEMENT</span>
-                    <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-xl bg-[#e6f6ec] flex items-center justify-center text-[#21ba45]">
+                <div className="card p-3 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[105px] sm:min-h-[140px] min-w-0">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800 truncate">AVG ENGAGEMENT</span>
+                    <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg sm:rounded-xl bg-[#e6f6ec] flex items-center justify-center text-[#21ba45] flex-shrink-0">
                       <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </div>
                   </div>
                   <div className="mt-2 sm:mt-4">
-                    <h3 className="text-2xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingRoster ? "..." : `${avgEngagementRate}%`}</h3>
+                    <h3 className="text-xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingRoster ? "..." : `${avgEngagementRate}%`}</h3>
                     <span className="text-[9px] sm:text-[10px] font-serif text-neutral-400 mt-1 sm:mt-2 block truncate">Class average</span>
                   </div>
                 </div>
               </section>
 
               {/* Columns Split */}
-              <div className="grid gap-8 lg:grid-cols-3">
+              <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
                 {/* Left Column (Quick Start & Recent) */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* Quick Start Card */}
-                  <div className="card p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row justify-between items-center gap-6">
-                    <div className="space-y-4 flex-1">
-                      <div>
-                        <h2 className="text-xl font-serif font-bold text-neutral-900">Start a New Session</h2>
-                        <p className="text-xs text-neutral-500 mt-1">Your AI teacher is ready to go live.</p>
+                  <div className="card p-4 sm:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6">
+                    <div className="w-full flex-1 space-y-3 sm:space-y-4">
+                      <div className="flex items-center justify-between w-full">
+                        <div>
+                          <h2 className="text-lg sm:text-xl font-serif font-bold text-neutral-900">Start a New Session</h2>
+                          <p className="text-xs text-neutral-500 mt-0.5">Your AI teacher is ready to go live.</p>
+                        </div>
+                        <div className="w-12 h-12 sm:hidden relative flex-shrink-0">
+                          <Image
+                            src="/ai-teacher-tablet.png"
+                            alt="AI Teacher"
+                            fill
+                            className="rounded-xl object-cover"
+                          />
+                        </div>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <button
-                          onClick={clearDatabaseHistory}
-                          className="text-xs text-neutral-500 font-medium hover:text-red-600 underline cursor-pointer"
-                        >
-                          Clear Database History
-                        </button>
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full">
                         <ShinyButton 
                           onClick={() => router.push("/dashboard/create-session")}
-                          className="!px-5 !py-2.5 !text-xs !font-bold flex items-center gap-1.5"
+                          className="!w-full sm:!w-auto !px-5 !py-2.5 !text-xs !font-bold flex items-center justify-center gap-1.5"
                         >
                           Create Session
                           <ArrowRight className="h-3.5 w-3.5 text-white" />
                         </ShinyButton>
+                        <button
+                          onClick={clearDatabaseHistory}
+                          className="text-[11px] sm:text-xs text-neutral-400 font-medium hover:text-red-600 text-center sm:text-left py-1 cursor-pointer"
+                        >
+                          Clear Database History
+                        </button>
                       </div>
                     </div>
-                    <div className="w-24 h-24 sm:w-28 sm:h-28 relative flex-shrink-0">
+                    <div className="w-24 h-24 sm:w-28 sm:h-28 relative flex-shrink-0 hidden sm:block">
                       <Image
                         src="/ai-teacher-tablet.png"
                         alt="AI Teacher Illustration"
@@ -479,14 +489,86 @@ function DashboardContent() {
 
                   {/* Recent Sessions */}
                   <div className="card overflow-hidden">
-                    <div className="px-6 py-5 border-b border-neutral-100 flex items-center justify-between">
-                      <h3 className="text-sm font-serif font-bold uppercase tracking-wider text-neutral-800">Recent Sessions</h3>
+                    <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-neutral-100 flex items-center justify-between">
+                      <h3 className="text-xs sm:text-sm font-serif font-bold uppercase tracking-wider text-neutral-800">Recent Sessions</h3>
                       <Link href="/dashboard?tab=sessions" className="text-xs font-semibold hover:underline" style={{ color: '#4F46E5' }}>
                         View All
                       </Link>
                     </div>
 
-                    <div className="overflow-x-auto">
+                    {/* Mobile Native Session Cards (visible on phones) */}
+                    <div className="divide-y divide-neutral-100 md:hidden">
+                      {loadingSessions ? (
+                        <div className="p-8 text-center text-neutral-400 text-xs font-semibold">
+                          <div className="h-5 w-5 rounded-full border border-purple-500 border-t-transparent animate-spin mx-auto mb-2" />
+                          Loading your sessions...
+                        </div>
+                      ) : sessions.length === 0 ? (
+                        <div className="p-8 text-center text-neutral-400 text-xs font-medium">
+                          <Info className="h-6 w-6 text-neutral-300 mx-auto mb-2" />
+                          No sessions created yet. Click &quot;New Session&quot; above to start your first class.
+                        </div>
+                      ) : (
+                        sessions.slice(0, 5).map((session, index) => {
+                          const sCode = session.code
+                          const topicsCount = session.topics?.length ?? 0
+                          const studentCount = session.studentCount ?? 0
+                          const title = session.title || session.name
+                          const isLive = session.status === "Live" || session.status === "Active"
+
+                          return (
+                            <div
+                              key={index}
+                              onClick={() => handleSessionClick(sCode, session.status)}
+                              className="p-3.5 space-y-2.5 active:bg-neutral-50 cursor-pointer transition-colors"
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="min-w-0 flex-1">
+                                  <h4 className="text-xs font-bold text-neutral-900 truncate">
+                                    {title}
+                                  </h4>
+                                  <span className="font-mono text-[10px] text-neutral-400 mt-0.5 block">
+                                    {sCode}
+                                  </span>
+                                </div>
+                                <div className="flex-shrink-0">
+                                  {isLive ? (
+                                    <span className="badge-live text-[9px] px-2 py-0.5">
+                                      <span className="status-dot-live" /> Live
+                                    </span>
+                                  ) : session.status === "Completed" ? (
+                                    <span className="badge-completed text-[9px] px-2 py-0.5">
+                                      <span className="status-dot-completed" /> Ended
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center rounded-full bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 text-[9px] font-bold">
+                                      Scheduled
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="flex items-center justify-between text-[11px] text-neutral-500 font-medium">
+                                <span className="flex items-center gap-1">
+                                  <BookOpen className="h-3 w-3 text-blue-500" />
+                                  {topicsCount} topics
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <Users className="h-3 w-3 text-blue-500" />
+                                  {studentCount} joined
+                                </span>
+                                <span className="text-[10px] text-neutral-400">
+                                  {formatSessionDate(session)}
+                                </span>
+                              </div>
+                            </div>
+                          )
+                        })
+                      )}
+                    </div>
+
+                    {/* Desktop Table (hidden on phones) */}
+                    <div className="overflow-x-auto hidden md:block">
                       <table className="w-full text-left border-collapse">
                         <thead>
                           <tr className="dashboard-table-header text-[10px] font-bold uppercase tracking-wider text-neutral-900">
@@ -620,23 +702,23 @@ function DashboardContent() {
 
           {/* 2. MY SESSIONS TAB */}
           {currentTab === "sessions" && (
-            <div className="space-y-6 animate-fadeIn">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-5 sm:space-y-6 animate-fadeIn">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                 <div>
-                  <h2 className="text-xl font-serif font-bold text-neutral-900">My Sessions</h2>
-                  <p className="text-xs text-neutral-500 mt-1">Search, copy session codes, or view summary reports</p>
+                  <h2 className="text-lg sm:text-xl font-serif font-bold text-neutral-900">My Sessions</h2>
+                  <p className="text-xs text-neutral-500 mt-0.5">Search, copy session codes, or view summary reports</p>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
                   {/* Search Bar */}
-                  <div className="relative">
+                  <div className="relative flex-1 sm:w-60">
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-neutral-400" />
                     <input
                       type="text"
                       placeholder="Search sessions..."
                       value={sessionsSearch}
                       onChange={(e) => setSessionsSearch(e.target.value)}
-                      className="bg-white rounded-xl border border-neutral-200 pl-9 pr-4 py-2 text-xs text-neutral-800 focus:outline-none focus:border-neutral-400 w-full sm:w-60 transition-colors shadow-sm"
+                      className="bg-white rounded-xl border border-neutral-200 pl-9 pr-3 py-2 text-xs text-neutral-800 focus:outline-none focus:border-neutral-400 w-full transition-colors shadow-sm"
                     />
                   </div>
 
@@ -644,7 +726,7 @@ function DashboardContent() {
                   <select
                     value={sessionsFilter}
                     onChange={(e) => setSessionsFilter(e.target.value)}
-                    className="bg-white rounded-xl border border-neutral-200 px-3 py-2 text-xs text-neutral-800 focus:outline-none focus:border-neutral-400 transition-colors shadow-sm"
+                    className="bg-white rounded-xl border border-neutral-200 px-3 py-2 text-xs text-neutral-800 focus:outline-none focus:border-neutral-400 transition-colors shadow-sm flex-shrink-0"
                   >
                     <option value="All">All Statuses</option>
                     <option value="Live">Live / Active</option>
@@ -654,9 +736,128 @@ function DashboardContent() {
                 </div>
               </div>
 
-              {/* Sessions List */}
+              {/* Sessions List Card */}
               <div className="card overflow-hidden">
-                <div className="overflow-x-auto">
+                {/* Mobile View: Native Session Cards (visible on phones) */}
+                <div className="divide-y divide-neutral-100 md:hidden">
+                  {loadingSessions ? (
+                    <div className="p-8 text-center text-neutral-400 text-xs font-semibold">
+                      <div className="h-6 w-6 rounded-full border-2 border-purple-500 border-t-transparent animate-spin mx-auto mb-2" />
+                      Loading class list...
+                    </div>
+                  ) : sessions.length === 0 ? (
+                    <div className="p-8 text-center text-neutral-400 text-xs">
+                      No sessions found. Create a new session to begin.
+                    </div>
+                  ) : (
+                    sessions
+                      .filter(session => {
+                        const title = (session.title || session.name || "").toLowerCase()
+                        const code = (session.code || "").toLowerCase()
+                        const matchesSearch = title.includes(sessionsSearch.toLowerCase()) || code.includes(sessionsSearch.toLowerCase())
+                        if (sessionsFilter === "All") return matchesSearch
+                        if (sessionsFilter === "Live") return matchesSearch && (session.status === "Live" || session.status === "Active")
+                        if (sessionsFilter === "Completed") return matchesSearch && session.status === "Completed"
+                        if (sessionsFilter === "Scheduled") return matchesSearch && session.status === "Scheduled"
+                        return matchesSearch
+                      })
+                      .map((session, index) => {
+                        const sCode = session.code
+                        const topicsCount = session.topics?.length ?? 0
+                        const studentCount = session.studentCount ?? 0
+                        const title = session.title || session.name
+                        const isLive = session.status === "Live" || session.status === "Active"
+
+                        return (
+                          <div key={index} className="p-4 space-y-3 bg-white">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0 flex-1">
+                                <h4 className="text-sm font-serif font-bold text-neutral-900 leading-snug">
+                                  {title}
+                                </h4>
+                                <div className="flex items-center gap-1.5 mt-1">
+                                  <span className="font-mono text-[10px] bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded font-bold border border-neutral-200">
+                                    {sCode}
+                                  </span>
+                                  <button
+                                    onClick={() => copyToClipboard(sCode)}
+                                    className="p-1 rounded text-neutral-400 hover:text-neutral-700 transition-colors"
+                                    title="Copy Session Code"
+                                  >
+                                    {copiedCode === sCode ? (
+                                      <Check className="h-3 w-3 text-emerald-600" />
+                                    ) : (
+                                      <Copy className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </div>
+                              </div>
+                              
+                              <div className="flex-shrink-0">
+                                {isLive ? (
+                                  <span className="badge-live text-[9px] px-2 py-0.5">
+                                    <span className="status-dot-live" /> Live
+                                  </span>
+                                ) : session.status === "Completed" ? (
+                                  <span className="badge-completed text-[9px] px-2 py-0.5">
+                                    <span className="status-dot-completed" /> Ended
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center rounded-full bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 text-[9px] font-bold">
+                                    Scheduled
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-neutral-500 font-medium">
+                              <span>{session.subject || "General"}</span>
+                              <span>•</span>
+                              <span>{session.gradeLevel || "Grade 10"}</span>
+                              <span>•</span>
+                              <span className="flex items-center gap-1">
+                                <BookOpen className="h-3 w-3 text-blue-500" />
+                                {topicsCount} topics
+                              </span>
+                              <span>•</span>
+                              <span className="flex items-center gap-1">
+                                <Users className="h-3 w-3 text-blue-500" />
+                                {studentCount} joined
+                              </span>
+                            </div>
+
+                            <div className="flex items-center justify-between pt-2 border-t border-neutral-50">
+                              <span className="text-[10px] text-neutral-400 font-medium">
+                                {formatSessionDate(session)}
+                              </span>
+                              <div>
+                                {session.status === "Completed" ? (
+                                  <Link
+                                    href={`/session/${sCode}/summary`}
+                                    className="inline-flex items-center gap-1 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 font-bold px-3 py-1.5 rounded-lg border border-neutral-200 text-[11px]"
+                                  >
+                                    View Summary
+                                    <ChevronRight className="h-3.5 w-3.5" />
+                                  </Link>
+                                ) : (
+                                  <Link
+                                    href={`/session/${sCode}`}
+                                    className="inline-flex items-center gap-1 bg-[#0a0a23] hover:bg-slate-900 text-white font-bold px-3 py-1.5 rounded-lg text-[11px] shadow-sm"
+                                  >
+                                    Open Lobby
+                                    <ChevronRight className="h-3.5 w-3.5" />
+                                  </Link>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })
+                  )}
+                </div>
+
+                {/* Desktop View: Full Table (hidden on phones) */}
+                <div className="overflow-x-auto hidden md:block">
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="dashboard-table-header text-[10px] font-bold uppercase tracking-wider text-neutral-900">
@@ -909,9 +1110,65 @@ function DashboardContent() {
                 </div>
               </div>
 
-              {/* Roster Table */}
+              {/* Roster Table Card */}
               <div className="card overflow-hidden">
-                <div className="overflow-x-auto">
+                {/* Mobile View: Native Student Cards (visible on phones) */}
+                <div className="divide-y divide-neutral-100 md:hidden">
+                  {loadingRoster ? (
+                    <div className="p-8 text-center text-neutral-400 text-xs font-semibold">
+                      <div className="h-6 w-6 rounded-full border-2 border-purple-500 border-t-transparent animate-spin mx-auto mb-3" />
+                      Compiling database roster...
+                    </div>
+                  ) : roster.length === 0 ? (
+                    <div className="p-8 text-center text-neutral-400 text-xs">
+                      No student attendance records found.
+                    </div>
+                  ) : (
+                    roster
+                      .filter(std => std.name.toLowerCase().includes(studentSearchQuery.toLowerCase()))
+                      .map((student, index) => {
+                        const nameInitial = student.name
+                          .split(" ")
+                          .map(n => n[0])
+                          .join("")
+                          .slice(0, 2)
+                          .toUpperCase()
+                        
+                        let ratingColor = "text-emerald-700 bg-emerald-50 border-emerald-100"
+                        let statusText = "High Attentive"
+                        if (student.avgEngagement < 90 && student.avgEngagement >= 80) {
+                          ratingColor = "text-amber-700 bg-amber-50 border-amber-100"
+                          statusText = "Normal"
+                        }
+                        if (student.avgEngagement < 80) {
+                          ratingColor = "text-red-700 bg-red-50 border-red-100"
+                          statusText = "Needs Review"
+                        }
+
+                        return (
+                          <div key={index} className="p-3.5 flex items-center justify-between gap-3 bg-white">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="h-9 w-9 rounded-full bg-purple-50 border border-purple-100 flex items-center justify-center text-xs font-bold text-purple-600 flex-shrink-0">
+                                {nameInitial}
+                              </div>
+                              <div className="min-w-0">
+                                <div className="font-semibold text-neutral-800 text-xs truncate">{student.name}</div>
+                                <div className="text-[10px] text-neutral-400 mt-0.5">{student.classesAttended} sessions attended</div>
+                              </div>
+                            </div>
+                            <div className="text-right flex-shrink-0">
+                              <span className={`inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full font-bold border ${ratingColor}`}>
+                                {student.avgEngagement}% • {statusText}
+                              </span>
+                            </div>
+                          </div>
+                        )
+                      })
+                  )}
+                </div>
+
+                {/* Desktop View: Full Table (hidden on phones) */}
+                <div className="overflow-x-auto hidden md:block">
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="dashboard-table-header text-[10px] font-bold uppercase tracking-wider text-neutral-400">
@@ -998,16 +1255,16 @@ function DashboardContent() {
 
           {/* 5. SETTINGS TAB */}
           {currentTab === "settings" && (
-            <div className="space-y-6 animate-fadeIn">
+            <div className="space-y-4 sm:space-y-6 animate-fadeIn">
               <div>
-                <h2 className="text-xl font-serif font-bold text-neutral-900">Teacher Preference Settings</h2>
-                <p className="text-xs text-neutral-500 mt-1">Configure default session control rules and check connection integrity</p>
+                <h2 className="text-lg sm:text-xl font-serif font-bold text-neutral-900">Teacher Preference Settings</h2>
+                <p className="text-xs text-neutral-500 mt-0.5 sm:mt-1">Configure default session control rules and check connection integrity</p>
               </div>
 
-              <div className="grid gap-6 md:grid-cols-2">
+              <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
                 {/* Left Card: Session rules configuration */}
-                <div className="card p-6 space-y-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-                  <h3 className="text-sm font-serif font-bold text-neutral-800 uppercase tracking-wider flex items-center gap-2 border-b border-neutral-100 pb-3">
+                <div className="card p-4 sm:p-6 rounded-[20px] sm:rounded-[24px] space-y-5 sm:space-y-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                  <h3 className="text-xs sm:text-sm font-serif font-bold text-neutral-800 uppercase tracking-wider flex items-center gap-2 border-b border-neutral-100 pb-3">
                     <Sliders className="h-4 w-4 text-blue-500" />
                     Session Control Default Rules
                   </h3>
@@ -1025,7 +1282,7 @@ function DashboardContent() {
                         max="15"
                         value={settings.faceWarningThreshold}
                         onChange={(e) => setSettings({ ...settings, faceWarningThreshold: parseInt(e.target.value) })}
-                        className="w-full h-1.5 bg-neutral-100 rounded-lg appearance-none cursor-pointer accent-[#0a0a23]"
+                        className="w-full h-2 bg-neutral-100 rounded-lg appearance-none cursor-pointer accent-[#0a0a23]"
                       />
                     </div>
 
@@ -1041,7 +1298,7 @@ function DashboardContent() {
                         max="15"
                         value={settings.outOfFrameTimeout}
                         onChange={(e) => setSettings({ ...settings, outOfFrameTimeout: parseInt(e.target.value) })}
-                        className="w-full h-1.5 bg-neutral-100 rounded-lg appearance-none cursor-pointer accent-[#0a0a23]"
+                        className="w-full h-2 bg-neutral-100 rounded-lg appearance-none cursor-pointer accent-[#0a0a23]"
                       />
                     </div>
 
@@ -1053,7 +1310,7 @@ function DashboardContent() {
                       </div>
                       <button
                         onClick={() => setSettings({ ...settings, defaultFocusMode: !settings.defaultFocusMode })}
-                        className={`h-6 w-11 rounded-full p-0.5 transition-colors duration-200 outline-none ${
+                        className={`h-6 w-11 rounded-full p-0.5 transition-colors duration-200 outline-none flex-shrink-0 cursor-pointer ${
                           settings.defaultFocusMode ? "bg-black" : "bg-neutral-200"
                         }`}
                       >
@@ -1073,7 +1330,7 @@ function DashboardContent() {
                       </div>
                       <button
                         onClick={() => setSettings({ ...settings, defaultAllowLateJoins: !settings.defaultAllowLateJoins })}
-                        className={`h-6 w-11 rounded-full p-0.5 transition-colors duration-200 outline-none ${
+                        className={`h-6 w-11 rounded-full p-0.5 transition-colors duration-200 outline-none flex-shrink-0 cursor-pointer ${
                           settings.defaultAllowLateJoins ? "bg-black" : "bg-neutral-200"
                         }`}
                       >
@@ -1094,7 +1351,7 @@ function DashboardContent() {
                       <select
                         value={settings.aiLecturerVoice}
                         onChange={(e) => setSettings({ ...settings, aiLecturerVoice: e.target.value })}
-                        className="w-full bg-white rounded-lg border border-neutral-200 px-3 py-2 text-xs text-neutral-800 focus:outline-none focus:border-neutral-400"
+                        className="w-full bg-white rounded-xl border border-neutral-200 px-3 py-2 text-xs text-neutral-800 focus:outline-none focus:border-neutral-400"
                       >
                         <option>Google US English (en-US)</option>
                         <option>Google UK English Male (en-GB)</option>
@@ -1103,9 +1360,9 @@ function DashboardContent() {
                       </select>
                     </div>
 
-                    <div className="pt-4 flex items-center justify-between gap-4">
+                    <div className="pt-4 flex flex-col xs:flex-row items-stretch xs:items-center justify-between gap-3">
                       {saveSuccess && (
-                        <span className="text-xs text-emerald-600 font-bold flex items-center gap-1 animate-pulse">
+                        <span className="text-xs text-emerald-600 font-bold flex items-center justify-center gap-1 animate-pulse">
                           <Check className="h-3.5 w-3.5" /> Preferences saved!
                         </span>
                       )}
@@ -1114,7 +1371,7 @@ function DashboardContent() {
                           setSaveSuccess(true)
                           setTimeout(() => setSaveSuccess(false), 2000)
                         }}
-                        className="ml-auto rounded-full bg-black hover:bg-slate-900 text-white font-bold px-5 py-2.5 text-xs transition-colors cursor-pointer shadow-sm"
+                        className="w-full xs:w-auto xs:ml-auto rounded-full bg-black hover:bg-slate-900 text-white font-bold px-6 py-2.5 text-xs transition-colors cursor-pointer shadow-sm active:scale-95"
                       >
                         Save Settings
                       </button>
@@ -1123,43 +1380,43 @@ function DashboardContent() {
                 </div>
 
                 {/* Right Card: Connections checklists */}
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {/* System connection */}
-                  <div className="card p-6 space-y-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-                    <h3 className="text-sm font-serif font-bold text-neutral-800 uppercase tracking-wider flex items-center gap-2 border-b border-neutral-100 pb-3">
+                  <div className="card p-4 sm:p-6 rounded-[20px] sm:rounded-[24px] space-y-4 sm:space-y-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                    <h3 className="text-xs sm:text-sm font-serif font-bold text-neutral-800 uppercase tracking-wider flex items-center gap-2 border-b border-neutral-100 pb-3">
                       <Database className="h-4 w-4 text-blue-500" />
                       Live Connection Checklist
                     </h3>
 
-                    <div className="space-y-3.5">
+                    <div className="space-y-3">
                       {/* Firestore check */}
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-semibold text-neutral-600">Firestore Database Connection</span>
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald border border-emerald-100 text-[10px] text-emerald-800 font-bold uppercase tracking-wider">
+                        <span className="font-semibold text-neutral-600 truncate mr-2">Firestore Database Connection</span>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-100 text-[10px] text-emerald-800 font-bold uppercase tracking-wider flex-shrink-0">
                           Connected
                         </span>
                       </div>
 
                       {/* Claude check */}
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-semibold text-neutral-600">Claude AI Chat & Lecture API</span>
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald border border-emerald-100 text-[10px] text-emerald-800 font-bold uppercase tracking-wider">
+                        <span className="font-semibold text-neutral-600 truncate mr-2">Claude AI Chat & Lecture API</span>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-100 text-[10px] text-emerald-800 font-bold uppercase tracking-wider flex-shrink-0">
                           Configured
                         </span>
                       </div>
 
                       {/* Web Speech synthesis check */}
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-semibold text-neutral-600">Web Speech Synthesis API</span>
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald border border-emerald-100 text-[10px] text-emerald-800 font-bold uppercase tracking-wider">
+                        <span className="font-semibold text-neutral-600 truncate mr-2">Web Speech Synthesis API</span>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-100 text-[10px] text-emerald-800 font-bold uppercase tracking-wider flex-shrink-0">
                           Available
                         </span>
                       </div>
 
                       {/* MediaPipe CV check */}
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-semibold text-neutral-600">MediaPipe Computer Vision SDK</span>
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald border border-emerald-100 text-[10px] text-emerald-800 font-bold uppercase tracking-wider">
+                        <span className="font-semibold text-neutral-600 truncate mr-2">MediaPipe Computer Vision SDK</span>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-100 text-[10px] text-emerald-800 font-bold uppercase tracking-wider flex-shrink-0">
                           Compiled
                         </span>
                       </div>
@@ -1167,15 +1424,15 @@ function DashboardContent() {
                   </div>
 
                   {/* Security check */}
-                  <div className="card p-6 space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-                    <h3 className="text-sm font-serif font-bold text-neutral-800 uppercase tracking-wider flex items-center gap-2 border-b border-neutral-100 pb-3">
+                  <div className="card p-4 sm:p-6 rounded-[20px] sm:rounded-[24px] space-y-3 sm:space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                    <h3 className="text-xs sm:text-sm font-serif font-bold text-neutral-800 uppercase tracking-wider flex items-center gap-2 border-b border-neutral-100 pb-3">
                       <Shield className="h-4 w-4 text-blue-500" />
                       System Access Profile
                     </h3>
                     <div className="space-y-1.5 text-xs text-neutral-600">
                       <div><strong className="text-neutral-800">Security Scope:</strong> teacher-read-write</div>
                       <div><strong className="text-neutral-800">Verification Mode:</strong> Google Firebase IAM</div>
-                      <div><strong className="text-neutral-800">App Environment:</strong> Production (six.vercel)</div>
+                      <div><strong className="text-neutral-800">App Environment:</strong> Production</div>
                     </div>
                   </div>
                 </div>

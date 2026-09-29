@@ -91,24 +91,24 @@ export default function ClassroomAnalyticsSection({
   const distractedPct = focusDistribution.distracted > 0 ? focusDistribution.distracted : 8
 
   return (
-    <div className="space-y-8 animate-fadeIn text-neutral-800">
+    <div className="space-y-5 sm:space-y-8 animate-fadeIn text-neutral-800">
       {/* ── Header Bar ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h2 className="text-xl font-serif font-bold text-neutral-900 flex items-center gap-2">
-            <Activity className="h-5 w-5 text-blue-600" />
-            Classroom Performance & Real-Time Telemetry
+          <h2 className="text-base sm:text-xl font-serif font-bold text-neutral-900 flex items-center gap-1.5 sm:gap-2">
+            <Activity className="h-4.5 w-4.5 sm:h-5 sm:w-5 text-blue-600 flex-shrink-0" />
+            <span>Classroom Performance & Telemetry</span>
           </h2>
-          <p className="text-xs text-neutral-500 mt-1">
-            Real-time computer vision focus telemetry, attention fluctuations, and student state distribution
+          <p className="text-[11px] sm:text-xs text-neutral-500 mt-0.5 sm:mt-1">
+            Real-time computer vision focus telemetry and student attention state distribution
           </p>
         </div>
 
         {/* Range Toggle */}
-        <div className="flex items-center gap-1.5 bg-neutral-100 border border-neutral-200 rounded-xl p-1 text-xs shadow-sm">
+        <div className="flex items-center gap-1 bg-neutral-100 border border-neutral-200 rounded-xl p-1 text-xs shadow-sm self-start sm:self-auto">
           <button
             onClick={() => setActiveRange("all")}
-            className={`px-3 py-1.5 rounded-lg font-semibold transition-colors cursor-pointer ${
+            className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-colors cursor-pointer ${
               activeRange === "all" ? "bg-black text-white shadow-sm" : "text-neutral-500 hover:text-neutral-900"
             }`}
           >
@@ -116,7 +116,7 @@ export default function ClassroomAnalyticsSection({
           </button>
           <button
             onClick={() => setActiveRange("live")}
-            className={`px-3 py-1.5 rounded-lg font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
+            className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
               activeRange === "live" ? "bg-black text-white shadow-sm" : "text-neutral-500 hover:text-neutral-900"
             }`}
           >
@@ -127,75 +127,75 @@ export default function ClassroomAnalyticsSection({
       </div>
 
       {/* ── Top Metric Cards Row ── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="card p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-2 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
-            <span>Class Focus Average</span>
-            <Brain className="h-4 w-4 text-purple-500" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
+        <div className="card p-3 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-1.5 sm:space-y-2 flex flex-col justify-between min-w-0">
+          <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+            <span className="truncate">Class Focus Avg</span>
+            <Brain className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-500 flex-shrink-0" />
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-3xl font-serif font-bold text-neutral-900">{avgOverallScore}%</span>
-            <span className="text-xs font-bold text-emerald-600 flex items-center gap-0.5">
+          <div className="mt-1 sm:mt-2 flex items-baseline gap-1.5">
+            <span className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900">{avgOverallScore}%</span>
+            <span className="text-[10px] sm:text-xs font-bold text-emerald-600 flex items-center gap-0.5">
               <TrendingUp className="h-3 w-3" /> +4.2%
             </span>
           </div>
-          <div className="text-[10px] text-neutral-400 font-medium">Aggregated AI vision score</div>
+          <div className="text-[9px] sm:text-[10px] text-neutral-400 font-medium truncate">Aggregated AI vision score</div>
         </div>
 
-        <div className="card p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-2 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
-            <span>Attentive Ratio</span>
-            <Eye className="h-4 w-4 text-emerald-500" />
+        <div className="card p-3 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-1.5 sm:space-y-2 flex flex-col justify-between min-w-0">
+          <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+            <span className="truncate">Attentive Ratio</span>
+            <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-500 flex-shrink-0" />
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-3xl font-serif font-bold text-emerald-600">{activePct}%</span>
-            <span className="text-xs font-bold text-neutral-400">Focused</span>
+          <div className="mt-1 sm:mt-2 flex items-baseline gap-1.5">
+            <span className="text-2xl sm:text-3xl font-serif font-bold text-emerald-600">{activePct}%</span>
+            <span className="text-[10px] sm:text-xs font-bold text-neutral-400">Focused</span>
           </div>
-          <div className="text-[10px] text-neutral-400 font-medium">Facing screen & engaged</div>
+          <div className="text-[9px] sm:text-[10px] text-neutral-400 font-medium truncate">Facing screen & engaged</div>
         </div>
 
-        <div className="card p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-2 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
-            <span>Live Roster Count</span>
-            <Users className="h-4 w-4 text-blue-500" />
+        <div className="card p-3 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-1.5 sm:space-y-2 flex flex-col justify-between min-w-0">
+          <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+            <span className="truncate">Live Roster</span>
+            <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-500 flex-shrink-0" />
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-3xl font-serif font-bold text-neutral-900">{roster.length > 0 ? roster.length : 12}</span>
-            <span className="text-xs font-semibold text-neutral-500">Students</span>
+          <div className="mt-1 sm:mt-2 flex items-baseline gap-1.5">
+            <span className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900">{roster.length > 0 ? roster.length : 12}</span>
+            <span className="text-[10px] sm:text-xs font-semibold text-neutral-500">Students</span>
           </div>
-          <div className="text-[10px] text-neutral-400 font-medium">Registered in active classes</div>
+          <div className="text-[9px] sm:text-[10px] text-neutral-400 font-medium truncate">In active classes</div>
         </div>
 
-        <div className="card p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-2 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
-            <span>Violations Blocked</span>
-            <ShieldCheck className="h-4 w-4 text-amber-500" />
+        <div className="card p-3 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-1.5 sm:space-y-2 flex flex-col justify-between min-w-0">
+          <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+            <span className="truncate">Violations</span>
+            <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-500 flex-shrink-0" />
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-3xl font-serif font-bold text-amber-600">{kickedLogs.length > 0 ? kickedLogs.length : 0}</span>
-            <span className="text-xs font-semibold text-neutral-500">Actions</span>
+          <div className="mt-1 sm:mt-2 flex items-baseline gap-1.5">
+            <span className="text-2xl sm:text-3xl font-serif font-bold text-amber-600">{kickedLogs.length > 0 ? kickedLogs.length : 0}</span>
+            <span className="text-[10px] sm:text-xs font-semibold text-neutral-500">Actions</span>
           </div>
-          <div className="text-[10px] text-neutral-400 font-medium">Off-camera & phone warnings</div>
+          <div className="text-[9px] sm:text-[10px] text-neutral-400 font-medium truncate">Off-camera warnings</div>
         </div>
       </div>
 
       {/* ── Primary Real-Time Interactive Chart & Spectrum Grid ── */}
       <div className="grid gap-6 md:grid-cols-3">
         {/* Left Column: Interactive Real-Time SVG Area Chart */}
-        <div className="md:col-span-2 card p-6 space-y-6 flex flex-col justify-between shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-          <div className="flex items-center justify-between border-b border-neutral-100 pb-4">
+        <div className="md:col-span-2 card p-4 sm:p-6 space-y-4 sm:space-y-6 flex flex-col justify-between shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-neutral-100 pb-3 sm:pb-4 gap-2">
             <div>
-              <h3 className="text-sm font-serif font-bold text-neutral-800 uppercase tracking-wider flex items-center gap-2">
+              <h3 className="text-xs sm:text-sm font-serif font-bold text-neutral-800 uppercase tracking-wider flex items-center gap-1.5 sm:gap-2">
                 <Activity className="h-4 w-4 text-blue-500" />
-                Real-Time Attention Fluctuations & Trends
+                Attention Fluctuations & Trends
               </h3>
-              <p className="text-[11px] text-neutral-500 mt-0.5">Minute-by-minute AI gaze & pose engagement telemetry</p>
+              <p className="text-[10px] sm:text-[11px] text-neutral-500 mt-0.5">Minute-by-minute AI gaze & pose telemetry</p>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 self-start sm:self-auto">
               <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-100 border border-neutral-200 text-[10px] font-bold font-mono text-neutral-600">
                 <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
-                REAL-TIME TELEMETRY
+                REAL-TIME
               </span>
             </div>
           </div>

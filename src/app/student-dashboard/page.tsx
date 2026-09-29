@@ -100,7 +100,7 @@ export default function StudentDashboardPage() {
     <div className="min-h-screen bg-[#F6F7F9] font-sans antialiased text-[#111827] flex flex-col relative overflow-hidden">
 
       {/* ─── Header ─── */}
-      <header className="w-full border-b border-[rgba(15,23,42,.08)] bg-white sticky top-0 z-20 px-3.5 sm:px-6 py-2.5 sm:py-4 flex items-center justify-between">
+      <header className="w-full border-b border-[rgba(15,23,42,.08)] bg-white sticky top-0 z-20 px-3.5 sm:px-6 pt-7 sm:pt-4 pb-2.5 sm:pb-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5 sm:gap-4">
           {/* Hamburger Trigger */}
           <button

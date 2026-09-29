@@ -624,4 +624,16 @@ tbody.divide-y > :not([hidden]) ~ :not([hidden]) {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-}
+}
+
+/* Mobile Status Bar Clearance for Android & iOS WebViews */
+.mobile-status-bar-clearance {
+  padding-top: max(env(safe-area-inset-top, 0px), 1.75rem);
+}
+
+@media (min-width: 640px) {
+  .mobile-status-bar-clearance {
+    padding-top: 0;
+  }
+}
+

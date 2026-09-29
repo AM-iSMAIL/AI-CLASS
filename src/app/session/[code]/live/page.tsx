@@ -2622,7 +2622,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       `}</style>
 
       {/* ═══ TOP BAR ═══ */}
-      <header className="h-14 sm:h-[72px] bg-white border-b border-[rgba(15,23,42,.08)] px-3 sm:px-6 flex items-center justify-between flex-shrink-0 z-30 antialiased">
+      <header className="pt-7 sm:pt-0 h-20 sm:h-[72px] bg-white border-b border-[rgba(15,23,42,.08)] px-3 sm:px-6 flex items-center justify-between flex-shrink-0 z-30 antialiased">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-[#EFF6FF] flex items-center justify-center border border-[#BFDBFE] shadow-xs flex-shrink-0">
             <Brain className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-[#2563EB]" />
