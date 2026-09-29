@@ -2661,15 +2661,15 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             </span>
           </div>
           {isTeacher ? (
-            <div className="flex items-center gap-2">
-              <button id="end-session-btn" onClick={handleEndSession} className="px-2.5 sm:px-4 landscape:px-2 py-1 sm:py-2 landscape:py-0.5 bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-lg sm:rounded-[16px] transition-all cursor-pointer text-[9px] sm:text-xs font-bold shadow-xs active:scale-95">
+            <div className="flex items-center gap-2 mr-1 sm:mr-0 landscape:mr-3">
+              <button id="end-session-btn" onClick={handleEndSession} className="px-3 sm:px-4 landscape:px-3 py-1 sm:py-2 landscape:py-1 bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-lg sm:rounded-[16px] transition-all cursor-pointer text-[10px] sm:text-xs font-bold shadow-xs active:scale-95">
                 <span className="hidden xs:inline">End Session</span>
                 <span className="xs:hidden">End</span>
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <button onClick={handleStudentLeave} className="px-2.5 sm:px-4 landscape:px-2 py-1 sm:py-2 landscape:py-0.5 bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-lg sm:rounded-[16px] transition-all cursor-pointer text-[9px] sm:text-xs font-bold shadow-xs active:scale-95 flex items-center gap-1 sm:gap-1.5">
+            <div className="flex items-center gap-2 mr-1 sm:mr-0 landscape:mr-3">
+              <button onClick={handleStudentLeave} className="px-3 sm:px-4 landscape:px-3 py-1 sm:py-2 landscape:py-1 bg-[#DC2626] hover:bg-[#B91C1C] text-white rounded-lg sm:rounded-[16px] transition-all cursor-pointer text-[10px] sm:text-xs font-bold shadow-xs active:scale-95 flex items-center gap-1 sm:gap-1.5">
                 <LogOut className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 <span className="hidden xs:inline">Leave Class</span>
                 <span className="xs:hidden">Leave</span>

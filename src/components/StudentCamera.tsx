@@ -178,26 +178,34 @@ export default function StudentCamera({
         <div
           className={
             isGridMode
-              ? "absolute bottom-2 left-2 z-10 flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2 py-1 rounded-full border border-white/10"
+              ? "absolute top-1 left-1 z-10 flex items-center gap-1 bg-black/60 backdrop-blur-xs px-1.5 py-0.5 rounded-full border border-white/10"
               : "fixed bottom-26 right-[172px] z-50 flex items-center gap-2 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 animate-in fade-in slide-in-from-bottom-2"
           }
         >
-          <div className={`w-2 h-2 rounded-full animate-pulse ${statusDotColor}`} />
-          <span className="text-xs text-white/70 font-mono">{metrics.score}%</span>
-          <span className="text-[10px] text-white/40 uppercase tracking-wider">{detailLabel}</span>
-          {/* Eye state indicator */}
-          {metrics.eyesOpen ? (
-            <Eye className="h-3 w-3 text-white/25" />
+          <div className={`rounded-full animate-pulse ${statusDotColor} ${isGridMode ? "w-1.5 h-1.5" : "w-2 h-2"}`} />
+          {isGridMode ? (
+            <span className="text-[7.5px] text-white/90 font-mono font-bold tracking-tight">
+              {metrics.status === "distracted" ? "Distracted" : metrics.status === "away" ? "Away" : "Focused"}
+            </span>
           ) : (
-            <EyeOff className="h-3 w-3 text-rose-400/60" />
-          )}
-          {/* Iris engagement indicator */}
-          {metrics.eyesOpen && metrics.faceDetected && (
-            <ScanEye className={`h-3 w-3 ${irisColor}`} />
-          )}
-          {/* Yawn indicator */}
-          {metrics.yawning && (
-            <Brain className="h-3 w-3 text-amber-400/70" />
+            <>
+              <span className="text-xs text-white/70 font-mono">{metrics.score}%</span>
+              <span className="text-[10px] text-white/40 uppercase tracking-wider">{detailLabel}</span>
+              {/* Eye state indicator */}
+              {metrics.eyesOpen ? (
+                <Eye className="h-3 w-3 text-white/25" />
+              ) : (
+                <EyeOff className="h-3 w-3 text-rose-400/60" />
+              )}
+              {/* Iris engagement indicator */}
+              {metrics.eyesOpen && metrics.faceDetected && (
+                <ScanEye className={`h-3 w-3 ${irisColor}`} />
+              )}
+              {/* Yawn indicator */}
+              {metrics.yawning && (
+                <Brain className="h-3 w-3 text-amber-400/70" />
+              )}
+            </>
           )}
         </div>
       )}
