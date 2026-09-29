@@ -73,18 +73,26 @@ export default function StudentCamera({
       }
 
       try {
-        // Attempt 1: Ideal dimensions and facing mode
+        // Attempt 1: Ideal dimensions, 30fps cap, and facing mode
         stream = await navigator.mediaDevices.getUserMedia({
           video: {
             width: { ideal: CAMERA_WIDTH },
             height: { ideal: CAMERA_HEIGHT },
+            frameRate: { ideal: 30, max: 30 },
             facingMode: "user",
           },
         });
       } catch (e1) {
         console.warn("[StudentCamera] High resolution constraints failed, attempting basic video:", e1);
-        // Attempt 2: Basic video constraints fallback (mobile browsers)
-        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        // Attempt 2: Basic video constraints fallback (mobile browsers) with 30fps cap
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: "user",
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            frameRate: { ideal: 30, max: 30 },
+          },
+        });
       }
 
       if (stream) {

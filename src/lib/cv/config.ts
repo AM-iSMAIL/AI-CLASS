@@ -182,8 +182,8 @@ export const DEFAULT_CV_CONFIG: CVConfig = {
   yawnPenalty: 30,
   blinkFatiguePenalty: 15,
   irisEngagementDivisor: 10,
-  emaAlpha: 0.35, // Faster responsiveness (less lag)
-  historySize: 10, // Shorter buffer to reflect instant distraction
+  emaAlpha: 0.20, // Smooth exponential moving average (prevents score jitter)
+  historySize: 20, // Stable history buffer for buttery-smooth transitions
 
   // Sustained Distraction
   sustainScoreThreshold: 65,
@@ -195,8 +195,8 @@ export const DEFAULT_CV_CONFIG: CVConfig = {
   statusDistractedMin: 40,
 
   // Object Detection
-  objectDetectionConfidence: 0.15,
-  objectDetectionIntervalMs: 150,
+  objectDetectionConfidence: 0.30,
+  objectDetectionIntervalMs: 1_500, // 1.5s interval to prevent mobile GPU throttling
   forbiddenObjects: ['cell phone', 'cell_phone', 'mobile phone', 'phone', 'tablet', 'remote', 'book', 'handbag', 'device'],
 
   // Presence

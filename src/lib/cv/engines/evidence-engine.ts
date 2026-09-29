@@ -10,6 +10,7 @@ export class EvidenceEngine implements CVModule<Map<string, EvidenceSnapshot[]>>
 
   private config: CVConfig | null = null;
   private offscreenCanvas: HTMLCanvasElement | null = null;
+  private lastCaptureTime = new Map<string, number>();
 
   setConfig(config: CVConfig): void {
     this.config = config;
@@ -31,6 +32,11 @@ export class EvidenceEngine implements CVModule<Map<string, EvidenceSnapshot[]>>
       // Locate violations that do not have an evidenceId assigned yet
       const pendingViolations = analysis.violations.filter(v => !v.evidenceId);
       if (!pendingViolations.length) continue;
+
+      // Throttle heavy base64 canvas encoding to at most once per 3s to prevent UI jank
+      const lastCapture = this.lastCaptureTime.get(student.trackingId) || 0;
+      if (ctx.timestamp - lastCapture < 3000) continue;
+      this.lastCaptureTime.set(student.trackingId, ctx.timestamp);
 
       // Capture screenshots for this frame
       const { fullFrame, croppedFace } = captureSnapshots(

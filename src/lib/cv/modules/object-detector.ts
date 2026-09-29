@@ -81,8 +81,7 @@ export class ObjectDetectorModule implements CVModule<ObjectDetection[]> {
           normClass.includes('cell') ||
           normClass.includes('remote') ||
           normClass.includes('mobile') ||
-          normClass.includes('tablet') ||
-          pred.class === 'person';
+          normClass.includes('tablet');
         if (!isForbidden) continue;
 
         detections.push({

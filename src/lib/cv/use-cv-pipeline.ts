@@ -62,6 +62,11 @@ export function useCVPipeline({
   const pipelineRef = useRef<CVPipeline | null>(null);
   const frameSourceRef = useRef<FrameSource | null>(null);
   const lastPushRef = useRef<number>(0);
+  const lastStateUpdateRef = useRef<number>(0);
+  const lastValidScoreRef = useRef<number>(100);
+
+  const onFocusUpdateRef = useRef(onFocusUpdate);
+  onFocusUpdateRef.current = onFocusUpdate;
 
   // Helper mapping function to retain full backward compatibility
   const mapToFocusMetrics = useCallback((output: CVOutput): FocusMetrics => {
@@ -108,6 +113,9 @@ export function useCVPipeline({
     };
   }, []);
 
+  const mapToFocusMetricsRef = useRef(mapToFocusMetrics);
+  mapToFocusMetricsRef.current = mapToFocusMetrics;
+
   useEffect(() => {
     if (!enabled || !videoRef.current) return;
 
@@ -134,18 +142,27 @@ export function useCVPipeline({
             primaryOutput.studentId = studentId;
           }
 
-          const fm = mapToFocusMetrics(primaryOutput);
-          setMetrics(fm);
-          setRawOutput(primaryOutput);
+          if (primaryOutput.focusScore > 0) {
+            lastValidScoreRef.current = primaryOutput.focusScore;
+          }
 
-          if (onFocusUpdate && now - lastPushRef.current >= throttleLimit) {
-            onFocusUpdate(fm, primaryOutput);
+          const fm = mapToFocusMetricsRef.current(primaryOutput);
+
+          // Throttle React state re-renders to ~10fps (every 100ms) to eliminate mobile main-thread jank
+          if (now - lastStateUpdateRef.current >= 100) {
+            setMetrics(fm);
+            setRawOutput(primaryOutput);
+            lastStateUpdateRef.current = now;
+          }
+
+          if (onFocusUpdateRef.current && now - lastPushRef.current >= throttleLimit) {
+            onFocusUpdateRef.current(fm, primaryOutput);
             lastPushRef.current = now;
           }
         } else {
           // No faces detected or tracked - report absent / away
           // Preserve previous non-zero focus score to prevent score dropping to 0 when camera turns off
-          const preservedScore = metrics.score > 0 ? metrics.score : 100;
+          const preservedScore = lastValidScoreRef.current > 0 ? lastValidScoreRef.current : 100;
           const absentOutput: CVOutput = {
             studentId: studentId || '',
             trackingId: 'local_untracked',
@@ -183,11 +200,14 @@ export function useCVPipeline({
             phoneDetected: false,
           };
 
-          setMetrics(fm);
-          setRawOutput(absentOutput);
+          if (now - lastStateUpdateRef.current >= 100) {
+            setMetrics(fm);
+            setRawOutput(absentOutput);
+            lastStateUpdateRef.current = now;
+          }
 
-          if (onFocusUpdate && now - lastPushRef.current >= throttleLimit) {
-            onFocusUpdate(fm, absentOutput);
+          if (onFocusUpdateRef.current && now - lastPushRef.current >= throttleLimit) {
+            onFocusUpdateRef.current(fm, absentOutput);
             lastPushRef.current = now;
           }
         }
@@ -214,7 +234,7 @@ export function useCVPipeline({
       setPipelineState(null);
       frameSourceRef.current = null;
     };
-  }, [enabled, videoRef, studentId, onFocusUpdate, mapToFocusMetrics]);
+  }, [enabled, videoRef, studentId]);
 
   return {
     metrics,
