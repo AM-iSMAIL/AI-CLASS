@@ -196,6 +196,27 @@ export default function DashboardSidebar({
           </aside>
         </div>
       )}
+
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-200/80 px-2 py-1.5 flex lg:hidden items-center justify-around shadow-[0_-4px_16px_rgba(0,0,0,0.04)] pb-[calc(env(safe-area-inset-bottom,0px)+6px)]">
+        {navItems.map((item) => {
+          const isActive = item.label === activeItem
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
+                isActive
+                  ? "text-purple-600 font-bold"
+                  : "text-neutral-500 hover:text-neutral-800 font-medium"
+              }`}
+            >
+              <item.icon className={`h-5 w-5 ${isActive ? "text-purple-600 scale-105" : "text-neutral-500"}`} />
+              <span className="text-[10px] mt-0.5 tracking-tight">{item.label}</span>
+            </Link>
+          )
+        })}
+      </nav>
     </>
   )
 }

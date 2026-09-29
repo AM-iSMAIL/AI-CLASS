@@ -338,15 +338,15 @@ export default function AuthPage() {
         </div>
 
         {/* ─── Right Side: White Card Center ─── */}
-        <div className="relative flex flex-1 flex-col justify-center items-center p-6 sm:p-12 bg-[#0A0A0A] overflow-hidden">
+        <div className="relative flex flex-1 flex-col justify-center items-center p-3.5 sm:p-8 lg:p-12 bg-[#0A0A0A] overflow-hidden min-h-screen py-12 sm:py-12">
           {/* Glow behind the card */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none -z-10 h-[500px] w-[500px] rounded-full bg-purple-500/5 blur-[120px]" />
 
           {/* Back link for mobile view */}
-          <div className="absolute top-6 left-6 z-10 lg:hidden">
+          <div className="absolute top-4 left-4 z-10 lg:hidden">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 text-xs text-white/50 transition-colors hover:text-white"
+              className="inline-flex items-center gap-1.5 text-xs text-white/60 transition-colors hover:text-white px-2 py-1 rounded-md bg-white/5 border border-white/10"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               Home
@@ -354,7 +354,7 @@ export default function AuthPage() {
           </div>
 
           {/* Main Card */}
-          <div className="relative z-10 w-full max-w-md bg-white text-neutral-900 rounded-2xl border border-neutral-100 p-8 shadow-2xl transition-all duration-300">
+          <div className="relative z-10 w-full max-w-md bg-white text-neutral-900 rounded-2xl sm:rounded-3xl border border-neutral-100 p-5 sm:p-8 shadow-2xl transition-all duration-300">
             {/* Card Top Logo */}
             <div className="flex flex-col items-center mb-6">
               <div className="flex items-center gap-2 mb-2">

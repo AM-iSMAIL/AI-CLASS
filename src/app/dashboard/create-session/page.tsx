@@ -383,30 +383,30 @@ export default function CreateSessionPage() {
         </header>
 
         {/* Form Container */}
-        <main className="flex-1 p-6 md:p-8 flex justify-center items-start lg:items-center bg-[#F6F7F9]">
-          <div className="w-full max-w-[620px] bg-[#FFFFFF] border border-[rgba(15,23,42,0.08)] rounded-[24px] p-6 md:p-8 space-y-8 shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)] create-session-card">
+        <main className="flex-1 p-3.5 sm:p-6 md:p-8 flex justify-center items-start lg:items-center bg-[#F6F7F9] pb-24 lg:pb-8">
+          <div className="w-full max-w-[620px] bg-[#FFFFFF] border border-[rgba(15,23,42,0.08)] rounded-[20px] sm:rounded-[24px] p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)] create-session-card">
             
             {/* Header & Subtitle */}
-            <div className="text-center space-y-2">
-              <h2 className="text-2xl font-bold text-[#111827] tracking-tight">Create New Session</h2>
-              <p className="text-xs md:text-sm text-[#6B7280] font-normal">Set up your AI-powered class in seconds</p>
+            <div className="text-center space-y-1.5 sm:space-y-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#111827] tracking-tight">Create New Session</h2>
+              <p className="text-xs sm:text-sm text-[#6B7280] font-normal">Set up your AI-powered class in seconds</p>
             </div>
 
             {/* Step Indicator (Info -> Content -> Launch) */}
-            <div className="relative max-w-md mx-auto">
+            <div className="relative max-w-md mx-auto px-2">
               {/* Connector Lines */}
-              <div className="absolute left-[21px] right-[21px] top-[21px] h-[4px] bg-[#E5E7EB] rounded-full -translate-y-1/2 z-0" />
+              <div className="absolute left-[18px] sm:left-[21px] right-[18px] sm:right-[21px] top-[18px] sm:top-[21px] h-[3px] sm:h-[4px] bg-[#E5E7EB] rounded-full -translate-y-1/2 z-0" />
               <div
-                className="absolute left-[21px] top-[21px] h-[4px] bg-[#2563EB] rounded-full -translate-y-1/2 progress-line z-0"
+                className="absolute left-[18px] sm:left-[21px] top-[18px] sm:top-[21px] h-[3px] sm:h-[4px] bg-[#2563EB] rounded-full -translate-y-1/2 progress-line z-0"
                 style={{ width: step === 2 ? "0%" : step === 3 ? "50%" : "100%" }}
               />
 
               {/* Steps Wrapper */}
               <div className="relative z-10 flex justify-between items-start">
                 {/* Step 1: Info */}
-                <div className="flex flex-col items-center gap-[18px]">
+                <div className="flex flex-col items-center gap-1.5 sm:gap-[18px]">
                   <div
-                    className={`h-[42px] w-[42px] rounded-full flex items-center justify-center text-sm font-bold border transition-all step-circle ${step === 2 ? "active" : ""} ${
+                    className={`h-9 w-9 sm:h-[42px] sm:w-[42px] rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border transition-all step-circle ${step === 2 ? "active" : ""} ${
                       step >= 2
                         ? "bg-[#2563EB] border-[#2563EB] text-white"
                         : "bg-[#F9FAFB] border-[#E5E7EB] text-[#9CA3AF]"
@@ -414,15 +414,15 @@ export default function CreateSessionPage() {
                   >
                     1
                   </div>
-                  <span className={`text-xs font-semibold ${step >= 2 ? "text-[#2563EB]" : "text-[#6B7280]"}`}>
+                  <span className={`text-[10px] sm:text-xs font-semibold ${step >= 2 ? "text-[#2563EB]" : "text-[#6B7280]"}`}>
                     Session Info
                   </span>
                 </div>
 
                 {/* Step 2: Content */}
-                <div className="flex flex-col items-center gap-[18px]">
+                <div className="flex flex-col items-center gap-1.5 sm:gap-[18px]">
                   <div
-                    className={`h-[42px] w-[42px] rounded-full flex items-center justify-center text-sm font-bold border transition-all step-circle ${step === 3 ? "active" : ""} ${
+                    className={`h-9 w-9 sm:h-[42px] sm:w-[42px] rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border transition-all step-circle ${step === 3 ? "active" : ""} ${
                       step >= 3
                         ? "bg-[#2563EB] border-[#2563EB] text-white"
                         : "bg-[#F9FAFB] border-[#E5E7EB] text-[#9CA3AF]"
@@ -430,15 +430,15 @@ export default function CreateSessionPage() {
                   >
                     2
                   </div>
-                  <span className={`text-xs font-semibold ${step >= 3 ? "text-[#2563EB]" : "text-[#6B7280]"}`}>
+                  <span className={`text-[10px] sm:text-xs font-semibold ${step >= 3 ? "text-[#2563EB]" : "text-[#6B7280]"}`}>
                     Content
                   </span>
                 </div>
 
                 {/* Step 3: Launch */}
-                <div className="flex flex-col items-center gap-[18px]">
+                <div className="flex flex-col items-center gap-1.5 sm:gap-[18px]">
                   <div
-                    className={`h-[42px] w-[42px] rounded-full flex items-center justify-center text-sm font-bold border transition-all step-circle ${step === 4 ? "active" : ""} ${
+                    className={`h-9 w-9 sm:h-[42px] sm:w-[42px] rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border transition-all step-circle ${step === 4 ? "active" : ""} ${
                       step >= 4
                         ? "bg-[#2563EB] border-[#2563EB] text-white"
                         : "bg-[#F9FAFB] border-[#E5E7EB] text-[#9CA3AF]"
@@ -446,7 +446,7 @@ export default function CreateSessionPage() {
                   >
                     3
                   </div>
-                  <span className={`text-xs font-semibold ${step >= 4 ? "text-[#2563EB]" : "text-[#6B7280]"}`}>
+                  <span className={`text-[10px] sm:text-xs font-semibold ${step >= 4 ? "text-[#2563EB]" : "text-[#6B7280]"}`}>
                     Launch
                   </span>
                 </div>

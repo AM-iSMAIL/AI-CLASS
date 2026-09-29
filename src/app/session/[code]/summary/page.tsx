@@ -267,43 +267,43 @@ export default function SummaryPage() {
     return (
       <div className="min-h-screen bg-[#F6F7F9] text-[#111827] font-sans relative pb-12 flex flex-col z-10 antialiased">
         {/* Top Navbar */}
-        <header className="h-16 border-b border-[rgba(15,23,42,.08)] bg-white px-6 md:px-8 flex items-center justify-between sticky top-0 z-20">
-          <div className="flex items-center gap-3">
+        <header className="h-14 sm:h-16 border-b border-[rgba(15,23,42,.08)] bg-white px-3.5 sm:px-6 md:px-8 flex items-center justify-between sticky top-0 z-20">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <Link 
               href="/dashboard" 
-              className="p-2 rounded-xl bg-white border border-[#E5E7EB] hover:bg-[#F9FAFB] hover:-translate-y-0.5 text-[#374151] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] shadow-xs"
+              className="p-1.5 sm:p-2 rounded-xl bg-white border border-[#E5E7EB] hover:bg-[#F9FAFB] hover:-translate-y-0.5 text-[#374151] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] shadow-xs"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
-            <h1 className="text-sm md:text-base font-bold text-[#111827] tracking-tight flex items-center gap-2">
+            <h1 className="text-xs sm:text-base font-bold text-[#111827] tracking-tight flex items-center gap-1.5 sm:gap-2">
               <BarChart className="h-4 w-4 text-[#2563EB]" />
-              Attendance & Performance Report
+              <span><span className="hidden sm:inline">Attendance & </span>Report</span>
             </h1>
           </div>
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-1.5 rounded-2xl bg-[#111827] hover:bg-[#1F2937] hover:-translate-y-0.5 px-4 py-2 text-xs font-bold text-white shadow-[0_12px_24px_rgba(17,24,39,.12)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer group"
+            className="flex items-center gap-1.5 rounded-xl sm:rounded-2xl bg-[#111827] hover:bg-[#1F2937] hover:-translate-y-0.5 px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold text-white shadow-[0_12px_24px_rgba(17,24,39,.12)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer group"
           >
             <Download className="h-3.5 w-3.5 group-hover:translate-y-0.5 transition-transform duration-300" />
-            Export CSV
+            <span className="hidden xs:inline">Export </span>CSV
           </button>
         </header>
 
         {/* Dashboard Content */}
-        <main className="flex-1 p-6 md:p-8 space-y-8 max-w-5xl w-full mx-auto">
+        <main className="flex-1 p-3.5 sm:p-6 md:p-8 space-y-5 sm:space-y-8 max-w-5xl w-full mx-auto">
           {/* Session Overview Card */}
-          <div className="bg-white border border-[rgba(15,23,42,.08)] p-6 rounded-[24px] space-y-4 shadow-[0_1px_2px_rgba(15,23,42,.03),0_12px_32px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="bg-white border border-[rgba(15,23,42,.08)] p-4 sm:p-6 rounded-[20px] sm:rounded-[24px] space-y-3 sm:space-y-4 shadow-[0_1px_2px_rgba(15,23,42,.03),0_12px_32px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
               <div>
                 <span className="text-[10px] text-[#2563EB] uppercase font-black tracking-widest font-mono">Session Summary</span>
-                <h2 className="text-xl font-bold text-[#111827] mt-1">{sessionData.title}</h2>
-                <p className="text-xs text-[#6B7280] mt-1">{sessionData.subject} • {sessionData.gradeLevel}</p>
+                <h2 className="text-lg sm:text-xl font-bold text-[#111827] mt-0.5 sm:mt-1">{sessionData.title}</h2>
+                <p className="text-[11px] sm:text-xs text-[#6B7280] mt-0.5 sm:mt-1">{sessionData.subject} • {sessionData.gradeLevel}</p>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-semibold text-[#374151] bg-[#F3F4F6] px-3.5 py-1.5 rounded-lg border border-[rgba(15,23,42,.08)] font-mono">
-                  CODE: {sessionCode}
+              <div className="flex items-center gap-2 sm:gap-3 self-start md:self-auto">
+                <span className="text-[11px] sm:text-xs font-semibold text-[#374151] bg-[#F3F4F6] px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg border border-[rgba(15,23,42,.08)] font-mono">
+                  {sessionCode}
                 </span>
-                <span className="text-xs font-semibold text-[#16A34A] bg-[#ECFDF5] px-3.5 py-1.5 rounded-lg border border-[#A7F3D0] uppercase">
+                <span className="text-[11px] sm:text-xs font-semibold text-[#16A34A] bg-[#ECFDF5] px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg border border-[#A7F3D0] uppercase">
                   Concluded
                 </span>
               </div>
@@ -311,57 +311,57 @@ export default function SummaryPage() {
           </div>
 
           {/* Stats Row */}
-          <section className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+          <section className="grid gap-2.5 sm:gap-4 grid-cols-2 lg:grid-cols-4">
             {/* Total Attendees */}
-            <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
-              <div className="flex items-center justify-between text-[#111827] mb-3">
-                <span className="text-[10px] font-black uppercase tracking-wider font-mono">Total Attendees</span>
-                <Users className="h-4 w-4 text-[#2563EB]" />
+            <div className="bg-white rounded-[16px] sm:rounded-[20px] border border-[rgba(15,23,42,.08)] p-3.5 sm:p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
+              <div className="flex items-center justify-between text-[#111827] mb-2 sm:mb-3">
+                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider font-mono">Total Attendees</span>
+                <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#2563EB]" />
               </div>
-              <h3 className="text-2xl font-black text-[#000000]">{totalAttendees}</h3>
-              <span className="text-[10px] text-[#111827] font-bold">Total session participants</span>
+              <h3 className="text-xl sm:text-2xl font-black text-[#000000]">{totalAttendees}</h3>
+              <span className="text-[9px] sm:text-[10px] text-[#111827] font-bold">Total session participants</span>
             </div>
 
             {/* Student Average Focus Score */}
-            <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
-              <div className="flex items-center justify-between text-[#111827] mb-3">
-                <span className="text-[10px] font-black uppercase tracking-wider font-mono">Class Avg Focus</span>
-                <Brain className="h-4 w-4 text-[#16A34A]" />
+            <div className="bg-white rounded-[16px] sm:rounded-[20px] border border-[rgba(15,23,42,.08)] p-3.5 sm:p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
+              <div className="flex items-center justify-between text-[#111827] mb-2 sm:mb-3">
+                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider font-mono">Class Avg Focus</span>
+                <Brain className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#16A34A]" />
               </div>
-              <h3 className="text-2xl font-black text-[#000000]">{totalAttendees > 0 ? `${avgFocusScore}%` : "--"}</h3>
-              <span className="text-[10px] text-[#16A34A] font-bold">Overall session focus average</span>
+              <h3 className="text-xl sm:text-2xl font-black text-[#000000]">{totalAttendees > 0 ? `${avgFocusScore}%` : "--"}</h3>
+              <span className="text-[9px] sm:text-[10px] text-[#16A34A] font-bold">Overall session focus</span>
             </div>
 
             {/* Present at Close */}
-            <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
-              <div className="flex items-center justify-between text-[#111827] mb-3">
-                <span className="text-[10px] font-black uppercase tracking-wider font-mono">Present at Close</span>
-                <CheckCircle2 className="h-4 w-4 text-[#16A34A]" />
+            <div className="bg-white rounded-[16px] sm:rounded-[20px] border border-[rgba(15,23,42,.08)] p-3.5 sm:p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
+              <div className="flex items-center justify-between text-[#111827] mb-2 sm:mb-3">
+                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider font-mono">Present at Close</span>
+                <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#16A34A]" />
               </div>
-              <h3 className="text-2xl font-black text-[#000000]">
+              <h3 className="text-xl sm:text-2xl font-black text-[#000000]">
                 {presentAtCloseCount}
               </h3>
-              <span className="text-[10px] text-[#111827] font-bold">Active till the end</span>
+              <span className="text-[9px] sm:text-[10px] text-[#111827] font-bold">Active till the end</span>
             </div>
 
             {/* Kicked / Dismissed */}
-            <div className="bg-white rounded-[20px] border border-[rgba(15,23,42,.08)] p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
-              <div className="flex items-center justify-between text-[#111827] mb-3">
-                <span className="text-[10px] font-black uppercase tracking-wider font-mono">Kicked/Dismissed</span>
-                <ShieldAlert className="h-4 w-4 text-[#DC2626]" />
+            <div className="bg-white rounded-[16px] sm:rounded-[20px] border border-[rgba(15,23,42,.08)] p-3.5 sm:p-5 shadow-[0_6px_20px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)]">
+              <div className="flex items-center justify-between text-[#111827] mb-2 sm:mb-3">
+                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider font-mono">Kicked/Dismissed</span>
+                <ShieldAlert className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#DC2626]" />
               </div>
-              <h3 className="text-2xl font-black text-[#DC2626]">{kickedList.length}</h3>
-              <span className="text-[10px] text-[#111827] font-bold">Removed for distraction</span>
+              <h3 className="text-xl sm:text-2xl font-black text-[#DC2626]">{kickedList.length}</h3>
+              <span className="text-[9px] sm:text-[10px] text-[#111827] font-bold">Removed for distraction</span>
             </div>
           </section>
 
           {/* Roster Table */}
-          <div className="bg-white rounded-[24px] border border-[rgba(15,23,42,.08)] overflow-hidden shadow-[0_1px_2px_rgba(15,23,42,.03),0_12px_32px_rgba(15,23,42,.05)]">
-            <div className="px-6 py-5 border-b border-[#E5E7EB] flex items-center justify-between">
+          <div className="bg-white rounded-[20px] sm:rounded-[24px] border border-[rgba(15,23,42,.08)] overflow-hidden shadow-[0_1px_2px_rgba(15,23,42,.03),0_12px_32px_rgba(15,23,42,.05)]">
+            <div className="px-4 sm:px-6 py-3.5 sm:py-5 border-b border-[#E5E7EB] flex items-center justify-between">
               <h3 className="text-xs font-black uppercase tracking-wider text-[#000000] font-mono">Attendance Roster</h3>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto custom-scrollbar">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-[#E5E7EB] text-[10px] font-black uppercase tracking-wider text-[#000000] bg-[#F9FAFB] font-mono">

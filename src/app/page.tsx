@@ -96,14 +96,14 @@ export default function Home() {
       >
         {/* ─── Sticky Navbar ─── */}
         <nav className="fixed top-0 left-0 right-0 z-40 border-b border-white/5 bg-background/80 backdrop-blur-xl">
-          <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+          <div className="mx-auto flex h-14 sm:h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
             {/* Left: Logo */}
             <Link
               href="/"
-              className="flex items-center gap-2.5 border-l-2 border-purple-500/40 pl-3 drop-shadow-[0_0_8px_rgba(147,51,234,0.3)] transition-all hover:border-purple-500/70"
+              className="flex items-center gap-2 sm:gap-2.5 border-l-2 border-purple-500/40 pl-2.5 sm:pl-3 drop-shadow-[0_0_8px_rgba(147,51,234,0.3)] transition-all hover:border-purple-500/70"
             >
-              <Image src="/logo.png" alt="Class AI" width={36} height={36} />
-              <span className="text-xl font-bold tracking-tight text-white">
+              <Image src="/logo.png" alt="Class AI" width={32} height={32} className="h-7 w-7 sm:h-9 sm:w-9" />
+              <span className="text-lg sm:text-xl font-bold tracking-tight text-white">
                 Class<span className="text-purple-400">AI</span>
               </span>
             </Link>
@@ -131,18 +131,18 @@ export default function Home() {
             </div>
 
             {/* Right: Auth buttons */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <Link
                 href="/auth?mode=signin"
                 id="sign-in-btn"
-                className="rounded-lg px-4 py-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
+                className="rounded-lg px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white/70 transition-colors hover:text-white"
               >
                 Sign In
               </Link>
               <Link
                 href="/auth?mode=signup"
                 id="nav-get-started-btn"
-                className="rounded-lg bg-gradient-to-r from-purple-600 to-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-purple-500/20 transition-all hover:shadow-purple-500/30 hover:brightness-110"
+                className="rounded-lg bg-gradient-to-r from-purple-600 to-violet-600 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white shadow-sm shadow-purple-500/20 transition-all hover:shadow-purple-500/30 hover:brightness-110"
               >
                 Get Started
               </Link>
@@ -151,15 +151,15 @@ export default function Home() {
         </nav>
 
         {/* ─── Hero Section ─── */}
-        <section className="relative flex min-h-[70vh] items-center justify-center bg-background pt-28 pb-16">
+        <section className="relative flex min-h-[70vh] items-center justify-center bg-background pt-24 sm:pt-28 pb-12 sm:pb-16">
           {/* Hero content */}
-          <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-purple-500/20 bg-purple-500/10 px-4 py-1.5 text-sm text-purple-300">
+          <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 text-center">
+            <div className="mb-4 sm:mb-5 inline-flex items-center gap-2 rounded-full border border-purple-500/20 bg-purple-500/10 px-3.5 py-1 text-xs sm:text-sm text-purple-300">
               <Sparkles className="h-3.5 w-3.5" />
               AI-Powered Classroom Intelligence
             </div>
 
-            <h1 className="mb-6 text-5xl font-bold leading-[1.1] tracking-tight text-white md:text-7xl">
+            <h1 className="mb-4 sm:mb-6 text-4xl sm:text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight text-white">
               Teach Smarter
               <br />
               <span className="bg-gradient-to-r from-purple-400 via-violet-400 to-indigo-400 bg-clip-text text-transparent">
@@ -167,16 +167,16 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+            <p className="mx-auto mb-8 sm:mb-10 max-w-2xl text-base sm:text-lg md:text-xl leading-relaxed text-muted-foreground">
               AI hosts your live class, answers student doubts, plays videos and
               generates visuals — in real time.
             </p>
 
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <div className="flex flex-col items-center justify-center gap-3 sm:gap-4 sm:flex-row w-full max-w-xs sm:max-w-none mx-auto">
               <Link
                 href="/auth?mode=signup"
                 id="get-started-btn"
-                className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-violet-600 px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-purple-500/25 transition-all hover:shadow-purple-500/40 hover:brightness-110"
+                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-violet-600 px-6 sm:px-8 py-3 sm:py-3.5 text-sm font-semibold text-white shadow-lg shadow-purple-500/25 transition-all hover:shadow-purple-500/40 hover:brightness-110"
               >
                 Get Started
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -184,26 +184,26 @@ export default function Home() {
               <Link
                 href="#features-section"
                 id="learn-more-btn"
-                className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-8 py-3.5 text-sm font-semibold text-white/80 backdrop-blur-sm transition-all hover:bg-white/10 hover:text-white"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 sm:px-8 py-3 sm:py-3.5 text-sm font-semibold text-white/80 backdrop-blur-sm transition-all hover:bg-white/10 hover:text-white"
               >
                 Learn More
               </Link>
             </div>
 
-            <div className="mt-12 flex flex-col items-center justify-center">
-              <p className="text-sm text-white/50 mb-3">Are you a student?</p>
+            <div className="mt-10 sm:mt-12 flex flex-col items-center justify-center">
+              <p className="text-xs sm:text-sm text-white/50 mb-2.5 sm:mb-3">Are you a student?</p>
               <form onSubmit={handleJoin} className="flex items-center gap-2 max-w-sm w-full relative">
                 <input
                   type="text"
                   placeholder="Enter Session Code (e.g. CLASS-XXXX)"
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value)}
-                  className="w-full bg-[#1A1A1A] border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all uppercase"
+                  className="w-full bg-[#1A1A1A] border border-white/10 rounded-xl px-4 py-3 sm:py-3.5 text-xs sm:text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all uppercase"
                 />
                 <button
                   type="submit"
                   disabled={!joinCode.trim()}
-                  className="absolute right-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="absolute right-1.5 sm:right-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-bold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Join
                 </button>

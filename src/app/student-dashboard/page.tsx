@@ -100,27 +100,28 @@ export default function StudentDashboardPage() {
     <div className="min-h-screen bg-[#F6F7F9] font-sans antialiased text-[#111827] flex flex-col relative overflow-hidden">
 
       {/* ─── Header ─── */}
-      <header className="w-full border-b border-[rgba(15,23,42,.08)] bg-white sticky top-0 z-20 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <header className="w-full border-b border-[rgba(15,23,42,.08)] bg-white sticky top-0 z-20 px-3.5 sm:px-6 py-2.5 sm:py-4 flex items-center justify-between">
+        <div className="flex items-center gap-2.5 sm:gap-4">
           {/* Hamburger Trigger */}
           <button
             onClick={() => setIsSidebarOpen(true)}
+            aria-label="Open menu"
             className="p-2 rounded-xl bg-white border border-[#E5E7EB] hover:bg-[#F9FAFB] hover:-translate-y-0.5 text-[#374151] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer active:scale-95 shadow-xs"
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
           </button>
 
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2.5 transition-all"
+            className="flex items-center gap-2 transition-all"
           >
-            <div className="h-8 w-8 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-center shadow-xs">
-              <Tv className="h-4 w-4 text-[#2563EB]" />
+            <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-center shadow-xs">
+              <Tv className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#2563EB]" />
             </div>
-            <span className="text-md font-bold tracking-tight text-[#111827]">
+            <span className="text-sm sm:text-base font-bold tracking-tight text-[#111827]">
               Class<span className="text-[#2563EB]">AI</span>{" "}
-              <span className="text-[9px] font-bold px-2.5 py-0.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#2563EB] ml-1.5 uppercase tracking-wider font-mono">
+              <span className="text-[8px] sm:text-[9px] font-bold px-2 sm:px-2.5 py-0.5 rounded-full bg-[#EFF6FF] border border-[#BFDBFE] text-[#2563EB] ml-1 uppercase tracking-wider font-mono">
                 Student
               </span>
             </span>
@@ -128,18 +129,18 @@ export default function StudentDashboardPage() {
         </div>
 
         {/* Profile Info */}
-        <div className="flex items-center gap-5">
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#374151]">
-            <span className="text-[#6B7280] font-normal">Welcome,</span>
-            <span className="text-[#2563EB] font-bold">{studentName}</span>
+        <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#374151]">
+            <span className="text-[#6B7280] font-normal hidden sm:inline">Welcome,</span>
+            <span className="text-[#2563EB] font-bold truncate max-w-[80px] xs:max-w-[120px] sm:max-w-none">{studentName}</span>
           </div>
 
           <button
             onClick={handleSignOut}
-            className="flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-xl border border-[#E5E7EB] bg-white text-xs font-semibold text-[#374151] hover:bg-[#FEF2F2] hover:text-[#DC2626] hover:border-[#FECACA] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer active:scale-95 shadow-xs"
+            className="flex items-center justify-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl border border-[#E5E7EB] bg-white text-xs font-semibold text-[#374151] hover:bg-[#FEF2F2] hover:text-[#DC2626] hover:border-[#FECACA] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer active:scale-95 shadow-xs"
           >
             <LogOut className="h-3.5 w-3.5" />
-            Sign Out
+            <span className="hidden sm:inline">Sign Out</span>
           </button>
         </div>
       </header>
@@ -229,27 +230,27 @@ export default function StudentDashboardPage() {
       </div>
 
       {/* ─── Main Workspace ─── */}
-      <main className="flex-1 max-w-6xl w-full mx-auto p-6 md:p-8 z-10 flex flex-col gap-8">
+      <main className="flex-1 max-w-6xl w-full mx-auto p-3.5 sm:p-6 md:p-8 pb-28 lg:pb-8 z-10 flex flex-col gap-6 sm:gap-8">
         
         {activeTab === "dashboard" && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start animate-fadeIn">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start animate-fadeIn">
             
             {/* ─── LEFT COLUMN: JOIN CLASS (lg:col-span-5) ─── */}
             <div className="lg:col-span-5 space-y-6">
-              <div className="bg-white border border-[rgba(15,23,42,.08)] rounded-[24px] p-6 md:p-8 shadow-[0_1px_2px_rgba(15,23,42,.03),0_12px_32px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] space-y-6 relative overflow-hidden">
+              <div className="bg-white border border-[rgba(15,23,42,.08)] rounded-[20px] sm:rounded-[24px] p-4 sm:p-6 md:p-8 shadow-[0_1px_2px_rgba(15,23,42,.03),0_12px_32px_rgba(15,23,42,.05)] hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(15,23,42,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] space-y-5 sm:space-y-6 relative overflow-hidden">
                 
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-center text-[#2563EB]">
-                    <Tv className="h-5 w-5" />
+                  <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-center text-[#2563EB]">
+                    <Tv className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
                   </div>
                   <div>
-                    <h2 className="text-base font-bold text-[#111827]">Join a Live Class</h2>
-                    <p className="text-xs text-[#6B7280] mt-0.5">Enter the session code from your teacher</p>
+                    <h2 className="text-sm sm:text-base font-bold text-[#111827]">Join a Live Class</h2>
+                    <p className="text-[11px] sm:text-xs text-[#6B7280] mt-0.5">Enter the session code from your teacher</p>
                   </div>
                 </div>
 
-                <form onSubmit={handleJoinClass} className="space-y-5">
-                  <div className="space-y-2">
+                <form onSubmit={handleJoinClass} className="space-y-4 sm:space-y-5">
+                  <div className="space-y-1.5 sm:space-y-2">
                     <label className="text-[10px] font-bold text-[#374151] uppercase tracking-widest block font-mono">Session Code</label>
                     <input
                       type="text"
@@ -259,7 +260,7 @@ export default function StudentDashboardPage() {
                       placeholder="CLASS-XXXX"
                       value={sessionCode}
                       onChange={(e) => setSessionCode(e.target.value)}
-                      className="w-full px-4 py-3.5 text-center font-mono text-xl font-bold tracking-widest uppercase bg-white border border-[#E5E7EB] rounded-[18px] text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#2563EB] focus:ring-0 focus:shadow-[0_0_0_3px_rgba(37,99,235,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] disabled:opacity-50"
+                      className="w-full px-4 py-3 sm:py-3.5 text-center font-mono text-lg sm:text-xl font-bold tracking-widest uppercase bg-white border border-[#E5E7EB] rounded-[16px] sm:rounded-[18px] text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#2563EB] focus:ring-0 focus:shadow-[0_0_0_3px_rgba(37,99,235,.08)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] disabled:opacity-50"
                     />
                   </div>
 
@@ -530,6 +531,56 @@ export default function StudentDashboardPage() {
           </div>
         )}
       </main>
+
+      {/* ─── STUDENT MOBILE BOTTOM NAVIGATION BAR ─── */}
+      <nav
+        aria-label="Student Mobile Navigation"
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-[rgba(15,23,42,.08)] px-4 py-2 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+      >
+        <div className="flex items-center justify-around max-w-md mx-auto">
+          <button
+            onClick={() => setActiveTab("dashboard")}
+            className={`flex flex-col items-center gap-1 py-1 px-4 rounded-xl transition-all cursor-pointer ${
+              activeTab === "dashboard"
+                ? "text-[#2563EB] font-bold"
+                : "text-[#64748B] hover:text-[#1E293B]"
+            }`}
+          >
+            <div className={`p-1 rounded-lg ${activeTab === "dashboard" ? "bg-[#EFF6FF]" : ""}`}>
+              <Tv className="h-5 w-5" />
+            </div>
+            <span className="text-[10px] tracking-tight">Class</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("documents")}
+            className={`flex flex-col items-center gap-1 py-1 px-4 rounded-xl transition-all cursor-pointer ${
+              activeTab === "documents"
+                ? "text-[#2563EB] font-bold"
+                : "text-[#64748B] hover:text-[#1E293B]"
+            }`}
+          >
+            <div className={`p-1 rounded-lg ${activeTab === "documents" ? "bg-[#EFF6FF]" : ""}`}>
+              <Cloud className="h-5 w-5" />
+            </div>
+            <span className="text-[10px] tracking-tight">Docs</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("history")}
+            className={`flex flex-col items-center gap-1 py-1 px-4 rounded-xl transition-all cursor-pointer ${
+              activeTab === "history"
+                ? "text-[#2563EB] font-bold"
+                : "text-[#64748B] hover:text-[#1E293B]"
+            }`}
+          >
+            <div className={`p-1 rounded-lg ${activeTab === "history" ? "bg-[#EFF6FF]" : ""}`}>
+              <History className="h-5 w-5" />
+            </div>
+            <span className="text-[10px] tracking-tight">History</span>
+          </button>
+        </div>
+      </nav>
     </div>
   )
 }

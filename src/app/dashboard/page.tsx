@@ -323,22 +323,23 @@ function DashboardContent() {
       <div className="flex-1 flex flex-col lg:ml-[72px]">
         
         {/* Header Topbar */}
-        <header className="h-16 border-b border-neutral-200/80 bg-white px-6 md:px-8 flex items-center justify-between sticky top-0 z-20">
-          <div className="flex items-center gap-3">
+        <header className="h-16 border-b border-neutral-200/80 bg-white px-3 sm:px-6 md:px-8 flex items-center justify-between sticky top-0 z-20">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             {/* Hamburger menu for mobile view */}
             <button
               onClick={() => setIsMobileSidebarOpen(true)}
-              className="p-2 rounded-lg border border-neutral-200 hover:bg-neutral-50 lg:hidden text-neutral-600 hover:text-neutral-900"
+              className="p-1.5 sm:p-2 rounded-lg border border-neutral-200 hover:bg-neutral-50 lg:hidden text-neutral-600 hover:text-neutral-900 flex-shrink-0"
+              title="Open menu"
             >
               <Menu className="h-5 w-5" />
             </button>
             
-            <h1 className="text-base md:text-xl font-serif font-bold text-neutral-900 tracking-tight">
+            <h1 className="text-sm sm:text-base md:text-xl font-serif font-bold text-neutral-900 tracking-tight truncate max-w-[140px] xs:max-w-[200px] sm:max-w-none">
               Good morning, {teacherName}
             </h1>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             {isPro ? (
               <button
                 onClick={openPaywall}
@@ -363,77 +364,78 @@ function DashboardContent() {
             </span>
             <ShinyButton 
               onClick={() => router.push("/dashboard/create-session")}
-              className="!px-5 !py-2.5 !text-xs !font-bold flex items-center gap-1.5"
+              className="!px-3 sm:!px-5 !py-2 sm:!py-2.5 !text-xs !font-bold flex items-center gap-1.5 flex-shrink-0"
             >
               <Plus className="h-3.5 w-3.5 text-white" />
-              New Session
+              <span className="hidden sm:inline">New Session</span>
+              <span className="sm:hidden">New</span>
             </ShinyButton>
           </div>
         </header>
 
         {/* Dashboard Grid Content */}
-        <main className="flex-1 p-6 md:p-8 space-y-8 max-w-6xl w-full mx-auto">
+        <main className="flex-1 p-3 sm:p-6 md:p-8 space-y-6 sm:space-y-8 max-w-6xl w-full mx-auto pb-28 lg:pb-8">
           
           {/* ────────────────── TABS RENDERING ────────────────── */}
 
           {/* 1. DEFAULT DASHBOARD TAB */}
           {currentTab === "dashboard" && (
-            <div className="space-y-8 animate-fadeIn">
+            <div className="space-y-6 sm:space-y-8 animate-fadeIn">
               {/* Stats Row */}
-              <section className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+              <section className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
                 {/* Card 1: Total Sessions */}
-                <div className="card p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[140px]">
+                <div className="card p-3.5 sm:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[110px] sm:min-h-[140px]">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800">TOTAL SESSIONS</span>
-                    <div className="h-8 w-8 rounded-xl bg-[#e6f0fa] flex items-center justify-center text-[#2185d0]">
-                      <Video className="h-4 w-4" />
+                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800">TOTAL SESSIONS</span>
+                    <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-xl bg-[#e6f0fa] flex items-center justify-center text-[#2185d0]">
+                      <Video className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </div>
                   </div>
-                  <div className="mt-4">
-                    <h3 className="text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : totalSessionsCount}</h3>
-                    <span className="text-[10px] font-serif text-neutral-400 mt-2 block">All active & finished</span>
+                  <div className="mt-2 sm:mt-4">
+                    <h3 className="text-2xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : totalSessionsCount}</h3>
+                    <span className="text-[9px] sm:text-[10px] font-serif text-neutral-400 mt-1 sm:mt-2 block truncate">All active & finished</span>
                   </div>
                 </div>
 
                 {/* Card 2: Students Taught */}
-                <div className="card p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[140px]">
+                <div className="card p-3.5 sm:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[110px] sm:min-h-[140px]">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800">STUDENTS TAUGHT</span>
-                    <div className="h-8 w-8 rounded-xl bg-[#ffebeb] flex items-center justify-center text-[#db2828]">
-                      <GraduationCap className="h-4 w-4" />
+                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800">STUDENTS TAUGHT</span>
+                    <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-xl bg-[#ffebeb] flex items-center justify-center text-[#db2828]">
+                      <GraduationCap className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </div>
                   </div>
-                  <div className="mt-4">
-                    <h3 className="text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : studentsTaughtCount}</h3>
-                    <span className="text-[10px] font-serif text-neutral-400 mt-2 block">From database registers</span>
+                  <div className="mt-2 sm:mt-4">
+                    <h3 className="text-2xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : studentsTaughtCount}</h3>
+                    <span className="text-[9px] sm:text-[10px] font-serif text-neutral-400 mt-1 sm:mt-2 block truncate">From registers</span>
                   </div>
                 </div>
 
                 {/* Card 3: Hours of Teaching */}
-                <div className="card p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[140px]">
+                <div className="card p-3.5 sm:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[110px] sm:min-h-[140px]">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800">HOURS OF TEACHING</span>
-                    <div className="h-8 w-8 rounded-xl bg-[#fff5e6] flex items-center justify-center text-[#f2711c]">
-                      <Clock className="h-4 w-4" />
+                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800">TEACHING TIME</span>
+                    <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-xl bg-[#fff5e6] flex items-center justify-center text-[#f2711c]">
+                      <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </div>
                   </div>
-                  <div className="mt-4">
-                    <h3 className="text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : `${teachingHours}h`}</h3>
-                    <span className="text-[10px] font-serif text-neutral-400 mt-2 block">Total live duration</span>
+                  <div className="mt-2 sm:mt-4">
+                    <h3 className="text-2xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingSessions ? "..." : `${teachingHours}h`}</h3>
+                    <span className="text-[9px] sm:text-[10px] font-serif text-neutral-400 mt-1 sm:mt-2 block truncate">Total live duration</span>
                   </div>
                 </div>
 
                 {/* Card 4: Avg Engagement */}
-                <div className="card p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[140px]">
+                <div className="card p-3.5 sm:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[110px] sm:min-h-[140px]">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800">AVG ENGAGEMENT</span>
-                    <div className="h-8 w-8 rounded-xl bg-[#e6f6ec] flex items-center justify-center text-[#21ba45]">
-                      <BarChart3 className="h-4 w-4" />
+                    <span className="text-[9px] sm:text-[10px] font-serif font-bold uppercase tracking-wider text-neutral-800">AVG ENGAGEMENT</span>
+                    <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-xl bg-[#e6f6ec] flex items-center justify-center text-[#21ba45]">
+                      <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </div>
                   </div>
-                  <div className="mt-4">
-                    <h3 className="text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingRoster ? "..." : `${avgEngagementRate}%`}</h3>
-                    <span className="text-[10px] font-serif text-neutral-400 mt-2 block">Average across students</span>
+                  <div className="mt-2 sm:mt-4">
+                    <h3 className="text-2xl sm:text-4xl font-bold text-neutral-900 leading-none" style={{ fontFamily: '"Times New Roman", Times, serif', fontWeight: 900 }}>{loadingRoster ? "..." : `${avgEngagementRate}%`}</h3>
+                    <span className="text-[9px] sm:text-[10px] font-serif text-neutral-400 mt-1 sm:mt-2 block truncate">Class average</span>
                   </div>
                 </div>
               </section>

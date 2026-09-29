@@ -958,17 +958,18 @@ export default function SessionPage() {
           />
 
           <div className="flex-1 lg:ml-64 flex flex-col">
-            <header className="h-16 border-b border-slate-200/80 bg-white/80 backdrop-blur-xl px-6 md:px-8 flex items-center justify-between sticky top-0 z-20 transition-all duration-300">
-              <div className="flex items-center gap-3">
+            <header className="h-14 sm:h-16 border-b border-slate-200/80 bg-white/80 backdrop-blur-xl px-3.5 sm:px-6 md:px-8 flex items-center justify-between sticky top-0 z-20 transition-all duration-300">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <button
                   onClick={() => setIsMobileSidebarOpen(true)}
+                  aria-label="Open menu"
                   className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 lg:hidden text-slate-600"
                 >
                   <Menu className="h-5 w-5" />
                 </button>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-slate-500 uppercase">Session Starting in</span>
-                  <span className="text-lg font-bold text-blue-600 font-mono tracking-widest px-2.5 py-0.5 rounded bg-blue-50 border border-blue-100/55 transition-all">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase">Starting in</span>
+                  <span className="text-base sm:text-lg font-bold text-blue-600 font-mono tracking-wider sm:tracking-widest px-2 sm:px-2.5 py-0.5 rounded bg-blue-50 border border-blue-100/55 transition-all">
                     {timeRemaining !== null ? formatTimeStr(timeRemaining) : "02:00"}
                   </span>
                 </div>
@@ -983,29 +984,29 @@ export default function SessionPage() {
                     console.warn("startClassEarly Firebase error (continuing with local transition):", e)
                   }
                 }}
-                className="flex items-center gap-1.5 px-4.5 py-2 rounded-xl bg-[#111827] hover:bg-[#1F2937] text-white text-xs font-bold transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-900/10 cursor-pointer active:translate-y-0"
+                className="flex items-center gap-1.5 px-3.5 sm:px-4.5 py-1.5 sm:py-2 rounded-xl bg-[#111827] hover:bg-[#1F2937] text-white text-xs font-bold transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-900/10 cursor-pointer active:translate-y-0"
               >
                 <Play className="h-3 w-3 fill-current" />
-                Start Early
+                <span>Start Early</span>
               </button>
             </header>
 
-            <main className="flex-1 p-6 md:p-8 max-w-5xl w-full mx-auto grid gap-8 lg:grid-cols-10">
-              <section className="lg:col-span-6 space-y-6">
+            <main className="flex-1 p-3.5 sm:p-6 md:p-8 pb-24 lg:pb-8 max-w-5xl w-full mx-auto grid gap-6 sm:gap-8 lg:grid-cols-10">
+              <section className="lg:col-span-6 space-y-5 sm:space-y-6">
                 <div>
-                  <h2 className="text-2xl font-bold tracking-tight text-[#111827]">Your session is ready</h2>
-                  <p className="text-xs text-[#6B7280] mt-1">Invite students and start the session below</p>
+                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#111827]">Your session is ready</h2>
+                  <p className="text-xs text-[#6B7280] mt-0.5 sm:mt-1">Invite students and start the session below</p>
                 </div>
 
-                <div className="bg-white border border-slate-900/8 rounded-[24px] shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)] hover:-translate-y-[2px] hover:shadow-[0_1px_2px_rgba(15,23,42,0.03),0_16px_40px_rgba(15,23,42,0.08)] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] p-6 space-y-4">
+                <div className="bg-white border border-slate-900/8 rounded-[20px] sm:rounded-[24px] shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)] hover:-translate-y-[2px] hover:shadow-[0_1px_2px_rgba(15,23,42,0.03),0_16px_40px_rgba(15,23,42,0.08)] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] p-4 sm:p-6 space-y-4">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h3 className="text-base font-bold text-[#111827]">{session.title}</h3>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        <span className="text-[10px] bg-[#EFF6FF] text-[#2563EB] font-bold px-3 py-1 rounded-[999px] uppercase tracking-wider">
+                      <h3 className="text-sm sm:text-base font-bold text-[#111827]">{session.title}</h3>
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2">
+                        <span className="text-[10px] bg-[#EFF6FF] text-[#2563EB] font-bold px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-[999px] uppercase tracking-wider">
                           {session.subject}
                         </span>
-                        <span className="text-[10px] bg-[#F3F4F6] text-[#374151] font-bold px-3 py-1 rounded-[999px] uppercase tracking-wider">
+                        <span className="text-[10px] bg-[#F3F4F6] text-[#374151] font-bold px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-[999px] uppercase tracking-wider">
                           {session.gradeLevel}
                         </span>
                       </div>
@@ -1013,12 +1014,12 @@ export default function SessionPage() {
                   </div>
                 </div>
 
-                <div className="bg-white border border-slate-900/8 rounded-[24px] shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)] hover:-translate-y-[2px] hover:shadow-[0_1px_2px_rgba(15,23,42,0.03),0_16px_40px_rgba(15,23,42,0.08)] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] p-6 text-center space-y-4">
+                <div className="bg-white border border-slate-900/8 rounded-[20px] sm:rounded-[24px] shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)] hover:-translate-y-[2px] hover:shadow-[0_1px_2px_rgba(15,23,42,0.03),0_16px_40px_rgba(15,23,42,0.08)] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] p-4 sm:p-6 text-center space-y-3 sm:space-y-4">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] block mb-1">
                     Invite Students with Code
                   </span>
-                  <div className={`relative max-w-sm mx-auto flex items-center justify-between bg-[#FCFCFD] border border-[#E5E7EB] h-[84px] px-6 rounded-[20px] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${isCopied ? 'bg-blue-50/50 border-blue-300 ring-2 ring-blue-100/50' : ''}`}>
-                    <span className="text-[26px] font-mono font-bold tracking-[3px] text-[#111827] whitespace-nowrap select-all">
+                  <div className={`relative max-w-sm mx-auto flex items-center justify-between bg-[#FCFCFD] border border-[#E5E7EB] h-[68px] sm:h-[84px] px-4 sm:px-6 rounded-[16px] sm:rounded-[20px] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${isCopied ? 'bg-blue-50/50 border-blue-300 ring-2 ring-blue-100/50' : ''}`}>
+                    <span className="text-[20px] sm:text-[26px] font-mono font-bold tracking-[2px] sm:tracking-[3px] text-[#111827] whitespace-nowrap select-all">
                       {session.code}
                     </span>
                     <button
@@ -1027,7 +1028,7 @@ export default function SessionPage() {
                         setIsCopied(true)
                         setTimeout(() => setIsCopied(false), 2000)
                       }}
-                      className="w-12 h-12 flex items-center justify-center rounded-xl bg-[#F3F4F6] text-slate-600 hover:bg-[#E5E7EB] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.05] cursor-pointer"
+                      className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl bg-[#F3F4F6] text-slate-600 hover:bg-[#E5E7EB] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.05] cursor-pointer"
                     >
                       {isCopied ? <CheckCircle className="h-5 w-5 text-blue-600 animate-bounce" /> : <Copy className="h-5 w-5" />}
                     </button>
@@ -1036,7 +1037,7 @@ export default function SessionPage() {
               </section>
 
               <section className="lg:col-span-4 space-y-6">
-                <div className="bg-white border border-slate-900/8 rounded-[24px] shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)] hover:-translate-y-[2px] hover:shadow-[0_1px_2px_rgba(15,23,42,0.03),0_16px_40px_rgba(15,23,42,0.08)] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] p-5 flex flex-col h-[300px]">
+                <div className="bg-white border border-slate-900/8 rounded-[20px] sm:rounded-[24px] shadow-[0_1px_2px_rgba(15,23,42,0.03),0_12px_32px_rgba(15,23,42,0.05)] hover:-translate-y-[2px] hover:shadow-[0_1px_2px_rgba(15,23,42,0.03),0_16px_40px_rgba(15,23,42,0.08)] transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] p-4 sm:p-5 flex flex-col h-[280px] sm:h-[300px]">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
                     <h3 className="text-xs font-bold uppercase tracking-wider text-[#111827]">Students Joined</h3>
                     <span className="px-2.5 py-0.5 rounded bg-[#EFF6FF] text-[10px] text-[#2563EB] font-bold">

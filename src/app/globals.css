@@ -120,12 +120,26 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
+    -webkit-tap-highlight-color: transparent;
   }
   html {
     @apply font-sans;
+    -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
+  }
+  body {
+    @apply bg-background text-foreground;
+    overflow-x: hidden;
+    max-width: 100vw;
+    touch-action: manipulation;
+  }
+  input, select, textarea, button {
+    font-size: 16px; /* Prevents auto-zoom on mobile safari & webview */
+  }
+  @media (min-width: 640px) {
+    input, select, textarea, button {
+      font-size: inherit;
+    }
   }
 }
 

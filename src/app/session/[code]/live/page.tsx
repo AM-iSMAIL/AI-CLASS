@@ -2622,17 +2622,17 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       `}</style>
 
       {/* ═══ TOP BAR ═══ */}
-      <header className="h-[72px] bg-white border-b border-[rgba(15,23,42,.08)] px-6 flex items-center justify-between flex-shrink-0 z-30 antialiased">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-[#EFF6FF] flex items-center justify-center border border-[#BFDBFE] shadow-xs">
-            <Brain className="h-4.5 w-4.5 text-[#2563EB]" />
+      <header className="h-14 sm:h-[72px] bg-white border-b border-[rgba(15,23,42,.08)] px-3 sm:px-6 flex items-center justify-between flex-shrink-0 z-30 antialiased">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-[#EFF6FF] flex items-center justify-center border border-[#BFDBFE] shadow-xs flex-shrink-0">
+            <Brain className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-[#2563EB]" />
           </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-black text-[#2563EB] leading-none tracking-tight">AI <span className="text-[#111827]">CLASS</span></span>
-            <span className="text-[11px] text-[#6B7280] font-medium tracking-wide uppercase truncate max-w-[160px] mt-1">{sessionTitle}</span>
+          <div className="flex flex-col min-w-0">
+            <span className="text-xs sm:text-sm font-black text-[#2563EB] leading-none tracking-tight">AI <span className="text-[#111827]">CLASS</span></span>
+            <span className="text-[10px] sm:text-[11px] text-[#6B7280] font-medium tracking-wide uppercase truncate max-w-[110px] xs:max-w-[150px] sm:max-w-[160px] mt-0.5 sm:mt-1">{sessionTitle}</span>
           </div>
         </div>
-        <div className="flex flex-col items-center gap-1.5 w-72">
+        <div className="hidden md:flex flex-col items-center gap-1.5 w-72">
           <div className="flex items-center gap-2 text-xs text-[#374151] font-semibold">
             <span className="text-[#2563EB] font-bold uppercase text-[9px] tracking-wider font-mono">{isPdfMode ? "PDF Page " : "Topic "} {activeTopicIdx + 1}/{totalItems}:</span>
             <span className="truncate max-w-[160px] font-bold text-[#111827]">{activeLabel}</span>
@@ -2641,30 +2641,34 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
             <div className="h-full bg-[#2563EB] rounded-full transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]" style={{ width: `${progressPct}%` }} />
           </div>
         </div>
-        <div className="flex items-center gap-2.5 text-xs font-semibold">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 text-xs font-semibold flex-shrink-0">
           {/* Student Focus Avg Badge */}
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E5E7EB] shadow-xs hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer">
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white border border-[#E5E7EB] shadow-xs hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer">
             <span className={`h-2 w-2 rounded-full ${focusDot} animate-pulse`} />
             <span className="text-[#6B7280] font-medium">Student Avg:</span>
             <span className={`${focusText} font-bold`}>{classFocus}%</span>
           </div>
 
-          <div className="flex items-center gap-2.5 bg-white border border-[#E5E7EB] px-3.5 py-1.5 rounded-full font-mono text-[#111827] font-bold shadow-xs hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer">
-            <Clock className="h-3.5 w-3.5 text-[#9CA3AF]" />
+          <div className="flex items-center gap-1.5 sm:gap-2.5 bg-white border border-[#E5E7EB] px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full font-mono text-[#111827] text-xs font-bold shadow-xs hover:-translate-y-0.5 transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer">
+            <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#9CA3AF]" />
             <span>{fmt(elapsedSeconds)}</span>
-            <span className="border-l border-[#E5E7EB] pl-2.5 flex items-center gap-1">
-              <Users className="h-3.5 w-3.5 text-[#2563EB]" />{students.length}
+            <span className="border-l border-[#E5E7EB] pl-1.5 sm:pl-2.5 flex items-center gap-1">
+              <Users className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#2563EB]" />{students.length}
             </span>
           </div>
           {isTeacher ? (
             <div className="flex items-center gap-2">
-              <button id="end-session-btn" onClick={handleEndSession} className="px-4 py-2 bg-[#DC2626] hover:bg-[#B91C1C] hover:-translate-y-0.5 text-white rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer text-xs font-bold shadow-[0_12px_24px_rgba(220,38,38,.18)] active:scale-95">End Session</button>
+              <button id="end-session-btn" onClick={handleEndSession} className="px-2.5 sm:px-4 py-1.5 sm:py-2 bg-[#DC2626] hover:bg-[#B91C1C] hover:-translate-y-0.5 text-white rounded-[14px] sm:rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer text-[11px] sm:text-xs font-bold shadow-[0_12px_24px_rgba(220,38,38,.18)] active:scale-95">
+                <span className="hidden xs:inline">End Session</span>
+                <span className="xs:hidden">End</span>
+              </button>
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <button onClick={handleStudentLeave} className="px-4 py-2 bg-[#DC2626] hover:bg-[#B91C1C] hover:-translate-y-0.5 text-white rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer text-xs font-bold shadow-[0_12px_24px_rgba(220,38,38,.18)] active:scale-95 flex items-center gap-1.5">
-                <LogOut className="h-3.5 w-3.5" />
-                Leave Class
+              <button onClick={handleStudentLeave} className="px-2.5 sm:px-4 py-1.5 sm:py-2 bg-[#DC2626] hover:bg-[#B91C1C] hover:-translate-y-0.5 text-white rounded-[14px] sm:rounded-[16px] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer text-[11px] sm:text-xs font-bold shadow-[0_12px_24px_rgba(220,38,38,.18)] active:scale-95 flex items-center gap-1 sm:gap-1.5">
+                <LogOut className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                <span className="hidden xs:inline">Leave Class</span>
+                <span className="xs:hidden">Leave</span>
               </button>
             </div>
           )}
@@ -2675,7 +2679,7 @@ IMAGE_PROMPT: A high-tech digital classroom with glowing violet displays and edu
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0 relative bg-[#F6F7F9]">
 
         {/* ─── LEFT COLUMN — Main Stage ─── */}
-        <div className="flex-1 flex flex-col p-4 gap-4 min-h-[50vh] lg:min-h-0 pb-4 lg:pb-[84px] overflow-hidden">
+        <div className="flex-1 flex flex-col p-2 sm:p-4 gap-2 sm:gap-4 min-h-[45vh] lg:min-h-0 pb-20 lg:pb-[84px] overflow-hidden">
 
           {/* ── CONTENT / IMAGE AREA (HERO — presentation panel widescreen fill with black border frame) ── */}
           <div className="flex-1 bg-white border-2 border-[#111827] rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,.08)] hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(15,23,42,.12)] transition-all duration-350 ease-[cubic-bezier(.22,1,.36,1)] overflow-hidden flex flex-col relative min-h-0">
