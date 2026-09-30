@@ -191,6 +191,7 @@ export default function LiveClassroomPage() {
   const ttsQueueRef = useRef<Array<{ text: string; onEnd?: () => void; audio?: HTMLAudioElement | null; audioSrc?: string | null; promise?: Promise<any> | null; error?: boolean; imagePrompt?: string; imageUrl?: string | null; imagePromise?: Promise<any> | null; runId: number; slideIndex: number }>>([])
   const isTtsPlayingRef = useRef<boolean>(false)
   const ttsRunIdRef = useRef(0)
+  const isFetchingTtsRef = useRef<boolean>(false)
   const currentSlideIdxRef = useRef(0)
   const streamCompletedRef = useRef(false)
   const hasStartedRef = useRef(false)
@@ -719,6 +720,7 @@ export default function LiveClassroomPage() {
     }
     ttsQueueRef.current = []
     isTtsPlayingRef.current = false
+    isFetchingTtsRef.current = false
     ttsRunIdRef.current++
     setAiSpeechState("idle")
   }, [])
@@ -818,6 +820,68 @@ export default function LiveClassroomPage() {
     return false;
   }
 
+  // Strict 1-at-a-time client-side TTS prefetch worker to prevent Camb AI concurrency exceeded (limit 1)
+  const pumpTtsFetchQueue = useCallback(() => {
+    if (isFetchingTtsRef.current || !speechEnabled) return;
+
+    // Find the earliest item in queue that hasn't started fetching yet
+    const itemToFetch = ttsQueueRef.current.find(
+      item => !item.promise && !item.audioSrc && !item.error && item.runId === ttsRunIdRef.current
+    );
+    if (!itemToFetch) return;
+
+    const cleanClause = itemToFetch.text
+      .split("\n")
+      .filter(l => !l.trim().startsWith("IMAGE_PROMPT:"))
+      .join("\n")
+      .trim();
+
+    if (!cleanClause) {
+      itemToFetch.promise = Promise.resolve();
+      pumpTtsFetchQueue();
+      return;
+    }
+
+    isFetchingTtsRef.current = true;
+
+    const fetchWithRetry = async (attempt = 1): Promise<void> => {
+      try {
+        console.log(`[Camb AI Client] Sequential TTS fetch (attempt ${attempt}): "${cleanClause.substring(0, 30)}..."`);
+        const r = await fetch("/api/tts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: cleanClause })
+        });
+        const data = await r.json();
+        if (data.audioContent) {
+          if (itemToFetch.runId === ttsRunIdRef.current) {
+            itemToFetch.audioSrc = "data:audio/mpeg;base64," + data.audioContent;
+          }
+          return;
+        }
+        if (attempt < 3) {
+          console.warn(`[Camb AI Client] Retrying TTS after error (attempt ${attempt}):`, data.error);
+          await new Promise(res => setTimeout(res, 600 * attempt));
+          return fetchWithRetry(attempt + 1);
+        }
+        itemToFetch.error = true;
+      } catch (err) {
+        if (attempt < 3) {
+          console.warn(`[Camb AI Client] Retrying TTS after network error (attempt ${attempt}):`, err);
+          await new Promise(res => setTimeout(res, 600 * attempt));
+          return fetchWithRetry(attempt + 1);
+        }
+        itemToFetch.error = true;
+      }
+    };
+
+    itemToFetch.promise = fetchWithRetry().finally(() => {
+      isFetchingTtsRef.current = false;
+      // Fetch the next queued item sequentially
+      pumpTtsFetchQueue();
+    });
+  }, [speechEnabled]);
+
   const processTtsQueue = useCallback(() => {
     async function runQueue() {
       if (isTtsPlayingRef.current) return;
@@ -877,7 +941,10 @@ export default function LiveClassroomPage() {
         setImageError(null);
       }
 
-      // Await TTS promise so audio payload is completely downloaded before dequeuing
+      // Ensure fetch is actively pumping for this chunk and future chunks
+      pumpTtsFetchQueue();
+
+      // Await TTS promise so audio payload is completely downloaded before playing
       if (nextChunk.promise) {
         try { await nextChunk.promise; } catch { }
       }
@@ -897,10 +964,10 @@ export default function LiveClassroomPage() {
 
       setLiveSubtitles(clean);
 
-      // On-demand fetch fallback if audio payload is missing
-      if (!nextChunk.audioSrc && !nextChunk.audio && speechEnabled && !nextChunk.error) {
+      // On-demand fetch fallback if audio payload is still missing
+      if (!nextChunk.audioSrc && speechEnabled && !nextChunk.error) {
         try {
-          console.log(`[Camb AI] On-demand fetching voice for: "${clean.substring(0, 25)}..."`);
+          console.log(`[Camb AI] On-demand fallback voice fetch for: "${clean.substring(0, 25)}..."`);
           const r = await fetch("/api/tts", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -911,19 +978,25 @@ export default function LiveClassroomPage() {
             nextChunk.audioSrc = "data:audio/mpeg;base64," + data.audioContent;
           }
         } catch (err) {
-          console.warn("[Camb AI]: On-demand fetch error:", err);
+          console.warn("[Camb AI]: On-demand fallback error:", err);
         }
       }
 
       const audioSrcToPlay = nextChunk.audioSrc || (nextChunk.audio ? nextChunk.audio.src : null);
 
       if (audioSrcToPlay && speechEnabled) {
-        if (!activeAudioRef.current) {
-          activeAudioRef.current = new Audio();
+        if (activeAudioRef.current) {
+          try {
+            activeAudioRef.current.pause();
+            activeAudioRef.current.onplay = null;
+            activeAudioRef.current.onended = null;
+            activeAudioRef.current.onerror = null;
+            activeAudioRef.current.src = "";
+          } catch { }
         }
-        const player = activeAudioRef.current;
-        player.pause();
-        player.src = audioSrcToPlay;
+
+        const player = new Audio(audioSrcToPlay);
+        activeAudioRef.current = player;
         player.volume = 1.0;
 
         player.onplay = () => {
@@ -948,24 +1021,11 @@ export default function LiveClassroomPage() {
 
         try {
           await player.play();
-
-          // Pipelined Audio Pre-loading: Pre-fetch & instantiate next audio element while current audio is playing
-          const upcomingItem = ttsQueueRef.current[0];
-          if (upcomingItem && upcomingItem.promise && !upcomingItem.audioSrc && !upcomingItem.audio && !upcomingItem.error) {
-            upcomingItem.promise
-              .then(() => {
-                if (upcomingItem.audioSrc && !upcomingItem.audio) {
-                  const preloadAudio = new Audio(upcomingItem.audioSrc);
-                  preloadAudio.preload = "auto";
-                  upcomingItem.audio = preloadAudio;
-                }
-              })
-              .catch(() => {});
-          }
+          // While this audio is playing, keep pumping subsequent queue items in the background!
+          pumpTtsFetchQueue();
           return;
         } catch (playErr) {
           console.warn("[Camb AI Player Play Exception]:", playErr);
-          // Retry play once if browser suspended audio context
           setTimeout(() => {
             player.play().catch(() => {
               if (nextChunk.runId !== ttsRunIdRef.current) return;
@@ -992,39 +1052,37 @@ export default function LiveClassroomPage() {
     }
 
     runQueue();
-  }, [speechEnabled])
+  }, [speechEnabled, pumpTtsFetchQueue]);
 
   const speakTextChunk = useCallback((text: string, onEnd?: () => void, startFromIndex = 0, firstImageUrl?: string | null) => {
     if (!text) {
-      if (onEnd) onEnd()
-      return
+      if (onEnd) onEnd();
+      return;
     }
 
     if (!speechEnabled) {
-      setAiSpeechState("speaking")
+      setAiSpeechState("speaking");
       const clean = text.split("\n").filter(l => !l.trim().startsWith("IMAGE_PROMPT:")).join("\n").trim();
-      setLiveSubtitles(clean)
-      const duration = Math.max(1000, clean.split(/\s+/).length * 250)
-      setTimeout(() => { setAiSpeechState("idle"); if (onEnd) onEnd() }, duration)
-      return
+      setLiveSubtitles(clean);
+      const duration = Math.max(1000, clean.split(/\s+/).length * 250);
+      setTimeout(() => { setAiSpeechState("idle"); if (onEnd) onEnd(); }, duration);
+      return;
     }
 
     const slides = parseExplanationToSlides(text);
     const remainingSlides = slides.slice(startFromIndex);
     if (remainingSlides.length === 0) {
-      if (onEnd) onEnd()
-      return
+      if (onEnd) onEnd();
+      return;
     }
 
-    // Queue all slides sequentially, and start prefetching audios in parallel immediately
+    // Queue all slides sequentially
     remainingSlides.forEach((slide, index) => {
       const isLast = index === remainingSlides.length - 1;
       const isFirst = index === 0;
 
       const clauses = splitIntoShortClauses(slide.text);
       clauses.forEach((clause, clauseIdx) => {
-        const cleanClause = clause.split("\n").filter(l => !l.trim().startsWith("IMAGE_PROMPT:")).join("\n").trim();
-
         const item = {
           text: clause,
           runId: ttsRunIdRef.current,
@@ -1039,33 +1097,13 @@ export default function LiveClassroomPage() {
           imagePromise: (isFirst && clauseIdx === 0 && firstImageUrl) ? Promise.resolve() : null as Promise<any> | null
         };
 
-        if (speechEnabled && cleanClause) {
-          item.promise = fetch("/api/tts", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: cleanClause })
-          })
-            .then(r => r.json())
-            .then(data => {
-              if (data.audioContent) {
-                item.audioSrc = "data:audio/mpeg;base64," + data.audioContent;
-              } else {
-                item.error = true;
-              }
-            })
-            .catch(() => {
-              item.error = true;
-            });
-        } else {
-          item.promise = Promise.resolve();
-        }
-
         ttsQueueRef.current.push(item);
       });
     });
 
-    processTtsQueue()
-  }, [speechEnabled, processTtsQueue])
+    pumpTtsFetchQueue();
+    processTtsQueue();
+  }, [speechEnabled, pumpTtsFetchQueue, processTtsQueue]);
 
   /* ─── PREFETCH LECTURE ─── */
   useEffect(() => {
@@ -1135,24 +1173,9 @@ export default function LiveClassroomPage() {
                         fullText += delta;
                         sentenceBuffer += delta;
 
-                        // 1. Trigger first TTS prefetch on-the-fly (pass true for instant start)
+                        // 1. Mark first clause detected for text cache
                         if (!firstTtsTriggered && shouldFlushSpeechBuffer(sentenceBuffer, true) && !sentenceBuffer.includes("IMAGE_PROMPT:")) {
                           firstTtsTriggered = true;
-                          const ttsText = sentenceBuffer.trim();
-                          if (ttsText) {
-                            fetch("/api/tts", {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ text: ttsText })
-                            })
-                              .then(r => r.json())
-                              .then(data => {
-                                if (data.audioContent && prefetchedLectures.current[cacheKey]) {
-                                  prefetchedLectures.current[cacheKey].firstAudioBase64 = data.audioContent;
-                                }
-                              })
-                              .catch(() => { });
-                          }
                         }
 
                         // 2. Trigger first image prefetch on-the-fly
@@ -1350,8 +1373,6 @@ export default function LiveClassroomPage() {
               const currentSlideIdx = slideIdx++;
 
               clauses.forEach((clause, clauseIdx) => {
-                const cleanClause = clause.split("\n").filter(l => !l.trim().startsWith("IMAGE_PROMPT:")).join("\n").trim();
-
                 const item = {
                   text: clause,
                   runId: ttsRunIdRef.current,
@@ -1366,29 +1387,10 @@ export default function LiveClassroomPage() {
                   imagePromise: null as Promise<any> | null,
                 };
 
-                if (speechEnabled && cleanClause) {
-                  item.promise = fetch("/api/tts", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ text: cleanClause })
-                  })
-                    .then(r => r.json())
-                    .then(data => {
-                      if (data.audioContent) {
-                        item.audioSrc = "data:audio/mpeg;base64," + data.audioContent;
-                      } else {
-                        item.error = true;
-                      }
-                    })
-                    .catch(() => {
-                      item.error = true;
-                    });
-                } else {
-                  item.promise = Promise.resolve();
-                }
-
                 ttsQueueRef.current.push(item);
               });
+
+              pumpTtsFetchQueue();
               processTtsQueue();
             };
 
@@ -1578,25 +1580,9 @@ export default function LiveClassroomPage() {
                               fullText += delta;
                               sentenceBuffer += delta;
 
-                              // 1. Trigger first TTS prefetch on-the-fly
+                              // 1. Mark first clause detected for text cache
                               if (!firstTtsTriggered && shouldFlushSpeechBuffer(sentenceBuffer, true) && !sentenceBuffer.includes("IMAGE_PROMPT:")) {
                                 firstTtsTriggered = true;
-                                const ttsText = sentenceBuffer.trim();
-                                if (ttsText) {
-                                  console.log(`[Latency] Prefetching next topic first TTS audio on the fly: "${ttsText}"`);
-                                  fetch("/api/tts", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ text: ttsText })
-                                  })
-                                    .then(r => r.json())
-                                    .then(data => {
-                                      if (data.audioContent && prefetchedLectures.current[nextCacheKey]) {
-                                        prefetchedLectures.current[nextCacheKey].firstAudioBase64 = data.audioContent;
-                                      }
-                                    })
-                                    .catch(() => { });
-                                }
                               }
 
                               // 2. Trigger first image prefetch on-the-fly
@@ -1660,23 +1646,7 @@ export default function LiveClassroomPage() {
                           }
                         }
 
-                        if (!firstTtsTriggered) {
-                          const nextSlides = parseExplanationToSlides(fullText);
-                          if (nextSlides.length > 0 && nextSlides[0].text) {
-                            fetch("/api/tts", {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ text: nextSlides[0].text })
-                            })
-                              .then(r => r.json())
-                              .then(data => {
-                                if (data.audioContent && prefetchedLectures.current[nextCacheKey]) {
-                                  prefetchedLectures.current[nextCacheKey].firstAudioBase64 = data.audioContent;
-                                }
-                              })
-                              .catch(() => { });
-                          }
-                        }
+
                       }
                     } catch { }
                   }
