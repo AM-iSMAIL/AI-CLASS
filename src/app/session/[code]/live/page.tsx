@@ -1049,6 +1049,8 @@ export default function LiveClassroomPage() {
             .then(data => {
               if (data.audioContent) {
                 item.audioSrc = "data:audio/mpeg;base64," + data.audioContent;
+              } else {
+                item.error = true;
               }
             })
             .catch(() => {
@@ -1374,6 +1376,8 @@ export default function LiveClassroomPage() {
                     .then(data => {
                       if (data.audioContent) {
                         item.audioSrc = "data:audio/mpeg;base64," + data.audioContent;
+                      } else {
+                        item.error = true;
                       }
                     })
                     .catch(() => {
